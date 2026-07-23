@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Campaign Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --font-title:'Cinzel',serif;
+    --font-text:'Spectral',serif;
+    --bg:#181310;
+    --bg-panel:#221b15;
+    --bg-panel-raised:#2a2118;
+    --line:#3a2f22;
+    --parchment:#ece1c4;
+    --parchment-dim:#b6a880;
+    --brass:#c9a24b;
+    --brass-dim:#8c7431;
+    --brass-bright:#e2bc63;
+    --locked:#4a4038;
+    --locked-line:#3a3128;
+    --moss:#6f8a53;
+    --moss-dim:#4c5f3a;
+    --wine:#8a3a3a;
+    --bg-glow:#23190f;
+    --shadow: 0 8px 24px rgba(0,0,0,.45);
+    --radius: 3px;
+  }
+  body.light{
+    --bg:#f3ead2;
+    --bg-panel:#fdf8ea;
+    --bg-panel-raised:#f6efd9;
+    --line:#dbc99c;
+    --parchment:#2b2013;
+    --parchment-dim:#6e5c3c;
+    --brass:#8a6114;
+    --brass-dim:#a9812c;
+    --brass-bright:#6b480d;
+    --locked:#a89872;
+    --locked-line:#e6d9b3;
+    --moss:#4b6b34;
+    --moss-dim:#6f8a53;
+    --wine:#8a3a3a;
+    --bg-glow:#fffaf0;
+    --shadow: 0 8px 20px rgba(60,45,20,.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top, var(--bg-glow) 0%, var(--bg) 55%),
+      var(--bg);
+    color:var(--parchment);
+    font-family:var(--font-text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    transition:background-color .2s, color .2s;
+  }
+  h1 { font-family: "Kimberley", sans-serif }
+  @font-face {
+      font-family: "Arkhamslim";
+      src: url(public/fonts/arkhamslim.ttf) format("truetype");
+  }
+  .arkhamslim{
+      color:var(--parchment);
+      font-family:'Arkhamslim';
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      transition:background-color .2s, color .2s;
+  }
+  ::selection{background:var(--brass-dim);color:#000;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--brass-dim);
+  }
+  h1,h2,h3{font-family:var(--font-title);font-weight:600;margin:0;letter-spacing:.02em;}
+  button{font-family:var(--font-text);cursor:pointer;}
+  a{color:var(--brass);}
+
+  #app{max-width:1180px;margin:0 auto;padding:18px 18px 56px;}
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--line);
+    padding-bottom:12px;margin-bottom:18px;flex-wrap:wrap;gap:14px;
+  }
+  header.top .brand{display:flex;align-items:center;gap:14px;}
+  header.top .brand svg{flex:none;}
+  header.top h1{font-size:22px;color:var(--parchment);}
+  header.top .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.08em;margin-top:2px;}
+  .top-actions{display:flex;gap:10px;align-items:center;}
+
+  .btn{
+    background:transparent;border:1px solid var(--brass-dim);color:var(--brass-bright);
+    padding:9px 16px;border-radius:var(--radius);font-size:13px;letter-spacing:.03em;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .btn:hover{background:var(--brass-dim);color:#161109;}
+  .btn.primary{background:var(--brass);color:#161109;border-color:var(--brass);font-weight:600;}
+  .btn.primary:hover{background:var(--brass-bright);border-color:var(--brass-bright);}
+  .btn.ghost{border-color:var(--line);color:var(--parchment-dim);}
+  .btn.ghost:hover{border-color:var(--parchment-dim);color:var(--parchment);background:transparent;}
+  .btn.danger{border-color:var(--wine);color:#d99;}
+  .btn.danger:hover{background:var(--wine);color:#fff;}
+  .btn.small{padding:6px 11px;font-size:12px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn:disabled:hover{background:transparent;color:var(--brass-bright);}
+  .btn svg{vertical-align:-2px;margin-right:5px;}
+
+  .library-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
+  .game-card{
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;cursor:pointer;position:relative;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .game-card:hover{transform:translateY(-3px);border-color:var(--brass-dim);box-shadow:var(--shadow);}
+  .game-card .art{
+    height:104px;background:linear-gradient(160deg,#2c2318,#181310) center/cover no-repeat;
+    display:flex;align-items:center;justify-content:center;color:var(--locked);
+    border-bottom:1px solid var(--line);
+  }
+  .game-card .body{padding:10px 12px 12px;}
+  .game-card h3{font-size:15px;color:var(--parchment);margin-bottom:4px;}
+  .game-card p{font-size:12px;color:var(--parchment-dim);margin:0 0 8px;line-height:1.45;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .game-card .stat-row{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--brass-dim);
+    letter-spacing:.05em;display:flex;justify-content:space-between;}
+  .add-card{
+    border:1px dashed var(--line);border-radius:var(--radius);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;min-height:104px;color:var(--parchment-dim);
+    cursor:pointer;transition:border-color .15s,color .15s;
+  }
+  .add-card:hover{border-color:var(--brass-dim);color:var(--brass-bright);}
+  .empty{border:1px dashed var(--line);border-radius:var(--radius);padding:36px 20px;text-align:center;color:var(--parchment-dim);}
+  .empty h3{color:var(--parchment);margin-bottom:6px;font-size:15px;}
+
+  .crumb{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12.5px;color:var(--parchment-dim);}
+  .crumb button{background:none;border:none;color:var(--brass);font-size:12.5px;padding:0;}
+  .game-header{display:flex;gap:14px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
+  .game-header .art{
+    width:64px;height:64px;border-radius:var(--radius);background:linear-gradient(160deg,#2c2318,#181310) center/cover no-repeat;
+    border:1px solid var(--line);flex:none;
+  }
+  .game-header .meta{flex:1;min-width:220px;}
+  .game-header h2{font-size:20px;color:var(--parchment);margin-bottom:3px;}
+  .game-header .desc{color:var(--parchment-dim);font-size:13px;max-width:60ch;line-height:1.5;margin:0 0 6px;}
+  .game-header .desc p{margin:0 0 6px;}
+  .game-header .desc p:last-child{margin-bottom:0;}
+  .progress-bar{height:4px;background:var(--locked-line);border-radius:3px;overflow:hidden;max-width:320px;margin-top:6px;}
+  .progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--brass-dim),var(--brass-bright));}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--brass-dim);margin-top:4px;letter-spacing:.05em;}
+
+  .toolbar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:12px;}
+  .view-toggle{display:flex;gap:6px;}
+  .view-toggle button{
+    background:transparent;border:1px solid var(--line);color:var(--parchment-dim);
+    padding:7px 14px;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;
+    border-radius:var(--radius);
+  }
+  .view-toggle button.active{border-color:var(--brass);color:var(--brass-bright);}
+  .setting-toggle{
+    display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    color:var(--parchment-dim);letter-spacing:.03em;cursor:pointer;user-select:none;
+  }
+  .setting-toggle input{accent-color:var(--brass);width:14px;height:14px;}
+
+  .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+  .node-card{
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px;
+    cursor:pointer;transition:border-color .15s,transform .15s;position:relative;
+  }
+  .node-card:hover{border-color:var(--brass-dim);transform:translateY(-2px);}
+  .node-card.completed{border-color:var(--moss-dim);}
+  .node-card .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+    display:inline-block;padding:2px 6px;border-radius:2px;margin-bottom:7px;
+  }
+  .node-card.completed .tag{background:rgba(111,138,83,.18);color:var(--moss);}
+  .node-card.available .tag{background:rgba(201,162,75,.15);color:var(--brass);}
+  .node-card h3{font-size:14.5px;color:var(--parchment);margin-bottom:4px;line-height:1.3;}
+  .node-card .node-card-text{font-size:12px;color:var(--parchment-dim);line-height:1.45;margin:0;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .node-card .node-card-text p{margin:0;}
+  .node-card .node-card-text ul{margin:0 0 0 1.1em;padding:0;}
+  .node-card .node-card-text code{background:var(--bg-panel-raised);padding:0 3px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:.92em;}
+  .node-card .icon-row{position:absolute;top:11px;right:11px;color:var(--brass-dim);}
+  .mini-play{
+    position:absolute;bottom:10px;right:10px;width:26px;height:26px;border-radius:50%;
+    background:var(--brass);color:#161109;display:flex;align-items:center;justify-content:center;
+    border:none;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);
+    transition:transform .12s ease, background .15s ease;
+  }
+  .mini-play:hover{transform:scale(1.08);background:var(--brass-bright);}
+  .mini-play.playing{background:var(--moss);}
+  .mini-play svg{display:block;margin:0;}
+  .locked-note{
+    grid-column:1/-1;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--locked);
+    border-top:1px dashed var(--line);padding-top:10px;margin-top:2px;letter-spacing:.03em;
+    display:flex;align-items:center;gap:8px;
+  }
+
+  .log-list{display:flex;flex-direction:column;gap:8px;}
+  .log-item{
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 13px;
+  }
+  .log-item .log-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .log-item .log-title{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .log-item .log-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--brass-dim);white-space:nowrap;letter-spacing:.03em;}
+  .log-item .log-choice{font-size:12px;color:var(--brass);margin-top:3px;}
+  .log-item .log-result{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:3px;line-height:1.5;}
+  .log-item .log-result p{margin:0;}
+
+  .map-wrap{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px;overflow:auto;}
+  .map-wrap svg{display:block;}
+  .map-node-label{font-family:'IBM Plex Mono',monospace;fill:var(--parchment);}
+  .map-hint{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--brass-dim);margin-bottom:8px;letter-spacing:.03em;}
+
+  .reader-overlay{
+    position:fixed;inset:0;background:rgba(10,8,6,.72);backdrop-filter:blur(2px);
+    display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;
+  }
+  @keyframes modalFadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes modalPopIn{ from{opacity:0;transform:scale(.94) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+  .reader-overlay.anim-in{ animation:modalFadeIn .16s ease-out; }
+  .reader-overlay.anim-in > .reader{ animation:modalPopIn .22s cubic-bezier(.2,.8,.3,1); }
+  @keyframes unlockPulse{
+    0%{ opacity:.25; transform:scale(.93); box-shadow:0 0 0 0 rgba(201,162,75,.55); }
+    55%{ opacity:1; box-shadow:0 0 0 9px rgba(201,162,75,0); }
+    100%{ opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(201,162,75,0); }
+  }
+  .node-card.newly-unlocked{ animation:unlockPulse .9s ease-out; }
+  @keyframes unlockPulseSvg{
+    0%{ opacity:.2; transform:scale(.55); }
+    55%{ opacity:1; transform:scale(1.25); }
+    100%{ opacity:1; transform:scale(1); }
+  }
+  .map-node.newly-unlocked{ animation:unlockPulseSvg .8s ease-out; transform-box:fill-box; transform-origin:center; }
+  .reader{
+    background:var(--bg-panel);border:1px solid var(--brass-dim);border-radius:var(--radius);
+    width:96vw;max-width:96vw;height:92vh;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+  .reader .art{width:100%;height:220px;background:linear-gradient(160deg,#2c2318,#181310) center/cover no-repeat;border-bottom:1px solid var(--line);}
+  .reader .content{padding:24px 32px 32px;max-width:900px;margin:0 auto;}
+  .reader h2{font-size:19px;color:var(--parchment);margin-bottom:10px;}
+  .reader .close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.4);border:1px solid var(--line);
+    color:var(--parchment-dim);width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;display:flex;
+    align-items:center;justify-content:center;}
+  .reader-relative{position:relative;}
+  .reader .body-text{font-size:15.5px;line-height:1.75;color:var(--parchment);margin-bottom:20px;}
+  .body-text p, .result-text p{margin:0 0 10px;}
+  .body-text p:last-child, .result-text p:last-child{margin-bottom:0;}
+  .body-text ul, .result-text ul{margin:0 0 10px 1.2em;padding:0;}
+  .body-text code, .result-text code{background:var(--bg-panel-raised);padding:1px 5px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:.9em;}
+  .body-text a, .result-text a{color:var(--brass);text-decoration:underline;}
+  audio{width:100%;margin-bottom:18px;filter:sepia(.2);}
+  .custom-audio-player{
+    display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:10px 14px;
+    border-radius:var(--radius);background:var(--bg-panel-raised);border:1px solid var(--line);
+  }
+  .custom-audio-player .cap-play{
+    flex:none;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--brass);color:#161109;display:flex;align-items:center;justify-content:center;
+    transition:transform .1s ease,background .15s ease;
+  }
+  .custom-audio-player .cap-play:hover{transform:scale(1.06);background:var(--brass-bright);}
+  .custom-audio-player .cap-play svg{width:14px;height:14px;}
+  .custom-audio-player .cap-progress-track{
+    flex:1;height:6px;background:var(--locked-line);border-radius:4px;cursor:pointer;position:relative;overflow:hidden;
+  }
+  .custom-audio-player .cap-progress-fill{height:100%;background:linear-gradient(90deg,var(--brass-dim),var(--brass-bright));width:0%;}
+  .custom-audio-player .cap-time{flex:none;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.03em;}
+  .custom-audio-player.style-minimal{padding:4px 2px;background:transparent;border:none;gap:9px;}
+  .custom-audio-player.style-minimal .cap-play{width:24px;height:24px;background:transparent;border:1px solid var(--line);color:var(--parchment-dim);}
+  .custom-audio-player.style-minimal .cap-play:hover{background:var(--bg-panel-raised);}
+  .custom-audio-player.style-minimal .cap-progress-track{height:3px;background:var(--line);}
+  .custom-audio-player.style-brass{
+    background:linear-gradient(160deg,var(--bg-panel-raised),var(--bg-panel));border:1px solid var(--brass-dim);padding:13px 16px;
+  }
+  .custom-audio-player.style-brass .cap-play{width:44px;height:44px;box-shadow:0 3px 8px rgba(0,0,0,.35);}
+  .custom-audio-player.style-brass .cap-play svg{width:16px;height:16px;}
+  .custom-audio-player.style-brass .cap-progress-track{height:9px;border-radius:6px;}
+  .custom-audio-player.style-brass .cap-time{font-size:11.5px;color:var(--brass-dim);}
+  .choices{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .choice-btn{
+    text-align:left;background:var(--bg-panel-raised);border:1px solid var(--line);color:var(--parchment);
+    padding:12px 14px;border-radius:var(--radius);font-size:14px;transition:border-color .15s,background .15s;
+  }
+  .choice-btn:hover{border-color:var(--brass);background:#2f2519;}
+  .reader-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+  .completed-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--moss);letter-spacing:.05em;}
+  .result-box{
+    background:var(--bg-panel-raised);border:1px solid var(--brass-dim);border-radius:var(--radius);
+    padding:16px;margin-top:8px;
+  }
+  .result-box .result-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--brass);letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase;}
+  .result-box .result-text{font-size:14.5px;line-height:1.7;color:var(--parchment);margin-bottom:14px;}
+
+  .manage-panel{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+  .manage-panel h3{color:var(--brass-bright);font-size:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+  .field{margin-bottom:10px;}
+  .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;
+    color:var(--parchment-dim);margin-bottom:6px;text-transform:uppercase;}
+  .field input[type=text], .field textarea, .field input[type=url]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--parchment);
+    padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;
+  }
+  .field textarea{min-height:80px;resize:vertical;}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--brass-dim);}
+  .path-picker-row{display:flex;gap:8px;align-items:stretch;}
+  .path-picker-row input[type=text]{flex:1;}
+  .path-picker-row .btn{flex:none;white-space:nowrap;}
+  .field-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .field-row .field{flex:1;min-width:220px;}
+  .media-toggle{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .media-toggle button{
+    font-size:11px;font-family:'IBM Plex Mono',monospace;background:transparent;border:1px solid var(--line);
+    color:var(--parchment-dim);padding:5px 10px;border-radius:var(--radius);
+  }
+  .media-toggle button.active{border-color:var(--brass-dim);color:var(--brass-bright);}
+  input[type=file]{width:100%;font-size:12px;color:var(--parchment-dim);font-family:'IBM Plex Mono',monospace;}
+  .file-status{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--moss);margin-top:6px;}
+  .file-error{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#d99;margin-top:6px;}
+  .prereq-box{border:1px solid var(--line);border-radius:var(--radius);padding:12px;max-height:180px;overflow:auto;background:var(--bg);}
+  .prereq-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;flex-wrap:wrap;}
+  .prereq-item select{
+    background:var(--bg-panel-raised);border:1px solid var(--line);color:var(--parchment-dim);
+    font-size:11px;padding:2px 4px;border-radius:2px;font-family:'IBM Plex Mono',monospace;
+  }
+  .choice-editor-card{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;background:var(--bg);}
+  .choice-editor-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .choice-editor-row input{flex:1;}
+  .small-x{background:transparent;border:1px solid var(--line);color:var(--parchment-dim);width:28px;height:28px;border-radius:var(--radius);font-size:14px;flex:none;}
+  .small-x:hover{border-color:var(--wine);color:#d99;}
+  .node-manage-list{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;}
+  .node-manage-item{
+    display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);
+    font-size:13.5px;flex-wrap:wrap;gap:8px;
+  }
+  .node-manage-item .left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .node-manage-item .pid, .pid{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--locked);}
+  .node-manage-item .right{display:flex;gap:8px;}
+  .node-manage-item{cursor:grab;border-radius:var(--radius);transition:border-color .12s;}
+  .node-manage-item:active{cursor:grabbing;}
+  .drag-handle{color:var(--locked);cursor:grab;font-size:14px;letter-spacing:-1px;}
+  .node-group-bucket{padding-left:6px;border-left:2px solid var(--line);margin:0 0 10px 4px;min-height:8px;}
+  .group-header{
+    display:flex;align-items:center;gap:8px;padding:8px 4px;margin-top:6px;
+    background:var(--bg-panel-raised);border-radius:var(--radius);cursor:grab;font-size:13px;
+  }
+  .group-header:active{cursor:grabbing;}
+  .group-header .group-name{font-family:'Cinzel',serif;color:var(--brass-bright);font-size:13px;}
+  .group-toggle{background:none;border:none;color:var(--parchment-dim);font-size:12px;cursor:pointer;padding:0 4px;}
+  .hint{font-size:12px;color:var(--locked);margin-top:4px;line-height:1.5;}
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--bg-panel-raised);
+    border:1px solid var(--brass-dim);color:var(--parchment);padding:10px 18px;border-radius:var(--radius);
+    font-size:13px;z-index:100;box-shadow:var(--shadow);max-width:80vw;text-align:center;
+  }
+  .loading-note{color:var(--parchment-dim);font-size:13px;padding:40px;text-align:center;}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading-note">Opening the codex…</div></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- Storage helpers ----------------
+    window.storage = {
+      set:(k,v)=>{
+        localStorage.setItem(k,v)
+        return localStorage.getItem(k).length
+      },
+      get: k=>localStorage.getItem(k)
+    }
+
+  async function sGet(key){
+    try{ const r = await window.storage.get(key); return r ? JSON.parse(r.value) : null; }
+    catch(e){ return null; }
+  }
+  async function sSet(key, val){
+    try{ const r = await window.storage.set(key, JSON.stringify(val)); return !!r; }
+    catch(e){ console.error("storage set failed", key, e); return false; }
+  }
+  async function sDel(key){ try{ await window.storage.delete(key); }catch(e){} }
+
+  const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+  const fmtBytes = (n) => n > 1024*1024 ? (n/1024/1024).toFixed(1)+' MB' : Math.round(n/1024)+' KB';
+  function joinSubdirPath(subdir, filename){
+    const dir = (subdir||'').trim().replace(/^\/+/,'').replace(/\/+$/,'');
+    return dir ? dir + '/' + filename : filename;
+  }
+
+  // ---------------- Limits ----------------
+  const MAX_AUDIO_BYTES = 3.2 * 1024 * 1024;   // raw file, before base64 inflation
+  const MAX_IMAGE_DIM = 1280;                   // px, longest side after compression
+  const IMAGE_QUALITY = 0.82;
+
+  const DEFAULT_SETTINGS = {
+    hideCompleted:false,
+    hideLockedInMap:true,
+    autoCloseOnAudioEnd:false,
+    theme:'dark',
+    mapOrientation:'horizontal',
+    autoAdvance:false,
+    revealChoicesWhenDone:false,
+    tickSoundEnabled:true,
+    scratchSoundEnabled:true,
+    logOrder:'latestFirst',
+    audioPlayerStyle:'native',
+    animationsEnabled:true
+  };
+
+  // ---------------- State ----------------
+  let games = [];
+  let nodesByGame = {};
+  let progress = {completed:{}};
+  let settings = Object.assign({}, DEFAULT_SETTINGS);
+
+  let route = {view:'library', gameId:null};
+  let manageMode = false;
+  let readerNode = null;
+  let readerResult = null; // {text, advanceTo} shown after a choice is played
+  let readerAutoPlay = false; // consumed once by renderReader to autoplay audio
+  let editingNodeId = null; // node currently being edited in manage panel, or null = "add new"
+  let gameSubView = 'shelf';
+  let undoStack = []; // [{nodeId, previous}] for progress changes, most recent last
+  let lastEditedNodeId = null; // most recently saved narration, for the Shift+↓ quick-chain fast key
+  let seenAvailableIds = new Set(); // node ids already shown as available — anything new here gets the unlock animation once
+
+  // inline (card / map) audio preview
+  const inlineAudio = new Audio();
+  let inlinePlayingId = null;
+  let inlineAutoComplete = false; // true only for map "graph" plays with no choices to pick
+  inlineAudio.addEventListener('ended', async ()=>{
+    const finishedId = inlinePlayingId;
+    const shouldComplete = inlineAutoComplete;
+    inlinePlayingId = null;
+    inlineAutoComplete = false;
+    if(shouldComplete && finishedId){
+      const node = findNodeById(finishedId);
+      if(node && !isCompleted(node.id) && !(node.choices && node.choices.length)){
+        await markCompletedAndFindNext(node, null);
+        toast('Marked as heard — new narrations may be available.');
+      }
+    }
+    render();
+  });
+
+  // ---------------- Load ----------------
+  async function loadAll(){
+    const gameIndex = await sGet('game-index') || [];
+    games = [];
+    for(const id of gameIndex){ const g = await sGet('game:'+id); if(g) games.push(g); }
+    nodesByGame = {};
+    for(const g of games){
+      const nodeIndex = await sGet('node-index:'+g.id) || [];
+      const list = [];
+      for(const nid of nodeIndex){ const n = await sGet('node:'+nid); if(n) list.push(n); }
+      nodesByGame[g.id] = list;
+    }
+    progress = await sGet('progress') || {completed:{}};
+    settings = Object.assign({}, DEFAULT_SETTINGS, await sGet('settings') || {});
+    applyTheme();
+    // seed with everything already available so nothing "unlock-animates" on first load —
+    // only genuinely new unlocks during this session should get the animation.
+    games.forEach(g=>{
+      (nodesByGame[g.id]||[]).forEach(n=>{ if(isAvailable(n)) seenAvailableIds.add(n.id); });
+    });
+    render();
+  }
+
+  function applyTheme(){
+    document.body.classList.toggle('light', settings.theme==='light');
+  }
+
+  // ---------------- Unlock logic ----------------
+  function findNodeById(id){
+    for(const gid in nodesByGame){
+      const found = (nodesByGame[gid]||[]).find(n=>n.id===id);
+      if(found) return found;
+    }
+    return null;
+  }
+  function completionRecord(nodeId){ return progress.completed[nodeId]; }
+  // Normalizes a node's prerequisites to always carry a group ('all' or 'any'), for backward
+  // compatibility with older saved data that used a single node.prerequisiteMode instead.
+  function normalizedPrereqs(node){
+    const legacyMode = node.prerequisiteMode==='any' ? 'any' : 'all';
+    return (node.prerequisites||[]).map(p=> ({...p, group: p.group || legacyMode}));
+  }
+  // True once a node's own AND/OR prerequisites are satisfied — independent of whether the
+  // node itself has been explicitly marked heard. Shared by isAvailable() and, for
+  // "completed by default" nodes, by isCompleted() itself.
+  function prerequisitesSatisfiedFor(node){
+    const prereqs = normalizedPrereqs(node);
+    if(prereqs.length===0) return true;
+    const allGroup = prereqs.filter(p=>p.group!=='any');
+    const anyGroup = prereqs.filter(p=>p.group==='any');
+    const allOk = allGroup.every(prereqSatisfied);
+    const anyOk = anyGroup.length===0 || anyGroup.some(prereqSatisfied);
+    return allOk && anyOk;
+  }
+  const completedByDefaultGuard = new Set(); // cycle protection while resolving auto-complete chains
+  function isCompleted(nodeId){
+    if(progress.completed[nodeId]) return true;
+    const node = findNodeById(nodeId);
+    if(node && node.completedByDefault){
+      if(completedByDefaultGuard.has(nodeId)) return false; // break accidental prerequisite cycles
+      completedByDefaultGuard.add(nodeId);
+      const result = prerequisitesSatisfiedFor(node);
+      completedByDefaultGuard.delete(nodeId);
+      return result;
+    }
+    return false;
+  }
+  function prereqSatisfied(p){
+    if(!isCompleted(p.nodeId)) return false;
+    if(p.choiceId){
+      const rec = completionRecord(p.nodeId);
+      if(!rec) return false;
+      if(Array.isArray(rec.choiceIds)) return rec.choiceIds.includes(p.choiceId);
+      return rec.choiceId === p.choiceId;
+    }
+    return true;
+  }
+  function isAvailable(node){
+    if(isCompleted(node.id)) return true;
+    return prerequisitesSatisfiedFor(node);
+  }
+  // Direct children that list this node as one of their prerequisites, and are currently
+  // available-but-not-completed and not hidden — used for "proceed" / junction navigation.
+  function findChildrenUnlockedBy(node){
+    return (nodesByGame[node.gameId]||[]).filter(c=>
+      !c.hidden &&
+      (c.prerequisites||[]).some(p=>p.nodeId===node.id) &&
+      isAvailable(c) && !isCompleted(c.id)
+    );
+  }
+  // choiceIdOrIds is a single choiceId (single-choice narrations) or an array (multi-choice).
+  async function markCompleted(node, choiceIdOrIds){
+    undoStack.push({nodeId: node.id, previous: progress.completed[node.id] ? {...progress.completed[node.id]} : null});
+    if(undoStack.length>25) undoStack.shift();
+    const isMulti = Array.isArray(choiceIdOrIds);
+    progress.completed[node.id] = {
+      completedAt: Date.now(),
+      choiceId: isMulti ? null : (choiceIdOrIds || null),
+      choiceIds: isMulti ? choiceIdOrIds : null
+    };
+    if(!node.hidden && (node.logMode||'full')!=='none') playScratchSound();
+    await sSet('progress', progress);
+  }
+  async function undoLast(){
+    if(undoStack.length===0) return;
+    const last = undoStack.pop();
+    if(last.previous){ progress.completed[last.nodeId] = last.previous; }
+    else { delete progress.completed[last.nodeId]; }
+    await sSet('progress', progress);
+    toast('Last action undone.');
+    render();
+  }
+  function availabilitySnapshot(gameId, excludeId){
+    const map = {};
+    (nodesByGame[gameId]||[]).forEach(n=>{ if(n.id!==excludeId) map[n.id] = isAvailable(n); });
+    return map;
+  }
+  // Marks a node complete and, if exactly one other narration newly unlocked as a result, returns it.
+  async function markCompletedAndFindNext(node, choiceId){
+    const before = availabilitySnapshot(node.gameId, node.id);
+    await markCompleted(node, choiceId);
+    const after = availabilitySnapshot(node.gameId, node.id);
+    const newlyUnlocked = Object.keys(after).filter(id=> after[id] && !before[id]);
+    if(newlyUnlocked.length===1){
+      return (nodesByGame[node.gameId]||[]).find(n=>n.id===newlyUnlocked[0]) || null;
+    }
+    return null;
+  }
+  // Skips through any chain of "completed by default" junction nodes to find the real
+  // narration to show; returns null if the chain dead-ends or forks (multiple next options).
+  function resolveJunctions(node){
+    let current = node, guard = 0;
+    while(current && current.completedByDefault && guard++<25){
+      const kids = findChildrenUnlockedBy(current);
+      current = kids.length===1 ? kids[0] : null;
+    }
+    return current;
+  }
+  // A short synthesized "tick" — no audio file needed, so it works fully offline.
+  let tickAudioCtx = null;
+  function playTickSound(){
+    if(!settings.tickSoundEnabled) return;
+    try{
+      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
+      const now = tickAudioCtx.currentTime;
+      const osc = tickAudioCtx.createOscillator();
+      const gain = tickAudioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1500, now);
+      osc.frequency.exponentialRampToValueAtTime(850, now + 0.06);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.16, now + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+      osc.connect(gain).connect(tickAudioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.1);
+    }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
+  }
+  // A short synthesized "pencil scratch" — filtered noise with a few uneven strokes,
+  // played when a narration is written into the log.
+  function playScratchSound(){
+    if(!settings.scratchSoundEnabled) return;
+    try{
+      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
+      const ctx = tickAudioCtx;
+      const now = ctx.currentTime;
+      const duration = 0.22;
+      const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 2500;
+      bandpass.Q.value = 0.6;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, now);
+      const strokes = 4;
+      for(let s=0;s<strokes;s++){
+        const stepLen = duration/strokes;
+        const t0 = now + s*stepLen;
+        gain.gain.exponentialRampToValueAtTime(0.07 + Math.random()*0.05, t0 + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + stepLen*0.85);
+      }
+      noise.connect(bandpass).connect(gain).connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + duration + 0.02);
+    }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
+  }
+  function openReaderFor(node, autoplay){
+    const resolved = resolveJunctions(node);
+    const skipped = resolved !== node;
+    stopInlinePlay();
+    readerNode = resolved;
+    readerResult = null;
+    readerAutoPlay = !!(resolved && resolved.audio && (autoplay || skipped));
+    if(resolved) playTickSound();
+    render();
+  }
+  async function saveSettings(){ await sSet('settings', settings); }
+
+  async function resetAllProgress(){
+    progress = {completed:{}};
+    await sSet('progress', progress);
+  }
+  async function resetGameProgress(gameId){
+    const ids = (nodesByGame[gameId]||[]).map(n=>n.id);
+    ids.forEach(id=>{ delete progress.completed[id]; });
+    await sSet('progress', progress);
+  }
+  function exportProgress(){
+    const payload = { type:'campaign-codex-progress', exportedAt: new Date().toISOString(), progress };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `campaign-codex-progress-${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  }
+  function importProgressFromFile(file){
+    return new Promise((resolve,reject)=>{
+      const r = new FileReader();
+      r.onerror = ()=>reject(new Error('Could not read that file.'));
+      r.onload = ()=>{
+        try{
+          const parsed = JSON.parse(r.result);
+          if(!parsed || typeof parsed !== 'object' || !parsed.progress || typeof parsed.progress.completed !== 'object'){
+            reject(new Error('That file doesn\'t look like a Campaign Codex progress export.'));
+            return;
+          }
+          resolve(parsed.progress);
+        }catch(e){ reject(new Error('That file is not valid JSON.')); }
+      };
+      r.readAsText(file);
+    });
+  }
+
+  function exportLibrary(){
+    const payload = { type:'campaign-codex-library', exportedAt: new Date().toISOString(), games, nodesByGame, settings };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `campaign-codex-structure-${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  }
+  function importLibraryFromFile(file){
+    return new Promise((resolve,reject)=>{
+      const r = new FileReader();
+      r.onerror = ()=>reject(new Error('Could not read that file.'));
+      r.onload = ()=>{
+        try{
+          const parsed = JSON.parse(r.result);
+          if(!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.games) || typeof parsed.nodesByGame !== 'object'){
+            reject(new Error('That file doesn\'t look like a Campaign Codex structure export.'));
+            return;
+          }
+          resolve({games: parsed.games, nodesByGame: parsed.nodesByGame, settings: (parsed.settings && typeof parsed.settings==='object') ? parsed.settings : null});
+        }catch(e){ reject(new Error('That file is not valid JSON.')); }
+      };
+      r.readAsText(file);
+    });
+  }
+  async function applyImportedLibrary(loaded){
+    // wipe existing games/nodes from storage
+    const oldIndex = await sGet('game-index') || [];
+    for(const gid of oldIndex){
+      const nIdx = await sGet('node-index:'+gid) || [];
+      for(const nid of nIdx){ await sDel('node:'+nid); }
+      await sDel('node-index:'+gid);
+      await sDel('game:'+gid);
+    }
+    // write new games/nodes
+    const newIndex = loaded.games.map(g=>g.id);
+    for(const g of loaded.games){ await sSet('game:'+g.id, g); }
+    await sSet('game-index', newIndex);
+    for(const gid of newIndex){
+      const nodeList = loaded.nodesByGame[gid] || [];
+      await sSet('node-index:'+gid, nodeList.map(n=>n.id));
+      for(const n of nodeList){ await sSet('node:'+n.id, n); }
+    }
+    games = loaded.games;
+    nodesByGame = {};
+    newIndex.forEach(gid=>{ nodesByGame[gid] = loaded.nodesByGame[gid] || []; });
+    if(loaded.settings){
+      settings = Object.assign({}, DEFAULT_SETTINGS, loaded.settings);
+      await sSet('settings', settings);
+      applyTheme();
+    }
+  }
+
+  // ---------------- Toast ----------------
+  let toastTimer=null;
+  function toast(msg){
+    let el = document.getElementById('toast');
+    if(!el){ el = document.createElement('div'); el.id='toast'; el.className='toast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.style.display='block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ el.style.display='none'; }, 3200);
+  }
+
+  // ---------------- Media helpers ----------------
+  function readFileAsDataUrl(file){
+    return new Promise((res,rej)=>{
+      const r = new FileReader();
+      r.onload = ()=>res(r.result);
+      r.onerror = ()=>rej(new Error('Could not read that file.'));
+      r.readAsDataURL(file);
+    });
+  }
+
+  // Downscale + recompress an image file so it comfortably fits in storage.
+  function compressImage(file){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onerror = ()=>reject(new Error('Could not read that image.'));
+      reader.onload = ()=>{
+        const img = new Image();
+        img.onerror = ()=>reject(new Error('That image could not be decoded.'));
+        img.onload = ()=>{
+          let { width, height } = img;
+          if(width > MAX_IMAGE_DIM || height > MAX_IMAGE_DIM){
+            if(width >= height){ height = Math.round(height * (MAX_IMAGE_DIM/width)); width = MAX_IMAGE_DIM; }
+            else { width = Math.round(width * (MAX_IMAGE_DIM/height)); height = MAX_IMAGE_DIM; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          let dataUrl;
+          try{ dataUrl = canvas.toDataURL('image/jpeg', IMAGE_QUALITY); }
+          catch(e){ reject(new Error('That image could not be processed.')); return; }
+          if(dataUrl.length > 4.2*1024*1024){
+            reject(new Error('Even after compressing, that image is too large to store. Try a smaller photo or paste an image URL instead.'));
+            return;
+          }
+          resolve(dataUrl);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function readAudioFile(file){
+    if(file.size > MAX_AUDIO_BYTES){
+      throw new Error(`That audio file is ${fmtBytes(file.size)} — please use a clip under ${fmtBytes(MAX_AUDIO_BYTES)}, or paste a hosted audio URL instead.`);
+    }
+    return readFileAsDataUrl(file);
+  }
+  async function readFontFile(file){
+    if(file.size > MAX_FONT_BYTES){
+      throw new Error(`That font file is ${fmtBytes(file.size)} — please use one under ${fmtBytes(MAX_FONT_BYTES)}, or paste a hosted or local font URL instead.`);
+    }
+    return readFileAsDataUrl(file);
+  }
+
+  // ---------------- Icons ----------------
+  const ICON_LOCK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="11" width="16" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  const ICON_PLAY = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>';
+  const ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg>';
+  const ICON_EYE_OFF = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l18 18M10.6 10.6a2 2 0 1 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c6 0 10 7 10 7a15 15 0 0 1-4 4.6M6.2 6.2C3.6 8 2 12 2 12s4 7 10 7c1.3 0 2.5-.3 3.6-.8"/></svg>';
+  const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+  const CREST = '<svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.6"><path d="M24 4l16 6v10c0 12-7 19-16 24C15 39 8 32 8 20V10l16-6z"/><path d="M24 14v16M17 21h14" stroke-width="1.3"/></svg>';
+  const ICON_MINI_PLAY = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>';
+  const ICON_MINI_PAUSE = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
+
+  const AUDIO_PLAYER_STYLES = {
+    native: {label:'Native (browser default)'},
+    minimal: {label:'Minimal bar'},
+    brass: {label:'Brass player'}
+  };
+  const ICON_PLAY_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>';
+  const ICON_PAUSE_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
+  function buildAudioMarkup(src){
+    if(!src) return '';
+    const style = settings.audioPlayerStyle || 'native';
+    if(style==='native'){
+      return `<audio controls src="${src}"></audio>`;
+    }
+    return `
+      <div class="custom-audio-player style-${style}" id="customAudioPlayer">
+        <button class="cap-play" type="button" aria-label="Play">${ICON_PLAY_LARGE}</button>
+        <div class="cap-progress-track"><div class="cap-progress-fill"></div></div>
+        <span class="cap-time">0:00 / 0:00</span>
+      </div>
+      <audio src="${src}" style="display:none;"></audio>
+    `;
+  }
+
+  const TITLE_FONTS = {
+    cinzel: {label:'Cinzel (default)', css:"'Cinzel', serif"},
+    imfell_sc: {label:'IM Fell English SC', css:"'IM Fell English SC', serif"},
+    special_elite: {label:'Special Elite (typewriter)', css:"'Special Elite', monospace"},
+    cormorant: {label:'Cormorant Garamond', css:"'Cormorant Garamond', serif"},
+    georgia: {label:'Georgia (system)', css:"Georgia, 'Times New Roman', serif"}
+  };
+  const TEXT_FONTS = {
+    spectral: {label:'Spectral (default)', css:"'Spectral', serif"},
+    imfell: {label:'IM Fell English', css:"'IM Fell English', serif"},
+    garamond: {label:'EB Garamond', css:"'EB Garamond', serif"},
+    special_elite: {label:'Special Elite (typewriter)', css:"'Special Elite', monospace"},
+    system: {label:'System sans-serif', css:"-apple-system, 'Segoe UI', Arial, sans-serif"}
+  };
+  const MAX_FONT_BYTES = 2.5 * 1024 * 1024; // raw file, before base64 inflation
+  function customFontFamily(gameId, slot){ return `gf-${slot}-${gameId}`; }
+  function guessFontFormat(src){
+    const s = (src||'').split('?')[0].toLowerCase();
+    if(s.endsWith('.woff2') || src.startsWith('data:font/woff2') || src.startsWith('data:application/font-woff2')) return 'woff2';
+    if(s.endsWith('.woff') || src.startsWith('data:font/woff') || src.startsWith('data:application/font-woff')) return 'woff';
+    if(s.endsWith('.ttf') || src.startsWith('data:font/ttf')) return 'truetype';
+    if(s.endsWith('.otf') || src.startsWith('data:font/otf')) return 'opentype';
+    return '';
+  }
+  // Injects/refreshes the @font-face rule(s) for a game's custom fonts, if any.
+  function ensureCustomFontFaces(game){
+    if(!game) return;
+    ['customTitleFont','customTextFont'].forEach(key=>{
+      const cf = game[key];
+      const styleId = 'ff-'+key+'-'+game.id;
+      let styleEl = document.getElementById(styleId);
+      if(!cf || !cf.source){
+        if(styleEl) styleEl.textContent = '';
+        return;
+      }
+      if(!styleEl){ styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
+      const format = guessFontFormat(cf.source);
+      styleEl.textContent = `@font-face{font-family:'${cf.family}';src:url('${cf.source}')${format?` format('${format}')`:''};font-display:swap;}`;
+    });
+  }
+  const GAME_STYLES = {
+    default: {label:'Default (matches app theme)'},
+    crimson: {label:'Crimson', dark:{brass:'#c0524a',dim:'#8a3a34',bright:'#e0736a'}, light:{brass:'#a83a32',dim:'#c25850',bright:'#7a241d'}},
+    verdant: {label:'Verdant', dark:{brass:'#6f9a52',dim:'#4c6f38',bright:'#8fc26c'}, light:{brass:'#4c7a34',dim:'#6f9a52',bright:'#375c26'}},
+    azure:   {label:'Azure',   dark:{brass:'#5a8fc2',dim:'#3d648c',bright:'#7fb0e0'}, light:{brass:'#3d6f9c',dim:'#5a8fc2',bright:'#2a4d70'}},
+    amethyst:{label:'Amethyst',dark:{brass:'#9a72c2',dim:'#6f4f8f',bright:'#b896e0'}, light:{brass:'#7a53a3',dim:'#9a72c2',bright:'#5c3d80'}},
+    ember:   {label:'Ember',   dark:{brass:'#d98a3d',dim:'#a8611f',bright:'#f0a75c'}, light:{brass:'#b5701f',dim:'#d98a3d',bright:'#8a5316'}},
+    slate:   {label:'Slate',   dark:{brass:'#8a97a8',dim:'#5f6b7a',bright:'#aab6c4'}, light:{brass:'#5f6b7a',dim:'#8a97a8',bright:'#3f4854'}}
+  };
+  function gameAccentVars(game){
+    const key = (game && game.stylePreset) || 'default';
+    const preset = GAME_STYLES[key];
+    if(!preset || !preset.dark) return '';
+    const set = settings.theme==='light' ? preset.light : preset.dark;
+    return `--brass:${set.brass};--brass-dim:${set.dim};--brass-bright:${set.bright};`;
+  }
+  function gameFontStyle(game){
+    ensureCustomFontFaces(game);
+    let t, x;
+    if(game && game.titleFont==='custom' && game.customTitleFont && game.customTitleFont.source){
+      t = `'${game.customTitleFont.family}', serif`;
+    } else {
+      t = (TITLE_FONTS[game && game.titleFont] || TITLE_FONTS.cinzel).css;
+    }
+    if(game && game.textFont==='custom' && game.customTextFont && game.customTextFont.source){
+      x = `'${game.customTextFont.family}', serif`;
+    } else {
+      x = (TEXT_FONTS[game && game.textFont] || TEXT_FONTS.spectral).css;
+    }
+    return `--font-title:${t};--font-text:${x};${gameAccentVars(game)}`;
+  }
+
+  function escapeHtml(s){
+    return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // Inline-only Markdown transforms (bold/italic/code/links), reused by both the full block
+  // renderer below and the single-line title renderer. Raw HTML passes through untouched.
+  function inlineMarkdown(t){
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return t;
+  }
+  // Titles/names: single line, no paragraph or list wrapping, but the same inline
+  // Markdown shortcuts and raw HTML support as the full renderer.
+  function renderTitle(src){
+    if(!src) return '';
+    return inlineMarkdown(src);
+  }
+
+  // Small, dependency-free Markdown -> HTML renderer for accompanying text / choice results.
+  // Raw HTML typed by the author is passed through as-is (not escaped) so it renders directly —
+  // this is a single-user authoring tool, so HTML in these fields is trusted content.
+  function renderMarkdown(src){
+    if(!src) return '';
+    const lines = src.replace(/\r\n/g,'\n').split('\n');
+    let html = '';
+    let inList = false;
+    const inlineMd = inlineMarkdown;
+    lines.forEach(line=>{
+      const listMatch = line.match(/^\s*[-*]\s+(.*)/);
+      if(listMatch){
+        if(!inList){ html += '<ul>'; inList = true; }
+        html += `<li>${inlineMd(listMatch[1])}</li>`;
+        return;
+      }
+      if(inList){ html += '</ul>'; inList=false; }
+      if(line.trim()===''){ html += '<br>'; return; }
+      html += `<p>${inlineMd(line)}</p>`;
+    });
+    if(inList) html += '</ul>';
+    return html;
+  }
+
+  // ---------------- Inline audio preview (play icon on cards / map nodes) ----------------
+  function toggleInlinePlay(node, evt, autoComplete){
+    if(evt){ evt.stopPropagation(); evt.preventDefault(); }
+    if(!node.audio) return;
+    if(inlinePlayingId === node.id){
+      inlineAudio.pause();
+      inlinePlayingId = null;
+      inlineAutoComplete = false;
+      render();
+      return;
+    }
+    inlineAudio.pause();
+    inlineAudio.src = node.audio;
+    inlineAudio.currentTime = 0;
+    inlinePlayingId = node.id;
+    inlineAutoComplete = !!autoComplete;
+    inlineAudio.play().catch(()=>{ inlinePlayingId=null; inlineAutoComplete=false; render(); });
+    render();
+  }
+  function stopInlinePlay(){
+    if(inlinePlayingId){ inlineAudio.pause(); inlinePlayingId = null; inlineAutoComplete = false; }
+  }
+
+  // ---------------- Render root ----------------
+  function render(){
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+    app.appendChild(renderHeader());
+    if(route.view==='library'){ app.appendChild(renderLibrary()); }
+    else if(route.view==='game'){ app.appendChild(renderGame()); }
+    const staleReader = document.getElementById('narrationReaderOverlay');
+    if(staleReader) staleReader.remove();
+    if(readerNode){ document.body.appendChild(renderReader()); }
+  }
+
+  function renderHeader(){
+    const h = document.createElement('header');
+    h.className='top';
+    h.innerHTML = `
+      <div class="brand">
+        ${CREST}
+        <div>
+          <h1>Campaign Codex</h1>
+          <div class="sub">VOICE NARRATION LIBRARY FOR TABLETOP CAMPAIGNS</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn ghost" id="openSettings">${ICON_GEAR} Settings</button>
+        <button class="btn ${manageMode?'primary':'ghost'}" id="toggleManage">${manageMode? 'Done editing' : 'Manage codex'}</button>
+      </div>
+    `;
+    h.querySelector('#toggleManage').onclick = ()=>{ manageMode = !manageMode; editingNodeId=null; render(); };
+    h.querySelector('#openSettings').onclick = openSettingsModal;
+    return h;
+  }
+
+  // ---------------- Settings modal ----------------
+  function openSettingsModal(){
+    const currentGame = route.view==='game' ? games.find(g=>g.id===route.gameId) : null;
+    const overlay = document.createElement('div');
+    overlay.className='reader-overlay' + (settings.animationsEnabled ? ' anim-in' : '');
+    overlay.innerHTML = `
+      <div class="reader" style="max-width:480px;">
+        <div class="content reader-relative">
+          <button class="close" id="closeSettings">&times;</button>
+          <h2 style="margin-bottom:16px;">Settings</h2>
+
+          <div class="field">
+            <label>Appearance</label>
+            <div class="media-toggle" id="themeToggle">
+              <button type="button" data-theme="dark" class="${settings.theme!=='light'?'active':''}">Dark</button>
+              <button type="button" data-theme="light" class="${settings.theme==='light'?'active':''}">Light</button>
+            </div>
+            <div class="media-toggle" id="orientationToggle" style="margin-top:6px;">
+              <button type="button" data-orient="horizontal" class="${settings.mapOrientation!=='vertical'?'active':''}">Map: left to right</button>
+              <button type="button" data-orient="vertical" class="${settings.mapOrientation==='vertical'?'active':''}">Map: top to bottom</button>
+            </div>
+            <div class="hint">Each narration now has its own map shape and label options — see "Map appearance" when editing a narration in Manage Codex.</div>
+          </div>
+
+          <div class="field">
+            <label>Display</label>
+            <label class="setting-toggle" style="margin-top:4px;">
+              <input type="checkbox" id="hideCompletedCk" ${settings.hideCompleted?'checked':''}> ${ICON_EYE_OFF} Hide narrations you've already heard
+            </label>
+            <label class="setting-toggle" style="margin-top:8px;">
+              <input type="checkbox" id="hideLockedCk" ${settings.hideLockedInMap?'checked':''}> ${ICON_LOCK} Hide narrations you haven't unlocked yet on the campaign map
+            </label>
+            <div class="hint">On by default, so the map doesn't spoil what's still ahead. Turn it off to see the full tree while you play. In "Manage codex" mode the full tree is always shown.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="animationsCk" ${settings.animationsEnabled?'checked':''}> Animate newly-unlocked narrations and opening windows
+            </label>
+            <div class="hint">Gives a brief pulse to narrations the moment they unlock on the shelf and map, and a short pop-in when a window opens. Turn off for an instant, static interface.</div>
+            <label style="display:block;margin-top:12px;">Log order</label>
+            <div class="media-toggle" id="logOrderToggle" style="margin-top:4px;">
+              <button type="button" data-order="latestFirst" class="${settings.logOrder!=='latestLast'?'active':''}">Latest first</button>
+              <button type="button" data-order="latestLast" class="${settings.logOrder==='latestLast'?'active':''}">Latest last</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Playback</label>
+            <label class="setting-toggle" style="margin-top:4px;">
+              <input type="checkbox" id="autoCloseCk" ${settings.autoCloseOnAudioEnd?'checked':''}> Close the narration automatically when its audio finishes
+            </label>
+            <div class="hint">Only applies to narrations with audio and no choices to make — those still need to be closed manually, and so do narrations with no audio at all.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="autoAdvanceCk" ${settings.autoAdvance?'checked':''}> Automatically open (and try to play) the next narration when it unlocks
+            </label>
+            <div class="hint">Only triggers when marking a narration heard (or picking a choice) unlocks exactly one further narration — if it unlocks none, or several at once, you'll stay on the shelf or map to choose. Browsers sometimes block automatic audio playback; if so, just press play in the window that opens.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="revealChoicesCk" ${settings.revealChoicesWhenDone?'checked':''}> Only show a narration's choices once it's done playing
+            </label>
+            <div class="hint">With this on, choice buttons stay hidden until the audio finishes (or right away if there's no audio), so you're not tempted to pick before hearing everything.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="tickSoundCk" ${settings.tickSoundEnabled?'checked':''}> Play a tick sound when a narration window opens
+            </label>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="scratchSoundCk" ${settings.scratchSoundEnabled?'checked':''}> Play a pencil-scratch sound when a new log entry is recorded
+            </label>
+            <label style="display:block;margin-top:12px;">Audio player style</label>
+            <div class="media-toggle" id="audioStyleToggle" style="margin-top:4px;">
+              ${Object.keys(AUDIO_PLAYER_STYLES).map(k=>`<button type="button" data-style="${k}" class="${(settings.audioPlayerStyle||'native')===k?'active':''}">${AUDIO_PLAYER_STYLES[k].label}</button>`).join('')}
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Library data</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn ghost small" id="exportLibBtn">Save structure to file</button>
+              <button class="btn ghost small" id="importLibBtn">Load structure from file</button>
+            </div>
+            <input type="file" id="importLibFile" accept="application/json" style="display:none;">
+            <div class="hint">This backs up your games, their narrations, prerequisites, choices and app settings (not your listening progress). Loading a file replaces your current games, narrations and settings entirely.</div>
+          </div>
+
+          <div class="field">
+            <label>Progress data</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn ghost small" id="exportBtn">Save progress to file</button>
+              <button class="btn ghost small" id="undoBtn" ${undoStack.length===0?'disabled':''}>Undo last action</button>
+              <button class="btn ghost small" id="importBtn">Load progress from file</button>
+            </div>
+            <input type="file" id="importFile" accept="application/json" style="display:none;">
+            <div class="hint">Saving writes a small JSON file with everything you've heard and chosen so far. Loading replaces your current progress with what's in the file. "Undo last action" steps back one narration or choice at a time, up to the last 25 — it only remembers actions from this browsing session.</div>
+          </div>
+
+          <div class="field">
+            <label>Reset</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${currentGame? `<button class="btn danger small" id="resetGameBtn">Reset progress for "${escapeHtml(currentGame.name)}"</button>`:''}
+              <button class="btn danger small" id="resetAllBtn">Reset all progress</button>
+            </div>
+            <div class="hint">This clears which narrations are marked as heard and the choices you've made. Games, images and audio are not affected.</div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:6px;">
+            <button class="btn primary" id="doneSettings">Done</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const close = ()=>overlay.remove();
+    overlay.querySelector('#closeSettings').onclick = close;
+    overlay.querySelector('#doneSettings').onclick = close;
+    overlay.onclick = (e)=>{ if(e.target===overlay) close(); };
+
+    overlay.querySelector('#hideCompletedCk').onchange = async (e)=>{
+      settings.hideCompleted = e.target.checked; await saveSettings(); render();
+    };
+    overlay.querySelector('#hideLockedCk').onchange = async (e)=>{
+      settings.hideLockedInMap = e.target.checked; await saveSettings(); render();
+    };
+    overlay.querySelector('#animationsCk').onchange = async (e)=>{
+      settings.animationsEnabled = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#autoCloseCk').onchange = async (e)=>{
+      settings.autoCloseOnAudioEnd = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#autoAdvanceCk').onchange = async (e)=>{
+      settings.autoAdvance = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#revealChoicesCk').onchange = async (e)=>{
+      settings.revealChoicesWhenDone = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#tickSoundCk').onchange = async (e)=>{
+      settings.tickSoundEnabled = e.target.checked; await saveSettings();
+      if(settings.tickSoundEnabled) playTickSound();
+    };
+    overlay.querySelector('#scratchSoundCk').onchange = async (e)=>{
+      settings.scratchSoundEnabled = e.target.checked; await saveSettings();
+      if(settings.scratchSoundEnabled) playScratchSound();
+    };
+    overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
+      overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      settings.audioPlayerStyle = b.dataset.style;
+      await saveSettings();
+    });
+    overlay.querySelector('#themeToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
+      overlay.querySelector('#themeToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      settings.theme = b.dataset.theme;
+      await saveSettings();
+      applyTheme();
+    });
+    overlay.querySelector('#orientationToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
+      overlay.querySelector('#orientationToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      settings.mapOrientation = b.dataset.orient;
+      await saveSettings();
+      render();
+    });
+    overlay.querySelector('#logOrderToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
+      overlay.querySelector('#logOrderToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      settings.logOrder = b.dataset.order;
+      await saveSettings();
+      render();
+    });
+    overlay.querySelector('#undoBtn').onclick = async ()=>{
+      await undoLast();
+      close();
+    };
+
+    overlay.querySelector('#exportBtn').onclick = ()=>{ exportProgress(); toast('Progress file downloaded.'); };
+
+    overlay.querySelector('#exportLibBtn').onclick = ()=>{ exportLibrary(); toast('Structure file downloaded.'); };
+    const importLibFileInp = overlay.querySelector('#importLibFile');
+    overlay.querySelector('#importLibBtn').onclick = ()=> importLibFileInp.click();
+    importLibFileInp.onchange = async ()=>{
+      const f = importLibFileInp.files[0];
+      if(!f) return;
+      if(!confirm('Loading a file will replace all current games and narrations. Continue?')) { importLibFileInp.value=''; return; }
+      try{
+        const loaded = await importLibraryFromFile(f);
+        await applyImportedLibrary(loaded);
+        toast('Structure loaded.');
+        close();
+        route = {view:'library', gameId:null};
+        render();
+      }catch(e){ toast(e.message); }
+    };
+
+    const importFileInp = overlay.querySelector('#importFile');
+    overlay.querySelector('#importBtn').onclick = ()=> importFileInp.click();
+    importFileInp.onchange = async ()=>{
+      const f = importFileInp.files[0];
+      if(!f) return;
+      if(!confirm('Loading a file will replace your current progress. Continue?')) { importFileInp.value=''; return; }
+      try{
+        const loaded = await importProgressFromFile(f);
+        progress = loaded;
+        await sSet('progress', progress);
+        toast('Progress loaded.');
+        close();
+        render();
+      }catch(e){ toast(e.message); }
+    };
+
+    if(currentGame){
+      overlay.querySelector('#resetGameBtn').onclick = async ()=>{
+        if(!confirm(`Reset progress for "${currentGame.name}"? This cannot be undone.`)) return;
+        await resetGameProgress(currentGame.id);
+        toast('Progress reset for this game.');
+        close();
+        render();
+      };
+    }
+    overlay.querySelector('#resetAllBtn').onclick = async ()=>{
+      if(!confirm('Reset ALL progress across every game? This cannot be undone.')) return;
+      await resetAllProgress();
+      toast('All progress has been reset.');
+      close();
+      render();
+    };
+  }
+
+  // ---------------- Library view ----------------
+  function renderLibrary(){
+    const wrap = document.createElement('div');
+    const head = document.createElement('div');
+    head.className='library-head';
+    head.innerHTML = `<div><div class="eyebrow">The shelf</div><h2 style="font-size:22px;margin-top:4px;">Your games</h2></div>`;
+    wrap.appendChild(head);
+
+    if(games.length===0 && !manageMode){
+      const empty = document.createElement('div');
+      empty.className='empty';
+      empty.innerHTML = `<h3>No games on the shelf yet</h3><p>Switch to "Manage codex" to add your first game and its narrations.</p>`;
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    const grid = document.createElement('div');
+    grid.className='grid';
+    games.forEach(g=>{
+      const nodes = nodesByGame[g.id]||[];
+      const total = nodes.length;
+      const completedCount = nodes.filter(n=>isCompleted(n.id)).length;
+      const card = document.createElement('div');
+      card.className='game-card';
+      card.setAttribute('style', gameAccentVars(g));
+      card.innerHTML = `
+        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>'}</div>
+        <div class="body">
+          <h3>${renderTitle(g.name)}</h3>
+          <div class="node-card-text">${renderMarkdown(g.description||'')}</div>
+          <div class="stat-row"><span>${total} NARRATION${total===1?'':'S'}</span><span>${completedCount}/${total} HEARD</span></div>
+        </div>
+      `;
+      card.onclick = ()=>{ route = {view:'game', gameId:g.id}; gameSubView='shelf'; editingNodeId=null; render(); };
+      grid.appendChild(card);
+    });
+
+    if(manageMode){
+      const addCard = document.createElement('div');
+      addCard.className='add-card';
+      addCard.innerHTML = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg><span>Add a game</span>`;
+      addCard.onclick = ()=>openGameModal(null);
+      grid.appendChild(addCard);
+    }
+    wrap.appendChild(grid);
+    return wrap;
+  }
+
+  // ---------------- Add / Edit Game modal ----------------
+  function openGameModal(existingGame){
+    const overlay = document.createElement('div');
+    overlay.className='reader-overlay' + (settings.animationsEnabled ? ' anim-in' : '');
+    overlay.innerHTML = `
+      <div class="reader" style="max-width:520px;">
+        <div class="content reader-relative">
+          <button class="close" id="closeAddGame">&times;</button>
+          <h2 style="margin-bottom:18px;">${existingGame? 'Edit game' : 'Add a game'}</h2>
+          <div class="field"><label>Name</label><input type="text" id="ngName" placeholder="e.g. Ashen Vault" value="${existingGame? escapeHtml(existingGame.name):''}"></div>
+          <div class="field"><label>Description</label><textarea id="ngDesc" placeholder="One or two lines about the game">${existingGame? escapeHtml(existingGame.description||''):''}</textarea><div class="hint">Supports basic Markdown and raw HTML, same as narration text.</div></div>
+          <div class="field">
+            <label>Cover image (optional)</label>
+            <div class="media-toggle" id="ngImgToggle">
+              ${existingGame && existingGame.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
+              <button type="button" data-m="file" class="${existingGame && existingGame.image? '':'active'}">Upload</button>
+              <button type="button" data-m="url">Web URL</button>
+              <button type="button" data-m="path">Local file path</button>
+            </div>
+            <input type="file" id="ngImgFile" accept="image/*" style="${existingGame && existingGame.image? 'display:none;':''}">
+            <input type="url" id="ngImgUrl" placeholder="https://…" style="display:none;">
+            <div id="ngImgPathRow" style="display:none;">
+              <input type="text" id="ngImgSubdir" placeholder="Optional subfolder, e.g. images or assets/covers" style="margin-bottom:6px;">
+              <div class="path-picker-row">
+                <input type="text" id="ngImgPath" placeholder="e.g. images/cover.jpg or file:///C:/Games/cover.jpg">
+                <button type="button" class="btn ghost small" id="ngImgPathBrowse">Browse…</button>
+                <input type="file" id="ngImgPathPicker" accept="image/*" style="display:none;">
+              </div>
+            </div>
+            <div id="ngImgStatus">${existingGame && existingGame.image? '<div class="file-status">A cover image is attached — pick another option to replace it.</div>':''}</div>
+            <div class="hint">Local file paths are used as-is and only load if this page is opened directly from your computer, with the path given relative to this HTML file (or as a full file:// path). Set the subfolder once, then "Browse…" fills in the filename — together they form the full relative path. Browsers only ever expose the filename, never the folder, so this is the only way to get a subfolder in there automatically.</div>
+          </div>
+          <div class="field">
+            <label>Color style</label>
+            <select id="ngStylePreset" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:8px 10px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:13px;width:100%;">
+              ${Object.keys(GAME_STYLES).map(k=>`<option value="${k}" ${((existingGame&&existingGame.stylePreset)||'default')===k?'selected':''}>${GAME_STYLES[k].label}</option>`).join('')}
+            </select>
+            <div class="hint">Recolors this game's borders, buttons and highlights — everywhere else in the codex keeps the shared dark/light theme from Settings.</div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Title font</label>
+              <select id="ngTitleFont" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:8px 10px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:13px;width:100%;">
+                ${Object.keys(TITLE_FONTS).map(k=>`<option value="${k}" ${((existingGame&&existingGame.titleFont)||'cinzel')===k?'selected':''}>${TITLE_FONTS[k].label}</option>`).join('')}
+                <option value="custom" ${existingGame && existingGame.titleFont==='custom'?'selected':''}>Custom (your own font file)</option>
+              </select>
+              <div id="ngTitleCustomWrap" style="display:${existingGame && existingGame.titleFont==='custom'?'block':'none'};margin-top:8px;">
+                <div class="media-toggle" id="ngTitleCustomToggle">
+                  ${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
+                  <button type="button" data-m="file" class="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '':'active'}">Upload</button>
+                  <button type="button" data-m="url">Web URL</button>
+                  <button type="button" data-m="path">Local file path</button>
+                </div>
+                <input type="file" id="ngTitleFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? 'display:none;':''}">
+                <input type="url" id="ngTitleFontUrl" placeholder="https://…/font.woff2" style="display:none;">
+                <div id="ngTitleFontPathRow" style="display:none;">
+                  <input type="text" id="ngTitleFontSubdir" placeholder="Optional subfolder, e.g. fonts" style="margin-bottom:6px;">
+                  <div class="path-picker-row">
+                    <input type="text" id="ngTitleFontPath" placeholder="e.g. fonts/title.woff2" value="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source && !/^https?:\/\//i.test(existingGame.customTitleFont.source) && !existingGame.customTitleFont.source.startsWith('data:') ? escapeHtml(existingGame.customTitleFont.source) : ''}">
+                    <button type="button" class="btn ghost small" id="ngTitleFontPathBrowse">Browse…</button>
+                    <input type="file" id="ngTitleFontPathPicker" accept=".woff,.woff2,.ttf,.otf,font/*" style="display:none;">
+                  </div>
+                </div>
+                <div id="ngTitleFontStatus">${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '<div class="file-status">A custom title font is attached — pick another option to replace it.</div>':''}</div>
+                <div class="hint">.woff2, .woff, .ttf or .otf. Uploaded files under ${fmtBytes(MAX_FONT_BYTES)} are stored directly; URLs and local file paths have no size limit.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Text font</label>
+              <select id="ngTextFont" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:8px 10px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:13px;width:100%;">
+                ${Object.keys(TEXT_FONTS).map(k=>`<option value="${k}" ${((existingGame&&existingGame.textFont)||'spectral')===k?'selected':''}>${TEXT_FONTS[k].label}</option>`).join('')}
+                <option value="custom" ${existingGame && existingGame.textFont==='custom'?'selected':''}>Custom (your own font file)</option>
+              </select>
+              <div id="ngTextCustomWrap" style="display:${existingGame && existingGame.textFont==='custom'?'block':'none'};margin-top:8px;">
+                <div class="media-toggle" id="ngTextCustomToggle">
+                  ${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
+                  <button type="button" data-m="file" class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Upload</button>
+                  <button type="button" data-m="url">Web URL</button>
+                  <button type="button" data-m="path">Local file path</button>
+                </div>
+                <input type="file" id="ngTextFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? 'display:none;':''}">
+                <input type="url" id="ngTextFontUrl" placeholder="https://…/font.woff2" style="display:none;">
+                <div id="ngTextFontPathRow" style="display:none;">
+                  <input type="text" id="ngTextFontSubdir" placeholder="Optional subfolder, e.g. fonts" style="margin-bottom:6px;">
+                  <div class="path-picker-row">
+                    <input type="text" id="ngTextFontPath" placeholder="e.g. fonts/body.woff2" value="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source && !/^https?:\/\//i.test(existingGame.customTextFont.source) && !existingGame.customTextFont.source.startsWith('data:') ? escapeHtml(existingGame.customTextFont.source) : ''}">
+                    <button type="button" class="btn ghost small" id="ngTextFontPathBrowse">Browse…</button>
+                    <input type="file" id="ngTextFontPathPicker" accept=".woff,.woff2,.ttf,.otf,font/*" style="display:none;">
+                  </div>
+                </div>
+                <div id="ngTextFontStatus">${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '<div class="file-status">A custom text font is attached — pick another option to replace it.</div>':''}</div>
+                <div class="hint">.woff2, .woff, .ttf or .otf. Uploaded files under ${fmtBytes(MAX_FONT_BYTES)} are stored directly; URLs and local file paths have no size limit.</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+            <button class="btn ghost" id="cancelAddGame">Cancel</button>
+            <button class="btn primary" id="saveAddGame">${existingGame? 'Save changes' : 'Save game'}</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const close = ()=>overlay.remove();
+    overlay.querySelector('#closeAddGame').onclick = close;
+    overlay.querySelector('#cancelAddGame').onclick = close;
+    overlay.onclick = (e)=>{ if(e.target===overlay) close(); };
+
+    const toggles = overlay.querySelector('#ngImgToggle').querySelectorAll('button');
+    const fileInp = overlay.querySelector('#ngImgFile');
+    const urlInp = overlay.querySelector('#ngImgUrl');
+    const pathRow = overlay.querySelector('#ngImgPathRow');
+    const pathInp = overlay.querySelector('#ngImgPath');
+    const status = overlay.querySelector('#ngImgStatus');
+    function showOnly(mode){
+      fileInp.style.display = mode==='file' ? 'block' : 'none';
+      urlInp.style.display = mode==='url' ? 'block' : 'none';
+      pathRow.style.display = mode==='path' ? 'block' : 'none';
+    }
+    toggles.forEach(b=>b.onclick=()=>{
+      toggles.forEach(x=>x.classList.remove('active')); b.classList.add('active');
+      status.innerHTML='';
+      showOnly(b.dataset.m);
+    });
+    fileInp.onchange = ()=>{
+      status.innerHTML = fileInp.files[0] ? `<div class="file-status">Selected: ${escapeHtml(fileInp.files[0].name)} (${fmtBytes(fileInp.files[0].size)}) — will be resized to fit.</div>` : '';
+    };
+    let ngImgLastPicked = '';
+    const ngImgSubdirInp = overlay.querySelector('#ngImgSubdir');
+    overlay.querySelector('#ngImgPathBrowse').onclick = ()=> overlay.querySelector('#ngImgPathPicker').click();
+    overlay.querySelector('#ngImgPathPicker').onchange = (e)=>{
+      const f = e.target.files[0];
+      if(f){ ngImgLastPicked = f.name; pathInp.value = joinSubdirPath(ngImgSubdirInp.value, ngImgLastPicked); }
+    };
+    ngImgSubdirInp.oninput = ()=>{ if(ngImgLastPicked) pathInp.value = joinSubdirPath(ngImgSubdirInp.value, ngImgLastPicked); };
+    if(existingGame && existingGame.image){ /* default 'keep' mode already hides both file/url/path */ }
+    else { showOnly('file'); }
+
+    // custom font panels: select toggles visibility, media-toggle groups behave like other file/url/path pickers
+    function wireFontPanel(prefix){
+      const wrap = overlay.querySelector('#ng'+prefix+'CustomWrap');
+      const toggleGroup = overlay.querySelector('#ng'+prefix+'CustomToggle');
+      const fFile = overlay.querySelector('#ng'+prefix+'FontFile');
+      const fUrl = overlay.querySelector('#ng'+prefix+'FontUrl');
+      const fPathRow = overlay.querySelector('#ng'+prefix+'FontPathRow');
+      const fPath = overlay.querySelector('#ng'+prefix+'FontPath');
+      const fStatus = overlay.querySelector('#ng'+prefix+'FontStatus');
+      const btns = toggleGroup.querySelectorAll('button');
+      btns.forEach(b=>b.onclick=()=>{
+        btns.forEach(x=>x.classList.remove('active')); b.classList.add('active');
+        fFile.style.display = b.dataset.m==='file' ? 'block' : 'none';
+        fUrl.style.display = b.dataset.m==='url' ? 'block' : 'none';
+        fPathRow.style.display = b.dataset.m==='path' ? 'block' : 'none';
+      });
+      fFile.onchange = ()=>{
+        const f = fFile.files[0];
+        if(!f){ fStatus.innerHTML=''; return; }
+        if(f.size > MAX_FONT_BYTES){
+          fStatus.innerHTML = `<div class="file-error">${escapeHtml(f.name)} is ${fmtBytes(f.size)} — over the ${fmtBytes(MAX_FONT_BYTES)} limit. Use a smaller file or paste a URL/path instead.</div>`;
+        } else {
+          fStatus.innerHTML = `<div class="file-status">Selected: ${escapeHtml(f.name)} (${fmtBytes(f.size)})</div>`;
+        }
+      };
+      let lastPicked = '';
+      const subdirInp = overlay.querySelector('#ng'+prefix+'FontSubdir');
+      overlay.querySelector('#ng'+prefix+'FontPathBrowse').onclick = ()=> overlay.querySelector('#ng'+prefix+'FontPathPicker').click();
+      overlay.querySelector('#ng'+prefix+'FontPathPicker').onchange = (e)=>{
+        const f = e.target.files[0];
+        if(f){ lastPicked = f.name; fPath.value = joinSubdirPath(subdirInp.value, lastPicked); }
+      };
+      subdirInp.oninput = ()=>{ if(lastPicked) fPath.value = joinSubdirPath(subdirInp.value, lastPicked); };
+    }
+    wireFontPanel('Title');
+    wireFontPanel('Text');
+    overlay.querySelector('#ngTitleFont').onchange = (e)=>{
+      overlay.querySelector('#ngTitleCustomWrap').style.display = e.target.value==='custom' ? 'block' : 'none';
+    };
+    overlay.querySelector('#ngTextFont').onchange = (e)=>{
+      overlay.querySelector('#ngTextCustomWrap').style.display = e.target.value==='custom' ? 'block' : 'none';
+    };
+
+    overlay.querySelector('#saveAddGame').onclick = async ()=>{
+      const name = overlay.querySelector('#ngName').value.trim();
+      if(!name){ toast('Give the game a name first.'); return; }
+      const btn = overlay.querySelector('#saveAddGame');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      let image = existingGame ? (existingGame.image||'') : '';
+      const activeMode = overlay.querySelector('#ngImgToggle button.active').dataset.m;
+      try{
+        if(activeMode==='file' && fileInp.files[0]){
+          image = await compressImage(fileInp.files[0]);
+        } else if(activeMode==='url'){
+          image = urlInp.value.trim();
+        } else if(activeMode==='path'){
+          image = pathInp.value.trim();
+        } else if(activeMode==='file' && !fileInp.files[0] && !existingGame){
+          image = '';
+        }
+      }catch(e){
+        toast(e.message);
+        btn.disabled=false; btn.textContent = existingGame? 'Save changes':'Save game';
+        return;
+      }
+      const id = existingGame ? existingGame.id : uid();
+
+      const titleFontVal = overlay.querySelector('#ngTitleFont').value;
+      const textFontVal = overlay.querySelector('#ngTextFont').value;
+      let customTitleFont = existingGame ? existingGame.customTitleFont : null;
+      let customTextFont = existingGame ? existingGame.customTextFont : null;
+      try{
+        if(titleFontVal==='custom'){
+          const mode = overlay.querySelector('#ngTitleCustomToggle button.active').dataset.m;
+          const family = customFontFamily(id, 'title');
+          if(mode==='file' && overlay.querySelector('#ngTitleFontFile').files[0]){
+            customTitleFont = {family, source: await readFontFile(overlay.querySelector('#ngTitleFontFile').files[0])};
+          } else if(mode==='url'){
+            customTitleFont = {family, source: overlay.querySelector('#ngTitleFontUrl').value.trim()};
+          } else if(mode==='path'){
+            customTitleFont = {family, source: overlay.querySelector('#ngTitleFontPath').value.trim()};
+          } else if(mode==='keep' && customTitleFont){
+            customTitleFont = {family, source: customTitleFont.source};
+          }
+        }
+        if(textFontVal==='custom'){
+          const mode = overlay.querySelector('#ngTextCustomToggle button.active').dataset.m;
+          const family = customFontFamily(id, 'text');
+          if(mode==='file' && overlay.querySelector('#ngTextFontFile').files[0]){
+            customTextFont = {family, source: await readFontFile(overlay.querySelector('#ngTextFontFile').files[0])};
+          } else if(mode==='url'){
+            customTextFont = {family, source: overlay.querySelector('#ngTextFontUrl').value.trim()};
+          } else if(mode==='path'){
+            customTextFont = {family, source: overlay.querySelector('#ngTextFontPath').value.trim()};
+          } else if(mode==='keep' && customTextFont){
+            customTextFont = {family, source: customTextFont.source};
+          }
+        }
+      }catch(e){
+        toast(e.message);
+        btn.disabled=false; btn.textContent = existingGame? 'Save changes':'Save game';
+        return;
+      }
+
+      const game = {
+        id, name,
+        description: overlay.querySelector('#ngDesc').value.trim(),
+        image,
+        stylePreset: overlay.querySelector('#ngStylePreset').value,
+        titleFont: titleFontVal,
+        textFont: textFontVal,
+        customTitleFont, customTextFont,
+        createdAt: existingGame ? existingGame.createdAt : Date.now()
+      };
+      const ok = await sSet('game:'+id, game);
+      if(!ok){ toast('Could not save the game — please try again, or link the image instead of uploading it.'); btn.disabled=false; btn.textContent = existingGame? 'Save changes':'Save game'; return; }
+      if(existingGame){
+        games = games.map(g=> g.id===id ? game : g);
+        toast('Game details updated.');
+      } else {
+        const idx = await sGet('game-index') || [];
+        idx.push(id);
+        await sSet('game-index', idx);
+        games.push(game);
+        nodesByGame[id] = [];
+        toast('Game added to the shelf.');
+      }
+      close();
+      render();
+    };
+  }
+
+  // ---------------- Game view ----------------
+  function renderGame(){
+    const game = games.find(g=>g.id===route.gameId);
+    const wrap = document.createElement('div');
+    if(!game){ route={view:'library',gameId:null}; return renderLibrary(); }
+    wrap.setAttribute('style', gameFontStyle(game));
+    const nodes = nodesByGame[game.id]||[];
+
+    const crumb = document.createElement('div');
+    crumb.className='crumb';
+    crumb.innerHTML = `<button id="backLib">← All games</button><span>/</span><span>${renderTitle(game.name)}</span>`;
+    crumb.querySelector('#backLib').onclick = ()=>{ route={view:'library',gameId:null}; render(); };
+    wrap.appendChild(crumb);
+
+    const total = nodes.length;
+    const completedCount = nodes.filter(n=>isCompleted(n.id)).length;
+    const gh = document.createElement('div');
+    gh.className='game-header';
+    gh.innerHTML = `
+      <div class="art" style="${game.image?`background-image:url('${game.image}')`:''}"></div>
+      <div class="meta">
+        <h2>${renderTitle(game.name)}</h2>
+        <div class="desc">${renderMarkdown(game.description||'')}</div>
+        <div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
+        <div class="progress-label">${completedCount} OF ${total} NARRATIONS HEARD</div>
+      </div>
+    `;
+    wrap.appendChild(gh);
+
+    if(manageMode){ wrap.appendChild(renderManagePanel(game)); }
+
+    const toolbar = document.createElement('div');
+    toolbar.className='toolbar-row';
+    const toggle = document.createElement('div');
+    toggle.className='view-toggle';
+    toggle.innerHTML = `
+      <button data-v="shelf" class="${gameSubView==='shelf'?'active':''}">Shelf</button>
+      <button data-v="map" class="${gameSubView==='map'?'active':''}">Campaign map</button>
+      <button data-v="log" class="${gameSubView==='log'?'active':''}">Log</button>
+    `;
+    toggle.querySelectorAll('button').forEach(b=>b.onclick=()=>{ gameSubView=b.dataset.v; render(); });
+    toolbar.appendChild(toggle);
+    wrap.appendChild(toolbar);
+
+    if(gameSubView==='shelf'){ wrap.appendChild(renderNodeShelf(nodes, game)); }
+    else if(gameSubView==='map'){ wrap.appendChild(renderCampaignMap(nodes, game)); }
+    else { wrap.appendChild(renderLog(nodes)); }
+
+    return wrap;
+  }
+
+  // ---------------- Log ----------------
+  function renderLog(nodes){
+    const box = document.createElement('div');
+    const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
+    const entries = visible
+      .filter(n=>isCompleted(n.id))
+      .filter(n=> manageMode || (n.logMode||'full') !== 'none')
+      .map(n=>({node:n, record: completionRecord(n.id) || {completedAt:0, choiceId:null}}))
+      .sort((a,b)=> settings.logOrder==='latestLast'
+        ? (a.record.completedAt||0) - (b.record.completedAt||0)
+        : (b.record.completedAt||0) - (a.record.completedAt||0));
+
+    if(entries.length===0){
+      box.className='empty';
+      box.innerHTML = `<h3>The log is empty</h3><p>Choices and heard narrations will be recorded here as you play.</p>`;
+      return box;
+    }
+
+    const list = document.createElement('div');
+    list.className='log-list';
+    entries.forEach(({node,record})=>{
+        if ((node.choices||[]).find(c=>c.id===record.choiceId)?.label === 'Otherwise proceed...') return
+      const item = document.createElement('div');
+      item.className='log-item';
+      const when = record.completedAt ? new Date(record.completedAt).toLocaleString() : 'Available from the start';
+      const mode = node.logMode || 'full';
+      const skippedNote = (manageMode && mode==='none') ? `<div class="log-result" style="color:#d99;">Not logged for players (set to "Don't log")</div>` : '';
+
+      if(mode==='titleOnly'){
+        item.innerHTML = `
+          <div class="log-top">
+            <span class="log-title">${renderTitle(node.title)}</span>
+            <span class="log-time">${escapeHtml(when)}</span>
+          </div>
+          ${skippedNote}
+        `;
+        list.appendChild(item);
+        return;
+      }
+      if(mode==='textOnly'){
+        item.innerHTML = `
+          <div class="log-top" style="align-items:flex-start;">
+            <div class="log-result" style="margin:0;flex:1;">${renderMarkdown(node.text||'')}</div>
+            <span class="log-time">${escapeHtml(when)}</span>
+          </div>
+          ${skippedNote}
+        `;
+        list.appendChild(item);
+        return;
+      }
+
+      let choiceLine = '';
+      let resultLine = '';
+      if(Array.isArray(record.choiceIds) && record.choiceIds.length){
+        const chosen = (node.choices||[]).filter(c=>record.choiceIds.includes(c.id));
+        if(chosen.length){
+          choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
+          const texts = chosen.filter(c=>c.resultText).map(c=>renderMarkdown(c.resultText));
+          if(texts.length) resultLine = `<div class="log-result">${texts.join('')}</div>`;
+        }
+      } else if(record.choiceId){
+        const c = (node.choices||[]).find(c=>c.id===record.choiceId);
+        if(c){
+          choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
+          if(c.resultText) resultLine = `<div class="log-result">${renderMarkdown(c.resultText)}</div>`;
+        }
+      }
+      item.innerHTML = `
+        <div class="log-top">
+          <span class="log-title">${renderTitle(node.title)}</span>
+          <span class="log-time">${escapeHtml(when)}</span>
+        </div>
+        ${choiceLine}
+        ${resultLine}
+        ${skippedNote}
+      `;
+      list.appendChild(item);
+    });
+    box.appendChild(list);
+    return box;
+  }
+
+  function renderNodeShelf(nodes, game){
+    const box = document.createElement('div');
+    const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
+    let available = visible.filter(isAvailable);
+    const lockedCount = visible.length - available.length;
+    if(settings.hideCompleted){ available = available.filter(n=>!isCompleted(n.id)); }
+
+    if(visible.length===0){
+      box.className='empty';
+      box.innerHTML = `<h3>No narrations yet</h3><p>Use "Manage codex" above to add the first one.</p>`;
+      return box;
+    }
+    if(available.length===0){
+      box.className='empty';
+      box.innerHTML = settings.hideCompleted
+        ? `<h3>All caught up</h3><p>You've heard everything currently available. Uncheck "Hide narrations you've already heard" to browse them again.</p>`
+        : `<h3>Nothing available yet</h3><p>${lockedCount} narration${lockedCount===1?'':'s'} will unlock as the campaign continues.</p>`;
+      return box;
+    }
+
+    function buildGrid(list){
+      const grid = document.createElement('div');
+      grid.className='node-grid';
+      list
+        .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
+        .forEach(n=>{
+          const done = isCompleted(n.id);
+          const playing = inlinePlayingId === n.id;
+          const wasSeen = seenAvailableIds.has(n.id);
+          if(!wasSeen) seenAvailableIds.add(n.id);
+          const isNew = settings.animationsEnabled && !manageMode && !done && !wasSeen;
+          const card = document.createElement('div');
+          card.className = 'node-card ' + (done?'completed':'available') + (isNew?' newly-unlocked':'');
+          card.innerHTML = `
+            <span class="icon-row">${done?ICON_CHECK:ICON_PLAY}</span>
+            <span class="tag">${done?'Heard':'Available'}</span>
+            ${manageMode && n.hidden? `<span class="tag" style="background:rgba(138,58,58,.18);color:#d99;margin-left:6px;">Hidden</span>`:''}
+            ${manageMode && n.completedByDefault? `<span class="tag" style="background:rgba(111,138,83,.18);color:var(--moss);margin-left:6px;">Auto</span>`:''}
+            <h3>${renderTitle(n.title)}</h3>
+            <div class="node-card-text">${renderMarkdown(n.text||'')}</div>
+            ${n.audio? `<button class="mini-play ${playing?'playing':''}" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
+          `;
+          card.onclick = ()=>{ openReaderFor(n, false); };
+          const playBtn = card.querySelector('.mini-play');
+          if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
+          grid.appendChild(card);
+        });
+      return grid;
+    }
+
+    const groups = game.groups || [];
+    if(groups.length===0){
+      box.appendChild(buildGrid(available));
+    } else {
+      const validGroupIds = groups.map(g=>g.id);
+      const ungrouped = available.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+      const sections = [];
+      if(ungrouped.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungrouped});
+      groups.forEach(g=>{
+        const list = available.filter(n=>n.groupId===g.id);
+        if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+      });
+      sections.forEach(sec=>{
+        const header = document.createElement('div');
+        header.className='group-header';
+        header.style.cursor = sec.id===null ? 'default' : 'pointer';
+        header.innerHTML = sec.id===null
+          ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>`
+          : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>`;
+        box.appendChild(header);
+        if(!sec.collapsed) box.appendChild(buildGrid(sec.list));
+        if(sec.id!==null){
+          const openHeader = ()=>{
+            header.querySelector('.group-toggle').onclick = async ()=>{
+              const g = groups.find(x=>x.id===sec.id);
+              if(g){ g.collapsed = !g.collapsed; await sSet('game:'+game.id, game); render(); }
+            };
+          };
+          openHeader();
+        }
+      });
+    }
+
+    if(lockedCount>0){
+      const note = document.createElement('div');
+      note.className='locked-note';
+      note.innerHTML = `${ICON_LOCK} ${lockedCount} more narration${lockedCount===1?'':'s'} will unlock as the campaign continues.`;
+      box.appendChild(note);
+    }
+    return box;
+  }
+
+  // ---------------- Campaign map ----------------
+  function hexToRgba(hex, alpha){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+  function mapPalette(game){
+    const base = settings.theme==='light'
+      ? { doneFill:'rgba(75,107,52,.14)', doneStroke:'#4b6b34', availFill:'rgba(138,97,20,.10)', availStroke:'#8a6114',
+          lockedFill:'rgba(168,152,114,.20)', lockedStroke:'#a89872', textAvail:'#2b2013', textLocked:'#8a7c5c',
+          connDone:'#a9812c', connLocked:'#c9b57e', orLabel:'#8a6114' }
+      : { doneFill:'rgba(111,138,83,.16)', doneStroke:'#6f8a53', availFill:'rgba(201,162,75,.12)', availStroke:'#c9a24b',
+          lockedFill:'rgba(74,64,56,.25)', lockedStroke:'#4a4038', textAvail:'#ece1c4', textLocked:'#7a7160',
+          connDone:'#8c7431', connLocked:'#3a3128', orLabel:'#8c7431' };
+    const key = (game && game.stylePreset) || 'default';
+    const preset = GAME_STYLES[key];
+    if(preset && preset.dark){
+      const set = settings.theme==='light' ? preset.light : preset.dark;
+      base.availStroke = set.brass;
+      base.connDone = set.dim;
+      base.orLabel = set.brass;
+      base.availFill = hexToRgba(set.brass, settings.theme==='light'?0.10:0.12);
+    }
+    return base;
+  }
+
+  // Wraps a title into up to maxLines lines of roughly maxChars characters each,
+  // breaking on word boundaries and ellipsizing anything left over.
+  function wrapLines(text, maxChars, maxLines){
+    const words = (text||'').split(/\s+/).filter(Boolean);
+    if(words.length===0) return [''];
+    const lines = [];
+    let cur = '';
+    let idx = 0;
+    while(idx < words.length && lines.length < maxLines){
+      let w = words[idx];
+      if(w.length > maxChars) w = w.slice(0, maxChars);
+      const test = cur ? cur + ' ' + w : w;
+      if(test.length <= maxChars){ cur = test; idx++; }
+      else if(!cur){ cur = w; idx++; }
+      else { lines.push(cur); cur=''; }
+    }
+    if(cur && lines.length < maxLines) lines.push(cur);
+    const overflow = idx < words.length;
+    if(overflow){
+      if(lines.length===0) lines.push('…');
+      else {
+        let last = lines[lines.length-1];
+        if(last.length > maxChars-1) last = last.slice(0, maxChars-1);
+        lines[lines.length-1] = last + '…';
+      }
+    }
+    return lines;
+  }
+
+  function renderCampaignMapCore(nodes, game){
+    const wrap = document.createElement('div');
+    if(nodes.length===0){
+      wrap.innerHTML = '<div class="empty" style="border:none;">Add narrations to see the campaign map.</div>';
+      return wrap;
+    }
+    if(manageMode){
+      const hint = document.createElement('div');
+      hint.className='map-hint';
+      hint.textContent = 'In manage mode: click any node to edit it, including its prerequisites and choices.';
+      wrap.appendChild(hint);
+    }
+
+    const mapBox = document.createElement('div');
+    mapBox.className='map-wrap';
+
+    let visibleNodes = nodes;
+    let hiddenLockedCount = 0;
+    if(!manageMode){
+      visibleNodes = nodes.filter(n=>{
+        if(n.hidden) return false;
+        if(settings.hideCompleted && isCompleted(n.id)) return false;
+        if(settings.hideLockedInMap && !isAvailable(n)){ hiddenLockedCount++; return false; }
+        return true;
+      });
+    }
+    if(!manageMode && hiddenLockedCount>0){
+      const hint = document.createElement('div');
+      hint.className='map-hint';
+      hint.innerHTML = `${ICON_LOCK} ${hiddenLockedCount} narration${hiddenLockedCount===1?'':'s'} further ahead are hidden until unlocked.`;
+      wrap.appendChild(hint);
+    }
+
+    const idToNode = {}; nodes.forEach(n=>idToNode[n.id]=n);
+    function depth(n, seen){
+      seen = seen || new Set();
+      if(seen.has(n.id)) return 0;
+      seen.add(n.id);
+      if(!n.prerequisites || n.prerequisites.length===0) return 0;
+      let m = 0;
+      n.prerequisites.forEach(p=>{ const pn = idToNode[p.nodeId]; if(pn) m = Math.max(m, depth(pn, seen)+1); });
+      return m;
+    }
+    const layers = {};
+    visibleNodes.forEach(n=>{ const d = depth(n); layers[d] = layers[d]||[]; layers[d].push(n); });
+    const layerKeys = Object.keys(layers).map(Number).sort((a,b)=>a-b);
+    if(layerKeys.length===0){
+      mapBox.innerHTML = '<div class="empty" style="border:none;">Nothing to show with the current filter.</div>';
+      wrap.appendChild(mapBox);
+      return wrap;
+    }
+
+    const isVertical = settings.mapOrientation==='vertical';
+    const boxW = 56, boxH = 100; // anchor sizing: circle diameter (+buffer) x full slot height incl. label
+    const circleR = 24;
+    const primaryStep = isVertical ? 150 : 190;   // spacing between successive layers (depth)
+    const secondaryStep = isVertical ? 170 : 150;  // spacing between siblings within a layer
+    const padX = 46, padY = 50;
+    const maxRows = Math.max(...layerKeys.map(k=>layers[k].length));
+    const svgW = isVertical ? padX*2 + secondaryStep*maxRows : padX*2 + primaryStep*layerKeys.length;
+    const svgH = isVertical ? padY*2 + primaryStep*layerKeys.length : padY*2 + secondaryStep*maxRows;
+
+    const pos = {};
+    layerKeys.forEach((k,ci)=>{
+      const rows = layers[k].length;
+      const secOffset = (maxRows - rows) * secondaryStep / 2;
+      layers[k].forEach((n,ri)=>{
+        if(isVertical){
+          pos[n.id] = { x: padX + secOffset + ri*secondaryStep + secondaryStep/2, y: padY + ci*primaryStep + primaryStep/2 };
+        } else {
+          pos[n.id] = { x: padX + ci*primaryStep + primaryStep/2, y: padY + secOffset + ri*secondaryStep + secondaryStep/2 };
+        }
+      });
+    });
+
+    const pal = mapPalette(game);
+    let lines = '';
+    visibleNodes.forEach(n=>{
+      normalizedPrereqs(n).forEach(p=>{
+        const from = pos[p.nodeId], to = pos[n.id];
+        if(!from||!to) return;
+        const label = p.choiceId ? (()=>{ const pn=idToNode[p.nodeId]; const c=pn&&pn.choices&&pn.choices.find(c=>c.id===p.choiceId); return c?c.label:''; })() : '';
+        const stroke = isCompleted(p.nodeId) ? pal.connDone : pal.connLocked;
+        let d, labelX, labelY;
+        if(isVertical){
+          const midy = (from.y+to.y)/2;
+          d = `M${from.x},${from.y+boxH/2} C${from.x},${midy} ${to.x},${midy} ${to.x},${to.y-boxH/2}`;
+          labelX = (from.x+to.x)/2; labelY = midy - 6;
+        } else {
+          const midx = (from.x+to.x)/2;
+          d = `M${from.x+circleR},${from.y} C${midx},${from.y} ${midx},${to.y} ${to.x-circleR},${to.y}`;
+          labelX = midx; labelY = (from.y+to.y)/2 - 6;
+        }
+        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'?'stroke-dasharray="4 3"':''}/>`;
+        if(label){
+          lines += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="9" class="map-node-label" fill="${pal.connDone}" style="font-style:italic;">${escapeHtml(label)}</text>`;
+        }
+      });
+    });
+
+    // Strips HTML/markdown syntax down to plain text for a compact map preview.
+    function plainPreview(src){
+      return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
+    }
+
+    let boxes = '';
+    visibleNodes.forEach(n=>{
+      const p = pos[n.id];
+      const done = isCompleted(n.id);
+      const avail = isAvailable(n);
+      const normPrereqs = normalizedPrereqs(n);
+      const anyCount = normPrereqs.filter(p=>p.group==='any').length;
+      const allCount = normPrereqs.length - anyCount;
+      const isOr = anyCount>0;
+      const orLabelText = (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
+      const fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
+      const stroke = done ? pal.doneStroke : (avail ? pal.availStroke : pal.lockedStroke);
+      const textColor = avail ? pal.textAvail : pal.textLocked;
+      const showPlay = !manageMode && n.audio && avail;
+      const playing = inlinePlayingId === n.id;
+      const statusWord = done?'HEARD':avail?'AVAILABLE':'LOCKED';
+      let tooltipBody;
+      if(n.mapTooltip==='textOnly' && n.text) tooltipBody = plainPreview(n.text);
+      else if(n.mapTooltip==='full' && n.text) tooltipBody = `${n.title} — ${statusWord}\n\n${plainPreview(n.text)}`;
+      else tooltipBody = `${n.title} — ${statusWord}`;
+      const tooltip = `<title>${escapeHtml(tooltipBody)}</title>`;
+      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle'));
+      const labelMode = n.mapLabel || 'title';
+      const asPlayIcon = shapeMode==='playIcon' && !!n.audio;
+      const iconColor = (done||avail) ? '#161109' : pal.textLocked;
+
+      // label source text, per the node's chosen label mode (used below the small shapes, or inside the box)
+      let labelSrc = '';
+      if(labelMode==='title') labelSrc = n.title;
+      else if(labelMode==='text') labelSrc = plainPreview(n.text);
+      else if(labelMode==='choices') labelSrc = (n.choices||[]).map(c=>c.label).join(' / ');
+
+      let shapeSvg, labelSvg, orSvg;
+
+      if(shapeMode==='labelOnly'){
+        // no shape at all — just the wrapped label text, color-coded by status since there's no fill to rely on
+        const src = (labelMode==='none' || !labelSrc) ? n.title : labelSrc;
+        const lines = wrapLines(src, 20, 2);
+        const blockY = lines.length<=1 ? p.y+3 : p.y-4;
+        shapeSvg = showPlay ? `
+          <g class="map-mini-play" data-id="${n.id}" style="cursor:pointer;">
+            <circle cx="${p.x}" cy="${blockY - 20}" r="9" fill="${playing?pal.doneStroke:pal.availStroke}"/>
+            ${playing
+              ? `<rect x="${p.x-3}" y="${blockY-24}" width="2.5" height="8" fill="#161109"/><rect x="${p.x+1.5}" y="${blockY-24}" width="2.5" height="8" fill="#161109"/>`
+              : `<path d="M${p.x-2.5},${blockY-25} l8,5 l-8,5 z" fill="#161109"/>`}
+          </g>` : '';
+        labelSvg = lines.map((line,i)=>
+          `<text x="${p.x}" y="${blockY + i*14}" text-anchor="middle" font-size="12" class="map-node-label" fill="${stroke}">${escapeHtml(line)}</text>`
+        ).join('');
+        orSvg = orLabelText? `<text x="${p.x}" y="${blockY-34}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
+      } else if(shapeMode==='box'){
+        const bw = 132, bh = 60;
+        const lines = labelMode==='none' ? [] : wrapLines(labelSrc, 17, 2);
+        const titleBlockY = lines.length<=1 ? p.y - 2 : p.y - 11;
+        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${isOr?'4 3':'0'}"/>`;
+        labelSvg = lines.map((line,i)=>
+          `<text x="${p.x}" y="${titleBlockY + i*14}" text-anchor="middle" font-size="11" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
+        ).join('') + `<text x="${p.x}" y="${p.y+bh/2-8}" text-anchor="middle" font-size="9" class="map-node-label" fill="${stroke}" style="letter-spacing:.06em;">${statusWord}</text>`;
+        if(showPlay){
+          shapeSvg += `
+            <g class="map-mini-play" data-id="${n.id}" style="cursor:pointer;">
+              <circle cx="${p.x+bw/2-12}" cy="${p.y-bh/2+12}" r="9" fill="${playing?pal.doneStroke:pal.availStroke}" stroke="${fill}" stroke-width="1"/>
+              ${playing
+                ? `<rect x="${p.x+bw/2-15}" y="${p.y-bh/2+8}" width="2.5" height="8" fill="#161109"/><rect x="${p.x+bw/2-10}" y="${p.y-bh/2+8}" width="2.5" height="8" fill="#161109"/>`
+                : `<path d="M${p.x+bw/2-15.5},${p.y-bh/2+7} l9,5 l-9,5 z" fill="#161109"/>`}
+            </g>`;
+        }
+        orSvg = orLabelText? `<text x="${p.x}" y="${p.y-bh/2-8}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
+      } else {
+        // the circle (or play-icon, or its no-audio dot fallback), centered at p.x,p.y
+        const isDotFallback = shapeMode==='playIcon' && !n.audio;
+        const r = isDotFallback ? 9 : circleR;
+        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr?'3 3':'0'}"/>`;
+        if(asPlayIcon){
+          shapeSvg += `
+            <g class="${showPlay?'map-mini-play':''}" data-id="${n.id}" style="cursor:${showPlay?'pointer':'inherit'};">
+              <circle cx="${p.x}" cy="${p.y}" r="${circleR-6}" fill="${stroke}" opacity="${avail?1:0.55}"/>
+              ${playing
+                ? `<rect x="${p.x-6}" y="${p.y-7}" width="4" height="14" fill="${iconColor}"/><rect x="${p.x+2}" y="${p.y-7}" width="4" height="14" fill="${iconColor}"/>`
+                : `<path d="M${p.x-6},${p.y-8} L${p.x+9},${p.y} L${p.x-6},${p.y+8} Z" fill="${iconColor}"/>`}
+            </g>`;
+        } else if(showPlay){
+          // plain circle, but still offer the click-to-preview control as a small corner badge
+          shapeSvg += `
+            <g class="map-mini-play" data-id="${n.id}" style="cursor:pointer;">
+              <circle cx="${p.x+circleR-8}" cy="${p.y-circleR+8}" r="9" fill="${playing?pal.doneStroke:pal.availStroke}" stroke="${fill}" stroke-width="1"/>
+              ${playing
+                ? `<rect x="${p.x+circleR-11}" y="${p.y-circleR+4}" width="2.5" height="8" fill="#161109"/><rect x="${p.x+circleR-6}" y="${p.y-circleR+4}" width="2.5" height="8" fill="#161109"/>`
+                : `<path d="M${p.x+circleR-11},${p.y-circleR+3} l9,5 l-9,5 z" fill="#161109"/>`}
+            </g>`;
+        }
+
+        // label text below the shape, per the node's chosen label mode
+        const labelLines = labelMode==='none' ? [] : wrapLines(labelSrc, 16, 2);
+        const labelTop = p.y + circleR + 13;
+        labelSvg = labelLines.map((line,i)=>
+          `<text x="${p.x}" y="${labelTop + i*13}" text-anchor="middle" font-size="10.5" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
+        ).join('');
+
+        orSvg = orLabelText? `<text x="${p.x}" y="${p.y-circleR-9}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
+      }
+
+      const mapWasSeen = seenAvailableIds.has(n.id);
+      if(avail && !mapWasSeen) seenAvailableIds.add(n.id);
+      const isNewMapNode = settings.animationsEnabled && !manageMode && !done && avail && !mapWasSeen;
+      boxes += `<g class="map-node${isNewMapNode?' newly-unlocked':''}" data-id="${n.id}" style="cursor:${(avail||manageMode)?'pointer':'default'}">${tooltip}${orSvg}${shapeSvg}${labelSvg}</g>`;
+    });
+
+    mapBox.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}" style="${isVertical? 'display:block;margin:0 auto;':''}">${lines}${boxes}</svg>`;
+    mapBox.querySelectorAll('.map-mini-play').forEach(g=>{
+      g.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const n = idToNode[g.dataset.id];
+        toggleInlinePlay(n, e, true);
+      });
+    });
+    mapBox.querySelectorAll('.map-node').forEach(g=>{
+      const id = g.dataset.id;
+      const n = idToNode[id];
+      if(manageMode){
+        g.addEventListener('click', ()=>{ editingNodeId = id; render(); scrollToManagePanel(); });
+      } else if(isAvailable(n)){
+        g.addEventListener('click', ()=>{ openReaderFor(n, false); });
+      }
+    });
+    wrap.appendChild(mapBox);
+    return wrap;
+  }
+
+  // Wraps the core single-canvas map renderer with collapsible folders matching
+  // Manage Codex's groups, for the player-facing view. Manage mode always shows
+  // the full unified graph (folders would hide structure you need while editing).
+  function renderCampaignMap(nodes, game){
+    if(nodes.length===0){
+      const empty = document.createElement('div');
+      empty.innerHTML = '<div class="empty" style="border:none;">Add narrations to see the campaign map.</div>';
+      return empty;
+    }
+    const groups = game.groups || [];
+    if(manageMode || groups.length===0){
+      return renderCampaignMapCore(nodes, game);
+    }
+    const wrap = document.createElement('div');
+    const validGroupIds = groups.map(g=>g.id);
+    const ungrouped = nodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+    const sections = [];
+    if(ungrouped.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungrouped});
+    groups.forEach(g=>{
+      const list = nodes.filter(n=>n.groupId===g.id);
+      if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+    });
+    sections.forEach(sec=>{
+      const header = document.createElement('div');
+      header.className='group-header';
+      header.style.cursor = sec.id===null ? 'default' : 'pointer';
+      header.innerHTML = sec.id===null
+        ? `<span class="group-name">Ungrouped</span>`
+        : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span>`;
+      wrap.appendChild(header);
+      if(!sec.collapsed){
+        wrap.appendChild(renderCampaignMapCore(sec.list, game));
+      }
+      if(sec.id!==null){
+        header.querySelector('.group-toggle').onclick = async ()=>{
+          const g = groups.find(x=>x.id===sec.id);
+          if(g){ g.collapsed = !g.collapsed; await sSet('game:'+game.id, game); render(); }
+        };
+      }
+    });
+    return wrap;
+  }
+
+  function scrollToManagePanel(){
+    setTimeout(()=>{
+      const el = document.querySelector('.manage-panel');
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 30);
+  }
+
+  // ---------------- Reader overlay ----------------
+  function renderReader(){
+    const n = readerNode;
+    stopInlinePlay();
+    const overlay = document.createElement('div');
+    overlay.className='reader-overlay' + (settings.animationsEnabled ? ' anim-in' : '');
+    overlay.id='narrationReaderOverlay';
+    const done = isCompleted(n.id);
+    const hasChoices = n.choices && n.choices.length>0;
+
+    const closeAndRerender = ()=>{ readerNode=null; readerResult=null; readerAutoPlay=false; overlay.remove(); render(); };
+    const advanceTo = (nextNode)=>{ openReaderFor(nextNode, true); };
+
+    const pos = n.image ? (n.imagePosition || 'top') : 'top';
+    const isRow = n.image && (pos==='left' || pos==='right');
+    const artHtml = n.image
+      ? (isRow
+          ? `<div class="art" style="background-image:url('${n.image}');width:100%;height:100%;min-height:220px;"></div>`
+          : `<div class="art" style="background-image:url('${n.image}')"></div>`)
+      : '';
+    const contentHtml = `
+      <div class="content">
+        <h2>${renderTitle(n.title)}</h2>
+        ${(!readerResult && n.audio) ? buildAudioMarkup(n.audio) : ''}
+        ${(!readerResult && !n.audio) ? `<div class="hint" style="margin-bottom:16px;">No audio attached to this narration.</div>` : ''}
+        ${!readerResult ? `<div class="body-text">${renderMarkdown(n.text||'')}</div>` : ''}
+        <div id="readerAction"></div>
+      </div>
+    `;
+
+    let bodyMarkup;
+    if(isRow){
+      bodyMarkup = `
+        <div class="reader-relative" style="display:flex;flex-direction:${pos==='left'?'row':'row-reverse'};max-height:92vh;overflow:hidden;">
+          <div style="flex:0 0 34%;align-self:stretch;">${artHtml}</div>
+          <div style="flex:1;min-width:0;max-height:92vh;overflow:auto;">${contentHtml}</div>
+          <button class="close" id="closeReader">&times;</button>
+        </div>`;
+    } else if(pos==='bottom'){
+      bodyMarkup = `<div class="reader-relative">${contentHtml}${artHtml}<button class="close" id="closeReader">&times;</button></div>`;
+    } else {
+      bodyMarkup = `<div class="reader-relative">${artHtml}<button class="close" id="closeReader">&times;</button>${contentHtml}</div>`;
+    }
+    overlay.innerHTML = `<div class="reader">${bodyMarkup}</div>`;
+    const ownerGame = games.find(g=>g.id===n.gameId);
+    overlay.querySelector('.reader').setAttribute('style', gameFontStyle(ownerGame));
+
+    document.body.appendChild(overlay);
+    overlay.onclick = (e)=>{ if(e.target===overlay) closeAndRerender(); };
+    overlay.querySelector('#closeReader').onclick = closeAndRerender;
+
+    const audioEl = overlay.querySelector('audio');
+    const capPlayer = overlay.querySelector('#customAudioPlayer');
+    if(audioEl && capPlayer){
+      const playBtn = capPlayer.querySelector('.cap-play');
+      const fill = capPlayer.querySelector('.cap-progress-fill');
+      const track = capPlayer.querySelector('.cap-progress-track');
+      const timeLabel = capPlayer.querySelector('.cap-time');
+      const fmtTime = (s)=>{ if(!isFinite(s)||s<0) return '0:00'; const m=Math.floor(s/60); const sec=Math.floor(s%60); return m+':'+String(sec).padStart(2,'0'); };
+      const updateUI = ()=>{
+        fill.style.width = (audioEl.duration? (audioEl.currentTime/audioEl.duration*100):0)+'%';
+        timeLabel.textContent = fmtTime(audioEl.currentTime)+' / '+fmtTime(audioEl.duration);
+        playBtn.innerHTML = (!audioEl.paused && !audioEl.ended) ? ICON_PAUSE_LARGE : ICON_PLAY_LARGE;
+      };
+      playBtn.onclick = ()=>{ if(audioEl.paused) audioEl.play().catch(()=>{}); else audioEl.pause(); };
+      track.addEventListener('click', (e)=>{
+        const rect = track.getBoundingClientRect();
+        const pct = Math.min(1, Math.max(0, (e.clientX-rect.left)/rect.width));
+        if(isFinite(audioEl.duration)) audioEl.currentTime = pct*audioEl.duration;
+      });
+      ['play','pause','timeupdate','loadedmetadata','ended'].forEach(evtName=> audioEl.addEventListener(evtName, updateUI));
+      updateUI();
+    }
+    if(audioEl && settings.autoCloseOnAudioEnd){
+      audioEl.addEventListener('ended', async ()=>{
+        if(hasChoices) return; // a choice still has to be made manually
+        if(!done){
+          const next = await markCompletedAndFindNext(n, null);
+          if(settings.autoAdvance && next){ advanceTo(next); return; }
+          toast('Marked as heard — new narrations may be available.');
+        }
+        closeAndRerender();
+      });
+    }
+    const shouldDelayChoices = hasChoices && !done && settings.revealChoicesWhenDone && !!n.audio;
+    if(audioEl && shouldDelayChoices){
+      audioEl.addEventListener('ended', ()=>{
+        const box = overlay.querySelector('#readerAction');
+        if(box){ box.innerHTML=''; box.appendChild(renderChoiceButtons()); }
+      });
+    }
+    if(audioEl && readerAutoPlay){
+      readerAutoPlay = false;
+      audioEl.play().catch(()=>{ /* autoplay may be blocked by the browser */ });
+    } else {
+      readerAutoPlay = false;
+    }
+
+    const actionBox = overlay.querySelector('#readerAction');
+
+    if(readerResult){
+      actionBox.innerHTML = `
+        <div class="result-box">
+          <div class="result-label">What happens</div>
+          <div class="result-text">${renderMarkdown(readerResult.text)}</div>
+          <button class="btn primary" id="closeResult">Continue</button>
+        </div>
+      `;
+      actionBox.querySelector('#closeResult').onclick = ()=>{
+        const next = readerResult.advanceTo;
+        if(settings.autoAdvance && next){ advanceTo(next); return; }
+        closeAndRerender();
+      };
+      return overlay;
+    }
+
+    function renderChoiceButtons(){
+      const box = document.createElement('div');
+      box.innerHTML = `<div class="hint" style="margin-bottom:8px;">What happens next?</div>`;
+      const choicesWrap = document.createElement('div');
+      choicesWrap.className='choices';
+      n.choices.forEach(c=>{
+        const b = document.createElement('button');
+        b.className='choice-btn';
+        b.textContent = c.label;
+        b.onclick = async ()=>{
+          const next = await markCompletedAndFindNext(n, c.id);
+          if(c.resultText && c.resultText.trim()){
+            readerResult = {text: c.resultText.trim(), advanceTo: next};
+            overlay.remove();
+            render();
+          } else if(settings.autoAdvance && next){
+            advanceTo(next);
+          } else {
+            toast('Choice recorded — new narrations may be available.');
+            closeAndRerender();
+          }
+        };
+        choicesWrap.appendChild(b);
+      });
+      box.appendChild(choicesWrap);
+      return box;
+    }
+
+    function renderMultiChoiceButtons(preselected){
+      const pre = new Set(preselected||[]);
+      const box = document.createElement('div');
+      box.innerHTML = `<div class="hint" style="margin-bottom:8px;">Select all that apply, then continue — or leave everything unchecked if none apply.</div>`;
+      const choicesWrap = document.createElement('div');
+      choicesWrap.className='choices';
+      const selected = new Set(pre);
+      n.choices.forEach(c=>{
+        const label = document.createElement('label');
+        label.className='choice-btn';
+        label.style.display='flex'; label.style.alignItems='center'; label.style.gap='10px';
+        label.innerHTML = `<input type="checkbox" ${pre.has(c.id)?'checked':''}> <span>${escapeHtml(c.label)}</span>`;
+        label.querySelector('input').onchange = (e)=>{ if(e.target.checked) selected.add(c.id); else selected.delete(c.id); };
+        choicesWrap.appendChild(label);
+      });
+      box.appendChild(choicesWrap);
+      const submitBtn = document.createElement('button');
+      submitBtn.className='btn primary';
+      submitBtn.style.marginTop='10px';
+      submitBtn.textContent='Confirm selection';
+      submitBtn.onclick = async ()=>{
+        const ids = Array.from(selected);
+        const next = await markCompletedAndFindNext(n, ids);
+        const resultTexts = n.choices.filter(c=>ids.includes(c.id) && c.resultText && c.resultText.trim()).map(c=>c.resultText.trim());
+        if(resultTexts.length){
+          readerResult = {text: resultTexts.join('\n\n'), advanceTo: next};
+          overlay.remove();
+          render();
+        } else if(settings.autoAdvance && next){
+          advanceTo(next);
+        } else {
+          toast(ids.length ? 'Choices recorded — new narrations may be available.' : 'No answer recorded — new narrations may be available.');
+          closeAndRerender();
+        }
+      };
+      box.appendChild(submitBtn);
+      return box;
+    }
+
+    function renderProceedButton(){
+      const kids = findChildrenUnlockedBy(n);
+      const b = document.createElement('button');
+      if(kids.length===1){
+        b.className='btn primary small';
+        b.textContent='Continue →';
+        b.onclick = ()=> openReaderFor(kids[0], true);
+      } else {
+        b.className='btn ghost small';
+        b.textContent='Return to index';
+        b.onclick = closeAndRerender;
+      }
+      return b;
+    }
+
+    function renderChoicesPending(){
+      const box = document.createElement('div');
+      box.innerHTML = `<div class="hint">Choices will appear once the narration finishes playing.</div>`;
+      return box;
+    }
+
+    if(hasChoices){
+      if(done){
+        const rec = completionRecord(n.id) || {choiceId:null, choiceIds:null};
+        const chosenList = Array.isArray(rec.choiceIds) && rec.choiceIds.length
+          ? n.choices.filter(c=>rec.choiceIds.includes(c.id))
+          : (n.choices.find(c=>c.id===rec.choiceId) ? [n.choices.find(c=>c.id===rec.choiceId)] : []);
+        const chosenLabel = chosenList.map(c=>`"${escapeHtml(c.label)}"`).join(', ');
+        const footer = document.createElement('div');
+        footer.className='reader-footer';
+        footer.innerHTML = `<span class="completed-pill">${ICON_CHECK} Heard — you chose ${chosenLabel||'—'}</span>`;
+        const btnRow = document.createElement('span');
+        btnRow.style.cssText='display:flex;gap:8px;';
+        const changeBtn = document.createElement('button');
+        changeBtn.className='btn ghost small';
+        changeBtn.textContent='Change choice';
+        changeBtn.onclick = ()=>{
+          actionBox.innerHTML='';
+          actionBox.appendChild(n.multiChoice ? renderMultiChoiceButtons(rec.choiceIds||[]) : renderChoiceButtons());
+        };
+        btnRow.appendChild(changeBtn);
+        btnRow.appendChild(renderProceedButton());
+        footer.appendChild(btnRow);
+        actionBox.appendChild(footer);
+      } else {
+        actionBox.appendChild(shouldDelayChoices ? renderChoicesPending() : (n.multiChoice ? renderMultiChoiceButtons() : renderChoiceButtons()));
+      }
+    } else {
+      if(done){
+        const footer = document.createElement('div');
+        footer.className='reader-footer';
+        footer.innerHTML = `<span class="completed-pill">${ICON_CHECK} Marked as heard</span>`;
+        footer.appendChild(renderProceedButton());
+        actionBox.appendChild(footer);
+      } else {
+        const b = document.createElement('button');
+        b.className='btn primary';
+        b.textContent='Mark as heard';
+        b.onclick = async ()=>{
+          const next = await markCompletedAndFindNext(n, null);
+          if(settings.autoAdvance && next){ advanceTo(next); return; }
+          toast('Marked as heard — new narrations may be available.');
+          closeAndRerender();
+        };
+        actionBox.appendChild(b);
+      }
+    }
+    return overlay;
+  }
+
+  // ---------------- Manage panel (per-game): add + edit narrations ----------------
+  function renderManagePanel(game){
+    const nodes = nodesByGame[game.id]||[];
+    const editingNode = editingNodeId ? nodes.find(n=>n.id===editingNodeId) : null;
+    const panel = document.createElement('div');
+    panel.className='manage-panel';
+
+    const otherNodes = nodes.filter(n=> !editingNode || n.id !== editingNode.id);
+    const normEditingPrereqs = editingNode ? normalizedPrereqs(editingNode) : [];
+    const existingPrereqIds = normEditingPrereqs.map(p=>p.nodeId);
+    const existingPrereqChoice = {};
+    const existingPrereqGroup = {};
+    normEditingPrereqs.forEach(p=>{ existingPrereqChoice[p.nodeId] = p.choiceId || ''; existingPrereqGroup[p.nodeId] = p.group || 'all'; });
+
+    panel.innerHTML = `
+      <h3>
+        <span>${editingNode? `Editing “${escapeHtml(editingNode.title)}”` : `Add a narration to “${escapeHtml(game.name)}”`}</span>
+        <span style="display:flex;gap:8px;">
+          <button class="btn ghost small" id="editGameBtn">Edit game details</button>
+          ${editingNode? `<button class="btn ghost small" id="cancelEdit">Cancel edit</button>` : ''}
+        </span>
+      </h3>
+      <div class="field-row">
+        <div class="field"><label>Title</label><input type="text" id="nTitle" placeholder="e.g. The Sunken Shrine" value="${editingNode? escapeHtml(editingNode.title):''}"></div>
+        <div class="field">
+          <label>Group</label>
+          <select id="nGroup" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
+            <option value="">No group</option>
+            ${(game.groups||[]).map(g=>`<option value="${g.id}" ${editingNode && editingNode.groupId===g.id?'selected':''}>${escapeHtml(g.name)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="setting-toggle"><input type="checkbox" id="nHidden" ${editingNode && editingNode.hidden?'checked':''}> Hidden — only visible in "Manage codex"</label>
+        <label class="setting-toggle"><input type="checkbox" id="nAutoComplete" ${editingNode && editingNode.completedByDefault?'checked':''}> Completed by default — completes itself as soon as its prerequisites are met, no player action needed</label>
+      </div>
+      <div class="hint" style="margin-bottom:14px;">With no prerequisites set, this narration is complete from the very start. With prerequisites set, it completes itself automatically the instant those are satisfied — nothing to click, no audio to play. Combine with "Hidden" for an invisible junction narration used purely to route AND/OR prerequisite logic; the app skips straight through it to whatever it unlocks.</div>
+      <div class="field">
+        <label>Log entry, once heard</label>
+        <select id="nLogMode" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
+          <option value="full" ${(!editingNode || (editingNode.logMode||'full')==='full')?'selected':''}>Full — title, choice made, and result text</option>
+          <option value="titleOnly" ${editingNode && editingNode.logMode==='titleOnly'?'selected':''}>Title only</option>
+          <option value="textOnly" ${editingNode && editingNode.logMode==='textOnly'?'selected':''}>Text only (accompanying text, no title)</option>
+          <option value="none" ${editingNode && editingNode.logMode==='none'?'selected':''}>Don't add to the log</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Map shape</label>
+          <select id="nMapShape" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
+            <option value="circle" ${(!editingNode || (editingNode.mapShape||'circle')==='circle')?'selected':''}>Small circle</option>
+            <option value="playIcon" ${editingNode && editingNode.mapShape==='playIcon'?'selected':''}>Play icon if it has audio, else a small dot</option>
+            <option value="box" ${editingNode && editingNode.mapShape==='box'?'selected':''}>Box (label + status inside)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Map label</label>
+          <select id="nMapLabel" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
+            <option value="title" ${(!editingNode || (editingNode.mapLabel||'title')==='title')?'selected':''}>Title only</option>
+            <option value="text" ${editingNode && editingNode.mapLabel==='text'?'selected':''}>Accompanying text</option>
+            <option value="choices" ${editingNode && editingNode.mapLabel==='choices'?'selected':''}>Choice options</option>
+            <option value="none" ${editingNode && editingNode.mapLabel==='none'?'selected':''}>No text at all</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Map tooltip</label>
+          <select id="nMapTooltip" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
+            <option value="title" ${(!editingNode || (editingNode.mapTooltip||'title')==='title')?'selected':''}>Title only</option>
+            <option value="full" ${editingNode && editingNode.mapTooltip==='full'?'selected':''}>Title + full text</option>
+            <option value="textOnly" ${editingNode && editingNode.mapTooltip==='textOnly'?'selected':''}>Text only</option>
+          </select>
+        </div>
+      </div>
+      <div class="hint" style="margin-bottom:14px;">Controls how this narration appears on the campaign map. "Play icon if it has audio, else a small dot" shows a play button for narrations with audio, and shrinks to a plain dot for ones without. "Box" fits its label and status word inside a bigger shape rather than beneath a small one. Hovering any node always shows a tooltip with its title and status — set "Map tooltip" to also include its full accompanying text there.</div>
+      <div class="field"><label>Accompanying text</label><textarea id="nText" placeholder="Text shown alongside the narration">${editingNode? escapeHtml(editingNode.text||'') : ''}</textarea><div class="hint">Supports basic Markdown: **bold**, *italic*, inline code with backticks, [links](url), "- " bullet lists — and raw HTML, which is rendered directly.</div></div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Narration audio</label>
+          <div class="media-toggle" data-t="audio">
+            ${editingNode && editingNode.audio? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
+            <button type="button" data-m="file" class="${editingNode && editingNode.audio? '':'active'}">Upload file</button>
+            <button type="button" data-m="url">Web URL</button>
+            <button type="button" data-m="path">Local file path</button>
+          </div>
+          <input type="file" id="nAudioFile" accept="audio/*" style="${editingNode && editingNode.audio? 'display:none;':''}">
+          <input type="url" id="nAudioUrl" placeholder="https://…" style="display:none;">
+          <div id="nAudioPathRow" style="display:none;">
+            <input type="text" id="nAudioSubdir" placeholder="Optional subfolder, e.g. audio or assets/narration" style="margin-bottom:6px;">
+            <div class="path-picker-row">
+              <input type="text" id="nAudioPath" placeholder="e.g. audio/shrine.mp3 or file:///C:/Games/shrine.mp3" value="${editingNode && editingNode.audio && !/^https?:\/\//i.test(editingNode.audio) && !editingNode.audio.startsWith('data:') ? escapeHtml(editingNode.audio) : ''}">
+              <button type="button" class="btn ghost small" id="nAudioPathBrowse">Browse…</button>
+              <input type="file" id="nAudioPathPicker" accept="audio/*" style="display:none;">
+            </div>
+          </div>
+          <div id="nAudioStatus">${editingNode && editingNode.audio? '<div class="file-status">Current audio is attached — choose another option to replace it.</div>':''}</div>
+          <div class="hint">Uploaded clips must be under ${fmtBytes(MAX_AUDIO_BYTES)}. For longer recordings, either host the file online and paste its URL, or link to a local file — a path relative to this HTML file, or a full file:// path. Local paths only load when the page is opened directly from your computer. Set the subfolder once, then "Browse…" fills in the filename — together they form the full relative path, since browsers never expose the folder on their own.</div>
+        </div>
+        <div class="field">
+          <label>Image (optional)</label>
+          <div class="media-toggle" data-t="image">
+            ${editingNode && editingNode.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
+            <button type="button" data-m="file" class="${editingNode && editingNode.image? '':'active'}">Upload file</button>
+            <button type="button" data-m="url">Web URL</button>
+            <button type="button" data-m="path">Local file path</button>
+          </div>
+          <input type="file" id="nImageFile" accept="image/*" style="${editingNode && editingNode.image? 'display:none;':''}">
+          <input type="url" id="nImageUrl" placeholder="https://…" style="display:none;">
+          <div id="nImagePathRow" style="display:none;">
+            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;">
+            <div class="path-picker-row">
+              <input type="text" id="nImagePath" placeholder="e.g. images/shrine.jpg or file:///C:/Games/shrine.jpg" value="${editingNode && editingNode.image && !/^https?:\/\//i.test(editingNode.image) && !editingNode.image.startsWith('data:') ? escapeHtml(editingNode.image) : ''}">
+              <button type="button" class="btn ghost small" id="nImagePathBrowse">Browse…</button>
+              <input type="file" id="nImagePathPicker" accept="image/*" style="display:none;">
+            </div>
+          </div>
+          <div id="nImageStatus">${editingNode && editingNode.image? '<div class="file-status">Current image is attached — choose another option to replace it.</div>':''}</div>
+          <div class="hint">Uploaded photos are automatically resized. Local paths work the same way as for audio, above.</div>
+          <label style="margin-top:8px;">Image position in the narration window</label>
+          <select id="nImagePos" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:8px 10px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:13px;width:100%;">
+            <option value="top" ${(!editingNode || (editingNode.imagePosition||'top')==='top')?'selected':''}>Top (banner)</option>
+            <option value="bottom" ${editingNode && editingNode.imagePosition==='bottom'?'selected':''}>Bottom (banner)</option>
+            <option value="left" ${editingNode && editingNode.imagePosition==='left'?'selected':''}>Left side</option>
+            <option value="right" ${editingNode && editingNode.imagePosition==='right'?'selected':''}>Right side</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Unlocked only after (prerequisites)</label>
+        <div class="prereq-box" id="prereqBox">
+          ${otherNodes.length===0? '<div class="hint">No other narrations yet — this will be available from the start.</div>' :
+            otherNodes.map(n=>{
+              const checked = existingPrereqIds.includes(n.id);
+              const hasChoices = n.choices && n.choices.length;
+              const grp = existingPrereqGroup[n.id] || 'all';
+              return `
+              <div class="prereq-item">
+                <input type="checkbox" class="prereqCk" value="${n.id}" ${checked?'checked':''}>
+                <span style="flex:1;">${escapeHtml(n.title)}</span>
+                <select class="prereqGroup" data-for="${n.id}" ${checked?'':'disabled'}>
+                  <option value="all" ${grp==='all'?'selected':''}>AND (required)</option>
+                  <option value="any" ${grp==='any'?'selected':''}>OR (any one)</option>
+                </select>
+                <select class="prereqChoice" data-for="${n.id}" ${checked?'':'disabled'}>
+                  <option value="">any completion</option>
+                  ${hasChoices? n.choices.map(c=>`<option value="${c.id}" ${existingPrereqChoice[n.id]===c.id?'selected':''}>requires choice: ${escapeHtml(c.label)}</option>`).join(''):''}
+                </select>
+              </div>`;
+            }).join('')}
+        </div>
+        <div class="hint">Leave all unchecked for a narration available from the start. Mark a checked prerequisite "AND" if it's always required, or "OR" if satisfying just one of the OR-marked prerequisites is enough — the narration unlocks once all AND prerequisites are met, and (if any are marked OR) at least one OR prerequisite too.</div>
+      </div>
+
+      <div class="field">
+        <label>Branching choices (optional)</label>
+        <div id="choiceEditor"></div>
+        <button class="btn ghost small" id="addChoiceBtn" type="button">+ Add a choice</button>
+        <label class="setting-toggle" style="margin-top:10px;"><input type="checkbox" id="nMultiChoice" ${editingNode && editingNode.multiChoice?'checked':''}> Multiple choice — let the listener pick more than one option</label>
+        <div class="hint">If you add choices, the listener picks one after hearing this narration (or several, with "multiple choice" on). Give each choice its own "what happens" text — it's shown right after the choice is made — and later narrations can require that specific choice.</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence.</span>
+        <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
+      </div>
+
+      <div class="node-manage-list">
+        <div class="eyebrow" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+          <span>Existing narrations</span>
+          <button class="btn ghost small" id="addGroupBtn" type="button">+ Add group</button>
+        </div>
+        <div id="narrationsList"></div>
+        ${nodes.length===0? '<div class="hint">None yet.</div>' : '<div class="hint">Drag a narration by its ⠿ handle to reorder it, or drop it onto a group to file it there. Drag a group\'s ⠿ handle to reorder groups.</div>'}
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+          <button class="btn danger small" id="deleteGameBtn">Remove this game</button>
+        </div>
+      </div>
+    `;
+
+    if(editingNode){
+      panel.querySelector('#cancelEdit').onclick = ()=>{ editingNodeId=null; render(); };
+    }
+    panel.querySelector('#editGameBtn').onclick = ()=> openGameModal(game);
+
+    // media toggles (audio / image), each may include a "keep" option plus file / url / local-path
+    panel.querySelectorAll('.media-toggle').forEach(mt=>{
+      const t = mt.dataset.t;
+      const btns = mt.querySelectorAll('button');
+      const fileInp = panel.querySelector(t==='audio'? '#nAudioFile':'#nImageFile');
+      const urlInp = panel.querySelector(t==='audio'? '#nAudioUrl':'#nImageUrl');
+      const pathRow = panel.querySelector(t==='audio'? '#nAudioPathRow':'#nImagePathRow');
+      btns.forEach(b=>b.onclick=()=>{
+        btns.forEach(x=>x.classList.remove('active')); b.classList.add('active');
+        fileInp.style.display = b.dataset.m==='file' ? 'block' : 'none';
+        urlInp.style.display = b.dataset.m==='url' ? 'block' : 'none';
+        pathRow.style.display = b.dataset.m==='path' ? 'block' : 'none';
+      });
+    });
+    panel.querySelector('#nAudioFile').onchange = (e)=>{
+      const f = e.target.files[0];
+      const statusEl = panel.querySelector('#nAudioStatus');
+      if(!f){ statusEl.innerHTML=''; return; }
+      if(f.size > MAX_AUDIO_BYTES){
+        statusEl.innerHTML = `<div class="file-error">${escapeHtml(f.name)} is ${fmtBytes(f.size)} — over the ${fmtBytes(MAX_AUDIO_BYTES)} limit. Use a shorter clip, paste a web URL, or link to a local file instead.</div>`;
+      } else {
+        statusEl.innerHTML = `<div class="file-status">Selected: ${escapeHtml(f.name)} (${fmtBytes(f.size)})</div>`;
+      }
+    };
+    panel.querySelector('#nImageFile').onchange = (e)=>{
+      const f = e.target.files[0];
+      const statusEl = panel.querySelector('#nImageStatus');
+      statusEl.innerHTML = f ? `<div class="file-status">Selected: ${escapeHtml(f.name)} (${fmtBytes(f.size)}) — will be resized to fit.</div>` : '';
+    };
+    let nAudioLastPicked = '';
+    const nAudioSubdirInp = panel.querySelector('#nAudioSubdir');
+    panel.querySelector('#nAudioPathBrowse').onclick = ()=> panel.querySelector('#nAudioPathPicker').click();
+    panel.querySelector('#nAudioPathPicker').onchange = (e)=>{
+      const f = e.target.files[0];
+      if(f){ nAudioLastPicked = f.name; panel.querySelector('#nAudioPath').value = joinSubdirPath(nAudioSubdirInp.value, nAudioLastPicked); }
+    };
+    nAudioSubdirInp.oninput = ()=>{ if(nAudioLastPicked) panel.querySelector('#nAudioPath').value = joinSubdirPath(nAudioSubdirInp.value, nAudioLastPicked); };
+
+    let nImageLastPicked = '';
+    const nImageSubdirInp = panel.querySelector('#nImageSubdir');
+    panel.querySelector('#nImagePathBrowse').onclick = ()=> panel.querySelector('#nImagePathPicker').click();
+    panel.querySelector('#nImagePathPicker').onchange = (e)=>{
+      const f = e.target.files[0];
+      if(f){ nImageLastPicked = f.name; panel.querySelector('#nImagePath').value = joinSubdirPath(nImageSubdirInp.value, nImageLastPicked); }
+    };
+    nImageSubdirInp.oninput = ()=>{ if(nImageLastPicked) panel.querySelector('#nImagePath').value = joinSubdirPath(nImageSubdirInp.value, nImageLastPicked); };
+
+    // prereq checkbox enabling group + choice dropdowns
+    panel.querySelectorAll('.prereqCk').forEach(ck=>{
+      const grpSel = panel.querySelector(`.prereqGroup[data-for="${ck.value}"]`);
+      const choiceSel = panel.querySelector(`.prereqChoice[data-for="${ck.value}"]`);
+      ck.onchange = ()=>{ grpSel.disabled = !ck.checked; choiceSel.disabled = !ck.checked; };
+    });
+
+    // choice editor (label + result text shown when that choice is played)
+    let choiceRows = editingNode && editingNode.choices ? editingNode.choices.map(c=>({id:c.id, label:c.label, resultText:c.resultText||''})) : [];
+    const choiceEditor = panel.querySelector('#choiceEditor');
+    function renderChoiceRows(){
+      choiceEditor.innerHTML = '';
+      choiceRows.forEach((c,i)=>{
+        const card = document.createElement('div');
+        card.className='choice-editor-card';
+        card.innerHTML = `
+          <div class="choice-editor-row">
+            <input type="text" value="${escapeHtml(c.label)}" placeholder="Choice label, e.g. Flee into the woods">
+            <button type="button" class="small-x">×</button>
+          </div>
+          <textarea placeholder="What happens next — shown to the player right after they pick this choice" style="min-height:56px;">${escapeHtml(c.resultText)}</textarea>
+        `;
+        card.querySelector('input').oninput = (e)=>{ choiceRows[i].label = e.target.value; };
+        card.querySelector('textarea').oninput = (e)=>{ choiceRows[i].resultText = e.target.value; };
+        card.querySelector('.small-x').onclick = ()=>{ choiceRows.splice(i,1); renderChoiceRows(); };
+        choiceEditor.appendChild(card);
+      });
+    }
+    renderChoiceRows();
+    panel.querySelector('#addChoiceBtn').onclick = ()=>{
+      choiceRows.push({id:uid(), label:'', resultText:''});
+      renderChoiceRows();
+    };
+
+    // save (add or update)
+    panel.querySelector('#saveNode').onclick = async ()=>{
+      const title = panel.querySelector('#nTitle').value.trim();
+      if(!title){ toast('Give the narration a title.'); return; }
+      const saveBtn = panel.querySelector('#saveNode');
+      saveBtn.disabled = true; saveBtn.textContent='Saving…';
+
+      let audio = editingNode ? (editingNode.audio||'') : '';
+      let image = editingNode ? (editingNode.image||'') : '';
+
+      try{
+        const audioMode = panel.querySelector('.media-toggle[data-t="audio"] button.active').dataset.m;
+        if(audioMode==='file' && panel.querySelector('#nAudioFile').files[0]){
+          audio = await readAudioFile(panel.querySelector('#nAudioFile').files[0]);
+        } else if(audioMode==='url'){
+          audio = panel.querySelector('#nAudioUrl').value.trim();
+        } else if(audioMode==='path'){
+          audio = panel.querySelector('#nAudioPath').value.trim();
+        } else if(audioMode==='file' && !panel.querySelector('#nAudioFile').files[0] && !editingNode){
+          audio = '';
+        }
+        const imageMode = panel.querySelector('.media-toggle[data-t="image"] button.active').dataset.m;
+        if(imageMode==='file' && panel.querySelector('#nImageFile').files[0]){
+          image = await compressImage(panel.querySelector('#nImageFile').files[0]);
+        } else if(imageMode==='url'){
+          image = panel.querySelector('#nImageUrl').value.trim();
+        } else if(imageMode==='path'){
+          image = panel.querySelector('#nImagePath').value.trim();
+        } else if(imageMode==='file' && !panel.querySelector('#nImageFile').files[0] && !editingNode){
+          image = '';
+        }
+      }catch(e){
+        toast(e.message);
+        saveBtn.disabled=false; saveBtn.textContent = editingNode? 'Save changes':'Add narration';
+        return;
+      }
+
+      const prerequisites = [];
+      panel.querySelectorAll('.prereqCk').forEach(ck=>{
+        if(ck.checked){
+          const grpSel = panel.querySelector(`.prereqGroup[data-for="${ck.value}"]`);
+          const choiceSel = panel.querySelector(`.prereqChoice[data-for="${ck.value}"]`);
+          prerequisites.push({nodeId: ck.value, choiceId: choiceSel.value || null, group: grpSel.value || 'all'});
+        }
+      });
+      const choices = choiceRows.filter(c=>c.label.trim()).map(c=>({id:c.id, label:c.label.trim(), resultText:(c.resultText||'').trim()}));
+      const multiChoice = panel.querySelector('#nMultiChoice').checked;
+      const imagePosition = panel.querySelector('#nImagePos').value;
+      const hidden = panel.querySelector('#nHidden').checked;
+      const completedByDefault = panel.querySelector('#nAutoComplete').checked;
+      const logMode = panel.querySelector('#nLogMode').value;
+      const mapShape = panel.querySelector('#nMapShape').value;
+      const mapLabel = panel.querySelector('#nMapLabel').value;
+      const mapTooltip = panel.querySelector('#nMapTooltip').value;
+      const groupId = panel.querySelector('#nGroup').value || null;
+      let order = editingNode ? (editingNode.order||0) : 0;
+      if(!editingNode){
+        const siblings = nodes.filter(n=> (n.groupId||null) === groupId);
+        order = siblings.length ? Math.max(...siblings.map(n=>n.order||0)) + 1 : 0;
+      }
+
+      const id = editingNode ? editingNode.id : uid();
+      const node = {
+        id, gameId: game.id, title,
+        text: panel.querySelector('#nText').value.trim(),
+        audio, image, imagePosition, prerequisites, choices, multiChoice,
+        hidden, completedByDefault, logMode, mapShape, mapLabel, mapTooltip, groupId, order,
+        createdAt: editingNode ? editingNode.createdAt : Date.now()
+      };
+
+      const ok = await sSet('node:'+id, node);
+      if(!ok){ toast('Could not save — please try again, or use a URL instead of uploading.'); saveBtn.disabled=false; saveBtn.textContent = editingNode? 'Save changes':'Add narration'; return; }
+      lastEditedNodeId = id;
+
+      if(editingNode){
+        nodesByGame[game.id] = nodesByGame[game.id].map(n=> n.id===id ? node : n);
+        toast('Narration updated.');
+        editingNodeId = null;
+      } else {
+        const nodeIndex = await sGet('node-index:'+game.id) || [];
+        nodeIndex.push(id);
+        await sSet('node-index:'+game.id, nodeIndex);
+        nodesByGame[game.id].push(node);
+        toast('Narration added.');
+      }
+      render();
+    };
+
+    // ---- Existing narrations: grouped, drag-and-drop reorderable list ----
+    let dragInfo = null; // {type:'node'|'group', id}
+    async function persistGroups(){ await sSet('game:'+game.id, game); }
+    async function persistNodes(ids){
+      for(const id of ids){
+        const nd = nodesByGame[game.id].find(x=>x.id===id);
+        if(nd) await sSet('node:'+id, nd);
+      }
+    }
+    function reorderWithinContainer(containerNodes, draggedId, targetId, after){
+      const ids = containerNodes.map(x=>x.id).filter(id=>id!==draggedId);
+      let idx = ids.indexOf(targetId);
+      if(idx===-1) idx = ids.length; else if(after) idx += 1;
+      ids.splice(idx, 0, draggedId);
+      ids.forEach((id,i)=>{ const nd = nodesByGame[game.id].find(x=>x.id===id); if(nd) nd.order = i; });
+      return ids;
+    }
+    function buildNodeRow(n){
+      const row = document.createElement('div');
+      row.className = 'node-manage-item';
+      row.draggable = true;
+      const normPrereqs = normalizedPrereqs(n);
+      const anyCount = normPrereqs.filter(p=>p.group==='any').length;
+      const allCount = normPrereqs.length - anyCount;
+      let prereqBadge = 'start node';
+      if(normPrereqs.length){
+        prereqBadge = `${normPrereqs.length} prereq${normPrereqs.length===1?'':'s'}`;
+        if(allCount>0 && anyCount>0) prereqBadge += ` (${allCount} and, ${anyCount} or)`;
+        else if(anyCount>1) prereqBadge += ' (any)';
+      }
+      row.innerHTML = `
+        <div class="left">
+          <span class="drag-handle" title="Drag to reorder or move to a group">⠿</span>
+          <span>${escapeHtml(n.title)}</span>
+          ${n.hidden? `<span class="pid" style="color:#d99;">hidden</span>`:''}
+          ${n.completedByDefault? `<span class="pid" style="color:var(--moss);">auto</span>`:''}
+          ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${n.logMode==='none'?'off':(n.logMode==='titleOnly'?'title only':'text only')}</span>`:''}
+          ${n.choices&&n.choices.length? `<span class="pid">${n.choices.length} choice${n.choices.length===1?'':'s'}</span>`:''}
+          <span class="pid">${prereqBadge}</span>
+        </div>
+        <div class="right">
+          ${n.audio? `<button class="btn ghost small" data-testplay="${n.id}" title="Preview the audio — does not mark this narration as heard">${inlinePlayingId===n.id?ICON_MINI_PAUSE:ICON_MINI_PLAY} Test play</button>`:''}
+          <button class="btn ghost small" data-copy="${n.id}">Copy</button>
+          <button class="btn ghost small" data-edit="${n.id}">Edit</button>
+          <button class="btn danger small" data-del="${n.id}">Remove</button>
+        </div>
+      `;
+      row.querySelector('[data-edit]').onclick = ()=>{ editingNodeId = n.id; render(); };
+      const testPlayBtn = row.querySelector('[data-testplay]');
+      if(testPlayBtn){ testPlayBtn.onclick = (e)=>{ e.stopPropagation(); toggleInlinePlay(n, e); }; }
+      row.querySelector('[data-copy]').onclick = async ()=>{
+        const siblings = nodesByGame[game.id].filter(x=> (x.groupId||null) === (n.groupId||null));
+        const copy = {
+          ...n,
+          id: uid(),
+          title: n.title + ' (copy)',
+          choices: (n.choices||[]).map(c=> ({...c, id: uid()})),
+          prerequisites: (n.prerequisites||[]).map(p=> ({...p})),
+          order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
+          createdAt: Date.now()
+        };
+        const ok = await sSet('node:'+copy.id, copy);
+        if(!ok){ toast('Could not copy this narration — please try again.'); return; }
+        const nodeIndex = await sGet('node-index:'+game.id) || [];
+        nodeIndex.push(copy.id);
+        await sSet('node-index:'+game.id, nodeIndex);
+        nodesByGame[game.id].push(copy);
+        editingNodeId = copy.id;
+        lastEditedNodeId = copy.id;
+        toast('Narration copied.');
+        render();
+      };
+      row.querySelector('[data-del]').onclick = async ()=>{
+        if(!confirm('Remove this narration? Other narrations that require it will stay locked. This cannot be undone.')) return;
+        await sDel('node:'+n.id);
+        let nodeIndex = await sGet('node-index:'+game.id) || [];
+        nodeIndex = nodeIndex.filter(x=>x!==n.id);
+        await sSet('node-index:'+game.id, nodeIndex);
+        nodesByGame[game.id] = nodesByGame[game.id].filter(x=>x.id!==n.id);
+        delete progress.completed[n.id];
+        await sSet('progress', progress);
+        if(editingNodeId===n.id) editingNodeId=null;
+        toast('Narration removed.');
+        render();
+      };
+      row.addEventListener('dragstart', (e)=>{
+        dragInfo = {type:'node', id:n.id};
+        e.dataTransfer.effectAllowed='move';
+        try{ e.dataTransfer.setData('text/plain', n.id); }catch(err){}
+        row.style.opacity='0.4';
+      });
+      row.addEventListener('dragend', ()=>{ row.style.opacity=''; });
+      row.addEventListener('dragover', (e)=>{ if(dragInfo && dragInfo.type==='node'){ e.preventDefault(); row.style.borderColor='var(--brass)'; } });
+      row.addEventListener('dragleave', ()=>{ row.style.borderColor=''; });
+      row.addEventListener('drop', async (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        row.style.borderColor='';
+        if(!dragInfo || dragInfo.type!=='node' || dragInfo.id===n.id) return;
+        const rect = row.getBoundingClientRect();
+        const after = (e.clientY - rect.top) > rect.height/2;
+        const draggedNode = nodesByGame[game.id].find(x=>x.id===dragInfo.id);
+        if(!draggedNode) return;
+        const targetGroupId = n.groupId || null;
+        draggedNode.groupId = targetGroupId;
+        const containerNodes = nodesByGame[game.id].filter(x=> (x.groupId||null)===targetGroupId).sort((a,b)=>(a.order||0)-(b.order||0));
+        const orderedIds = reorderWithinContainer(containerNodes, draggedNode.id, n.id, after);
+        await persistNodes(Array.from(new Set(orderedIds.concat(draggedNode.id))));
+        dragInfo = null;
+        render();
+      });
+      return row;
+    }
+    function buildBucket(groupId, nodesInBucket){
+      const bucket = document.createElement('div');
+      bucket.className = 'node-group-bucket';
+      if(nodesInBucket.length===0){
+        bucket.innerHTML = `<div class="hint" style="padding:6px 0 10px;">Drop a narration here.</div>`;
+      }
+      nodesInBucket.slice().sort((a,b)=>(a.order||0)-(b.order||0)).forEach(n=> bucket.appendChild(buildNodeRow(n)));
+      bucket.addEventListener('dragover', (e)=>{ if(dragInfo && dragInfo.type==='node') e.preventDefault(); });
+      bucket.addEventListener('drop', async (e)=>{
+        e.preventDefault();
+        if(!dragInfo || dragInfo.type!=='node') return;
+        const draggedNode = nodesByGame[game.id].find(x=>x.id===dragInfo.id);
+        if(!draggedNode) return;
+        draggedNode.groupId = groupId || null;
+        const siblings = nodesByGame[game.id].filter(x=>(x.groupId||null)===(groupId||null) && x.id!==draggedNode.id);
+        draggedNode.order = siblings.length? Math.max(...siblings.map(s=>s.order||0))+1 : 0;
+        await persistNodes([draggedNode.id]);
+        dragInfo = null;
+        render();
+      });
+      return bucket;
+    }
+    function renderNarrationsList(){
+      const listWrap = panel.querySelector('#narrationsList');
+      const allNodesInGame = nodesByGame[game.id]||[];
+      const validGroupIds = (game.groups||[]).map(g=>g.id);
+      const ungrouped = allNodesInGame.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+
+      const ungroupedHeader = document.createElement('div');
+      ungroupedHeader.className='group-header';
+      ungroupedHeader.innerHTML = `<span class="group-name">Ungrouped</span>`;
+      listWrap.appendChild(ungroupedHeader);
+      listWrap.appendChild(buildBucket(null, ungrouped));
+
+      (game.groups||[]).forEach(g=>{
+        const header = document.createElement('div');
+        header.className='group-header';
+        header.draggable = true;
+        header.innerHTML = `
+          <span class="drag-handle" title="Drag to reorder groups">⠿</span>
+          <button class="group-toggle" type="button">${g.collapsed?'▸':'▾'}</button>
+          <span class="group-name">${escapeHtml(g.name)}</span>
+          <span style="flex:1;"></span>
+          <button class="btn ghost small" data-rename="1">Rename</button>
+          <button class="btn danger small" data-delgroup="1">Delete</button>
+        `;
+        listWrap.appendChild(header);
+        const groupNodes = allNodesInGame.filter(n=>n.groupId===g.id);
+        const bucket = buildBucket(g.id, groupNodes);
+        bucket.style.display = g.collapsed ? 'none' : '';
+        listWrap.appendChild(bucket);
+
+        header.querySelector('.group-toggle').onclick = async ()=>{ g.collapsed = !g.collapsed; await persistGroups(); render(); };
+        header.querySelector('[data-rename]').onclick = async ()=>{
+          const name = prompt('Rename group', g.name);
+          if(name && name.trim()){ g.name = name.trim(); await persistGroups(); render(); }
+        };
+        header.querySelector('[data-delgroup]').onclick = async ()=>{
+          if(!confirm(`Delete group "${g.name}"? Its narrations become ungrouped, not deleted.`)) return;
+          game.groups = (game.groups||[]).filter(x=>x.id!==g.id);
+          const toUngroup = allNodesInGame.filter(n=>n.groupId===g.id);
+          toUngroup.forEach(n=>{ n.groupId=null; });
+          await persistGroups();
+          await persistNodes(toUngroup.map(n=>n.id));
+          render();
+        };
+        header.addEventListener('dragstart', (e)=>{ dragInfo={type:'group', id:g.id}; e.dataTransfer.effectAllowed='move'; });
+        header.addEventListener('dragover', (e)=>{ e.preventDefault(); header.style.borderColor='var(--brass)'; });
+        header.addEventListener('dragleave', ()=>{ header.style.borderColor=''; });
+        header.addEventListener('drop', async (e)=>{
+          e.preventDefault();
+          header.style.borderColor='';
+          if(dragInfo && dragInfo.type==='group' && dragInfo.id!==g.id){
+            const groups = game.groups;
+            const fromIdx = groups.findIndex(x=>x.id===dragInfo.id);
+            const toIdx = groups.findIndex(x=>x.id===g.id);
+            if(fromIdx>-1 && toIdx>-1){ const [moved]=groups.splice(fromIdx,1); groups.splice(toIdx,0,moved); await persistGroups(); }
+          } else if(dragInfo && dragInfo.type==='node'){
+            const draggedNode = allNodesInGame.find(x=>x.id===dragInfo.id);
+            if(draggedNode){
+              draggedNode.groupId = g.id;
+              const siblings = allNodesInGame.filter(x=>x.groupId===g.id && x.id!==draggedNode.id);
+              draggedNode.order = siblings.length? Math.max(...siblings.map(s=>s.order||0))+1 : 0;
+              await persistNodes([draggedNode.id]);
+            }
+          }
+          dragInfo = null;
+          render();
+        });
+      });
+    }
+    renderNarrationsList();
+
+    panel.querySelector('#addGroupBtn').onclick = async ()=>{
+      const name = prompt('Group name', 'New group');
+      if(!name || !name.trim()) return;
+      game.groups = game.groups || [];
+      game.groups.push({id: uid(), name: name.trim(), collapsed:false});
+      await persistGroups();
+      render();
+    };
+
+    // delete game
+    panel.querySelector('#deleteGameBtn').onclick = async ()=>{
+      if(!confirm(`Remove "${game.name}" and all its narrations? This cannot be undone.`)) return;
+      for(const n of nodes){ await sDel('node:'+n.id); }
+      await sDel('node-index:'+game.id);
+      await sDel('game:'+game.id);
+      let idx = await sGet('game-index') || [];
+      idx = idx.filter(x=>x!==game.id);
+      await sSet('game-index', idx);
+      games = games.filter(g=>g.id!==game.id);
+      delete nodesByGame[game.id];
+      route = {view:'library', gameId:null};
+      toast('Game removed.');
+      render();
+    };
+
+    return panel;
+  }
+
+  // ---------------- Escape closes whichever modal is open ----------------
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Escape') return;
+    const reader = document.getElementById('narrationReaderOverlay');
+    if(reader){
+      e.preventDefault();
+      readerNode = null; readerResult = null; readerAutoPlay = false;
+      reader.remove();
+      render();
+      return;
+    }
+    const otherModal = document.querySelector('.reader-overlay');
+    if(otherModal){
+      e.preventDefault();
+      otherModal.remove();
+      return;
+    }
+    if(manageMode){
+      const cancelBtn = document.querySelector('.manage-panel #cancelEdit');
+      if(cancelBtn){ e.preventDefault(); cancelBtn.click(); }
+    }
+  });
+
+  // ---------------- Space bar plays/pauses the reader's audio ----------------
+  document.addEventListener('keydown', (e)=>{
+    if(e.code !== 'Space' && e.key !== ' ') return;
+    const reader = document.getElementById('narrationReaderOverlay');
+    if(!reader) return;
+    const active = document.activeElement;
+    const tag = active && active.tagName;
+    if(tag==='BUTTON' || tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || tag==='A') return; // let space activate the focused control instead
+    const audioEl = reader.querySelector('audio');
+    if(!audioEl) return;
+    e.preventDefault();
+    if(audioEl.paused) audioEl.play().catch(()=>{});
+    else audioEl.pause();
+  });
+
+  // ---------------- Manage Codex fast keys ----------------
+  async function switchToPathAndPaste(toggleGroup, field){
+    if(!toggleGroup || !field){
+      toast('That field isn\'t open right now.');
+      return;
+    }
+    const pathBtn = toggleGroup.querySelector('button[data-m="path"]');
+    if(pathBtn) pathBtn.click();
+    field.focus();
+    try{
+      const text = await navigator.clipboard.readText();
+      if(text){
+        field.value = text;
+        field.dispatchEvent(new Event('input', {bubbles:true}));
+        toast('Pasted from clipboard.');
+      }
+    }catch(err){
+      toast('Could not read the clipboard — your browser may need permission for this.');
+    }
+  }
+  function currentImagePathTarget(){
+    const gameToggle = document.querySelector('.reader-overlay #ngImgToggle');
+    if(gameToggle){
+      return { toggle: gameToggle, field: document.querySelector('.reader-overlay #ngImgPath') };
+    }
+    const narrToggle = document.querySelector('.manage-panel .media-toggle[data-t="image"]');
+    if(narrToggle){
+      return { toggle: narrToggle, field: document.querySelector('.manage-panel #nImagePath') };
+    }
+    return null;
+  }
+  function currentAudioPathTarget(){
+    const narrToggle = document.querySelector('.manage-panel .media-toggle[data-t="audio"]');
+    if(narrToggle){
+      return { toggle: narrToggle, field: document.querySelector('.manage-panel #nAudioPath') };
+    }
+    return null;
+  }
+  // Duplicates the most recently saved narration, points the copy's prerequisite at that
+  // original (so it continues on from it), and focuses the title field to rename it.
+  async function quickChainFromLastEdited(){
+    const original = findNodeById(lastEditedNodeId);
+    if(!original){ toast('Save a narration first, then Shift+↓ adds the next one after it.'); return; }
+    const game = games.find(g=>g.id===original.gameId);
+    if(!game){ toast('Could not find the game for that narration.'); return; }
+    const siblings = (nodesByGame[game.id]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
+    const copy = {
+      ...original,
+      id: uid(),
+      title: original.title + ' (copy)',
+      choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
+      prerequisites: [{nodeId: original.id, choiceId: null, group:'all'}],
+      order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
+      createdAt: Date.now()
+    };
+    const ok = await sSet('node:'+copy.id, copy);
+    if(!ok){ toast('Could not create the next narration — please try again.'); return; }
+    const nodeIndex = await sGet('node-index:'+game.id) || [];
+    nodeIndex.push(copy.id);
+    await sSet('node-index:'+game.id, nodeIndex);
+    nodesByGame[game.id].push(copy);
+    route = {view:'game', gameId: game.id};
+    editingNodeId = copy.id;
+    lastEditedNodeId = copy.id;
+    toast('Added the next narration — requires "'+original.title+'".');
+    render();
+    setTimeout(()=>{
+      const titleInput = document.querySelector('.manage-panel #nTitle');
+      if(titleInput){ titleInput.focus(); titleInput.select(); }
+    }, 30);
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(!manageMode) return;
+    const active = document.activeElement;
+    const tag = active && active.tagName;
+    const isTextEditing = tag==='TEXTAREA' || (tag==='INPUT' && !['checkbox','radio','button','submit','file'].includes(active.type));
+    if(e.shiftKey && e.key==='Enter' && !isTextEditing){
+      const saveBtn = document.querySelector('.manage-panel #saveNode');
+      if(saveBtn){ e.preventDefault(); saveBtn.click(); }
+      return;
+    }
+    if(e.shiftKey && e.key==='ArrowRight' && !isTextEditing){
+      e.preventDefault();
+      const target = currentImagePathTarget();
+      if(target) switchToPathAndPaste(target.toggle, target.field);
+      else toast('No image field is open right now.');
+      return;
+    }
+    if(e.shiftKey && e.key==='ArrowLeft' && !isTextEditing){
+      e.preventDefault();
+      const target = currentAudioPathTarget();
+      if(target) switchToPathAndPaste(target.toggle, target.field);
+      else toast('No audio field is open right now.');
+      return;
+    }
+    if(e.shiftKey && e.key==='ArrowDown' && !isTextEditing){
+      e.preventDefault();
+      quickChainFromLastEdited();
+    }
+  });
+
+  loadAll();
+})();
+</script>
+</body>
+</html>
