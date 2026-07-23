@@ -1,0 +1,158 @@
+Add an option for hidden nodes that should only be shown in "Manage Codex". Also add nodes that are completed by default — automatically proceed to next node or return to index.
+
+Change order of items, and add possibility to group items, in lists in Manage Codex. Add functionality to open and close groups.
+
+Add font option for title and text for each game.
+
+Also save settings together with the structure.
+
+Add a proceed button in the modal, if there is only one way forward. It should open the next modal otherwise return to index.
+
+Make it possible to use both and/or prerequisites for each node.
+
+---
+
+Make the options drag-and-dropable to change order and to group the items.
+Add a setting to only show the choices in a node when its narration is done.
+Add option to make a node hidden.
+
+Add possibility to combine and/or-choices.
+
+Add option to add own fonts.
+
+---
+public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3
+---
+Change the "Completed by default" option to automatically complete when all prerequisites are fulfilled. No user interaction is needed.
+
+Option for each node: don't add node to log. Alt. only add title/text to log.
+
+FEATURE FIX: To the setting "Automatically open the next narration when it unlocks" also close the modal that finished.
+
+FEATURE FIX: add html (will probably present opportunity to add script inside node - step one up/down)
+
+copy other nodes
+
+Setting: Add tick sound when new node opens.
+Setting: Add scribe sound when adding to log.
+
+--> ADDED MANUALLY Add symbol tokens font
+  @font-face {
+      font-family: "Arkhamslim";
+      src: url(public/fonts/arkhamslim.ttf) format("truetype");
+  }
+  .arkhamslim{
+      color:var(--parchment);
+      font-family:'Arkhamslim';
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      transition:background-color .2s, color .2s;
+  }
+--> remove: "Chose: "
+--> change:
+    entries.forEach(({node,record})=>{
+// ADD
+        if ((node.choices||[]).find(c=>c.id===record.choiceId)?.label === 'Otherwise proceed...') return
+// MODIFY: kursiv och nurad för varje alternativ i multi-logg.
+          choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
+// MODIFY: kursiv och nurad för varje alternativ i multi-logg.
+          choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
+
+Add a file selector when adding narration and images.
+Setting: Change direction of log. latest first, latest last.
+FIX Add the subdirectory path to the image and narration as well.
+!!!!
+
+OK TEST 24 Make modal wider - fill whole screen.
+OK TEST 25 Make the play button on the graph also mark the node as heard when it finishes playing if there is only one option forward.
+OK TEST 26 Do the same thing for the mini-play button on the shelf cards.
+OK TEST 27 Make it possible to change the style of the audio player. Do some variants and make them selectable in the settings.
+OK TEST 28 Add test play button on manage codex to check the audio file.
+OK DUP28 TEST 29 Add test play button in "manage codex" to check the audio file. This should not progress the narration.
+OK TEST 30 Format the information in the graph better. For example, break long lines.
+OK TEST 31 --- DEFINE MORE Make fast keys. (t ex SHIFT-left arrow = Add Narration/Save Changes)
+OK MEN BLEV SÅDÄR EFTERSOM MAN MÅSTE ANGE PATH I ANNAT FÄLT TEST 32 Add a file finder when entering a local file.
+OK MEN BLEWV SÅDÄR. FLER SAKER MÅSTE ÄNDRA FÄRG. TEST 33 Make it possible to change the style of each game.
+OK TEST 34 Make it possible to close each modal with the ESC-key.
+OK TEST 35 When "Text only" is shown in the log, move the date to the right.
+OK TEST 36 Put the timestamp on the same line as the text in "Text only" log entries.
+OK OUTSIDE TEXT FOCUS TEST 37 Change the fast key SHIFT-left arrow to SHIFT-RETURN.
+OK TEST 38 Make a fast key, SHIFT-right arrow to copy content of copy buffer to the image field in "local file path".
+        Make SHIFT-left arrow to copy content of copy buffer to the audio field in "local field path".
+OK TEST 40 Center the campaign graph in top-down mode.
+OK TEST 42 Add a shortcut, SHIFT-down arrow, to copy latest edited node and set a prerequisite to it and move focus to the title field.
+TEST 43 Add an option to show the node in the campaign map as a circle  or as a play icon if there is narration. Also make the node show its text as a tooltip.
+        Add another option to show the node as a line without any text.
+OK TEST 44 Line or circle node should be a setting for each node.
+OK TEST Web URL for narration and images
+OK TEST 45 Make space stop and start player if modal is opened
+OK TEST 46 Make an option for every node to be shown as a small circle or as a play icon if there is a narrative together with title only, text only, option only, or no text at all.
+OK         Make a box map shape.
+OK TEST 48 When the shortcut SHIFT-left arrow is used, first open the local narration path, put focus on the field and paste the copybuffer.
+OK        Do the same functionality for SHIFT-rigt arrow but for the image.
+OK TEST 49 Make index and campaign map organized in folders corresponding to the groups in Manage codex. The folders can be opened and closed.
+OK TEST 50 Also make an option to have the nodes show the full text as a tooltip.
+OK TEST 51 Add an alternative to map tooltip - text only
+MAYBE TEST 52 Add an alternative to map shape - label only
+    Map shape as dot
+OK TEST 53 Add multiple choice option to the nodes with no res as pos.
+OK TEST 54 Accept zero alternatives in multi choice.
+OK TEST 55 Make an animation of new nodes when new nodes are unlocked.
+OK TEST 55 Also make an animationof the modal box when it is opened.
+OK TEST 55 Add the animations as a new option is settings.
+
+
+
+OK MANUAL Multiple choices to multiple lines in log.
+OK MANUAL kursiv och nurad för varje alternativ i multi-logg.
+OK MANUAL Add symbol tokens font arkhamslim
+MANUAL add encounter set icons
+OK MANUAL Change name of the project to Loquitur with the subtitle  "it speaks for itself", Res ipsa loquitur:
+MANUAL Default Box without resolution
+MANUAL Add option to hide heard cards but keep heard in campaign log.
+OK MANUAL LOG ENTRY alt. Full ... -> Choice made
+Hide line in graph behind nodes.
+HEARD should only be shown on narrative nodes. Otherwise, checkmark?
+change style
+
+OK MANUAL Maintain newlines in tooltip texts.
+If a folder doesn't have anything to show, hide it.
+Automatically open the folder if it has any nodes.
+Replace "any one of" in Campaign log with the selection that was done.
+MAYBE Change the icon on an index card to a player icon that can play content if there is any. Otherwise don't show an icon.
+Make a node template that many nodes can refer to. One change in the node changes all referents. However, the prerequisites can change.
+Path saknas när man gör Browse, alt. path som anges används inte
+OLD Also make an option for every node to only show text in the campaign map.
+
+Only show the path from the chosen node, not the alternative nodes. (but do in Manage Codex-mode)
+Show any one of (OR) lines in different line styles.
+More fast keys...
+MAYBE: set text in "Continue" button. (Mark as heard - only when narration)
+
+Cleanup graph. Make it more streamlined.
+KANSKE GÅR MED HTML add textbox in resolution (to show Victory-X value) - man kan göra många vägar med choice
+
+//Make groups selectable as prerequisites.
+Make groups of prerequisites that are linked by OR.
+Make list of and/or requirements OR-list. Each element in list OR-ed.
+--- DEFINE MORE Somehow improve addition of assets.
+
+FIX (KANSKE INTE BEHÖVS) the title and text - text is missing
+
+
+Name of the game:
+=================
+GameVoice
+GameVox
+Loquitur (it speaks for itself) - If you are trying to say "it speaks for itself," the famous Latin idiom is loquitur (or res ipsa loquitur).
+VoxPopuli
+PopVox
+VoxSubTerra
+
+ LO
+QUIT
+ UR
+
+ LOQ
+ U I
+ TUR

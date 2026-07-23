@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Campaign Codex</title>
+<title>Loquitur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -1008,8 +1008,8 @@
       <div class="brand">
         ${CREST}
         <div>
-          <h1>Campaign Codex</h1>
-          <div class="sub">VOICE NARRATION LIBRARY FOR TABLETOP CAMPAIGNS</div>
+          <h1>res ipsa LOQUITUR  — Campaign Codex</h1>
+          <div class="sub"><i>"it speaks for itself"</i> — VOICE NARRATION LIBRARY FOR TABLETOP CAMPAIGNS</div>
         </div>
       </div>
       <div class="top-actions">
@@ -1667,8 +1667,10 @@
 
       let choiceLine = '';
       let resultLine = '';
+      let choicesLength = 0;
       if(Array.isArray(record.choiceIds) && record.choiceIds.length){
         const chosen = (node.choices||[]).filter(c=>record.choiceIds.includes(c.id));
+        choicesLength = chosen.length
         if(chosen.length){
           choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
           const texts = chosen.filter(c=>c.resultText).map(c=>renderMarkdown(c.resultText));
@@ -1677,11 +1679,28 @@
       } else if(record.choiceId){
         const c = (node.choices||[]).find(c=>c.id===record.choiceId);
         if(c){
+            choicesLength = 1
           choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
           if(c.resultText) resultLine = `<div class="log-result">${renderMarkdown(c.resultText)}</div>`;
         }
       }
-      item.innerHTML = `
+      if(mode==='choicesOnly') {
+          if(choicesLength > 0 || manageMode) {
+            item.innerHTML = `
+          <div class="log-top" style="align-items:flex-start;">
+            ${choiceLine}
+            <span class="log-time">${escapeHtml(when)}</span>
+          </div>
+          ${skippedNote}
+        `;
+            list.appendChild(item);
+            return;
+        } else {
+          return
+        }
+      }
+
+        item.innerHTML = `
         <div class="log-top">
           <span class="log-title">${renderTitle(node.title)}</span>
           <span class="log-time">${escapeHtml(when)}</span>
@@ -1945,7 +1964,8 @@
 
     // Strips HTML/markdown syntax down to plain text for a compact map preview.
     function plainPreview(src){
-      return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
+      return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').trim();
+      // return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
     }
 
     let boxes = '';
@@ -2421,6 +2441,7 @@
         <label>Log entry, once heard</label>
         <select id="nLogMode" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
           <option value="full" ${(!editingNode || (editingNode.logMode||'full')==='full')?'selected':''}>Full — title, choice made, and result text</option>
+          <option value="choicesOnly" ${editingNode && editingNode.logMode==='choicesOnly'?'selected':''}>Choices made only</option>
           <option value="titleOnly" ${editingNode && editingNode.logMode==='titleOnly'?'selected':''}>Title only</option>
           <option value="textOnly" ${editingNode && editingNode.logMode==='textOnly'?'selected':''}>Text only (accompanying text, no title)</option>
           <option value="none" ${editingNode && editingNode.logMode==='none'?'selected':''}>Don't add to the log</option>
