@@ -110,7 +110,7 @@ OK MANUAL LOG ENTRY alt. Full ... -> Choice made
 OK MANUAL Maintain new lines in tooltip texts.
 MANUAL add encounter set icons
 MANUAL Default Box without resolution
-MANUAL Add option to hide heard cards but keep heard in campaign log.
+??? MANUAL Add option to hide heard cards but keep heard in campaign log.
 
 Hide line in graph behind nodes.
 HEARD should only be shown on narrative nodes. Otherwise, checkmark?
