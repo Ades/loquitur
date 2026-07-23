@@ -100,22 +100,23 @@ OK TEST 54 Accept zero alternatives in multi choice.
 OK TEST 55 Make an animation of new nodes when new nodes are unlocked.
 OK TEST 55 Also make an animationof the modal box when it is opened.
 OK TEST 55 Add the animations as a new option is settings.
-
-
+TEST 56 Make the style of the checkbox to better match the selected style.
 
 OK MANUAL Multiple choices to multiple lines in log.
 OK MANUAL kursiv och nurad för varje alternativ i multi-logg.
 OK MANUAL Add symbol tokens font arkhamslim
-MANUAL add encounter set icons
 OK MANUAL Change name of the project to Loquitur with the subtitle  "it speaks for itself", Res ipsa loquitur:
+OK MANUAL LOG ENTRY alt. Full ... -> Choice made
+OK MANUAL Maintain new lines in tooltip texts.
+MANUAL add encounter set icons
 MANUAL Default Box without resolution
 MANUAL Add option to hide heard cards but keep heard in campaign log.
-OK MANUAL LOG ENTRY alt. Full ... -> Choice made
+
 Hide line in graph behind nodes.
 HEARD should only be shown on narrative nodes. Otherwise, checkmark?
 change style
+Gör OR-linjer heldragna och inte streckade som de är nu.
 
-OK MANUAL Maintain newlines in tooltip texts.
 If a folder doesn't have anything to show, hide it.
 Automatically open the folder if it has any nodes.
 Replace "any one of" in Campaign log with the selection that was done.
