@@ -5,6 +5,11 @@
 <title>Loquitur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 <style>
   :root{
     --font-title:'Cinzel',serif;
@@ -372,23 +377,47 @@
   "use strict";
 
   // ---------------- Storage helpers ----------------
-    window.storage = {
-      set:(k,v)=>{
-        localStorage.setItem(k,v)
-        return localStorage.getItem(k).length
-      },
-      get: k=>localStorage.getItem(k)
+  //   window.storage = {
+  //     set:(k,v)=>{
+  //       localStorage.setItem(k,v)
+  //       return localStorage.getItem(k).length
+  //     },
+  //     get: k=>localStorage.getItem(k)
+  //   }
+    // Prefers the platform's persistent artifact storage (window.storage) when available.
+    // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
+    // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
+    // page refresh returns to the same state either way.
+    const LS_PREFIX = 'campaign-codex:';
+    function hasPlatformStorage(){
+        return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
     }
-
   async function sGet(key){
-    try{ const r = await window.storage.get(key); return r ? JSON.parse(r.value) : null; }
-    catch(e){ return null; }
+    try{
+      if(hasPlatformStorage()){
+        const r = await window.storage.get(key);
+        return r ? JSON.parse(r.value) : null;
+      }
+      const raw = localStorage.getItem(LS_PREFIX+key);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
   }
   async function sSet(key, val){
-    try{ const r = await window.storage.set(key, JSON.stringify(val)); return !!r; }
-    catch(e){ console.error("storage set failed", key, e); return false; }
+    try{
+      if(hasPlatformStorage()){
+        const r = await window.storage.set(key, JSON.stringify(val));
+        return !!r;
+      }
+      localStorage.setItem(LS_PREFIX+key, JSON.stringify(val));
+      return true;
+    }catch(e){ console.error("storage set failed", key, e); return false; }
   }
-  async function sDel(key){ try{ await window.storage.delete(key); }catch(e){} }
+  async function sDel(key){
+    try{
+      if(hasPlatformStorage()){ await window.storage.delete(key); return; }
+      localStorage.removeItem(LS_PREFIX+key);
+    }catch(e){}
+  }
 
   const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
   const fmtBytes = (n) => n > 1024*1024 ? (n/1024/1024).toFixed(1)+' MB' : Math.round(n/1024)+' KB';
@@ -1308,9 +1337,9 @@
             <label>Cover image (optional)</label>
             <div class="media-toggle" id="ngImgToggle">
               ${existingGame && existingGame.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-              <button type="button" data-m="file" class="${existingGame && existingGame.image? '':'active'}">Upload</button>
+              <button type="button" data-m="file">Upload</button>
               <button type="button" data-m="url">Web URL</button>
-              <button type="button" data-m="path">Local file path</button>
+              <button type="button" data-m="path" class="${existingGame && existingGame.image? '':'active'}">Local file path</button>
             </div>
             <input type="file" id="ngImgFile" accept="image/*" style="${existingGame && existingGame.image? 'display:none;':''}">
             <input type="url" id="ngImgUrl" placeholder="https://…" style="display:none;">
@@ -1342,9 +1371,9 @@
               <div id="ngTitleCustomWrap" style="display:${existingGame && existingGame.titleFont==='custom'?'block':'none'};margin-top:8px;">
                 <div class="media-toggle" id="ngTitleCustomToggle">
                   ${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-                  <button type="button" data-m="file" class="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '':'active'}">Upload</button>
+                  <button type="button" data-m="file">Upload</button>
                   <button type="button" data-m="url">Web URL</button>
-                  <button type="button" data-m="path">Local file path</button>
+                  <button type="button" data-m="path" class="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '':'active'}">Local file path</button>
                 </div>
                 <input type="file" id="ngTitleFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? 'display:none;':''}">
                 <input type="url" id="ngTitleFontUrl" placeholder="https://…/font.woff2" style="display:none;">
@@ -1369,9 +1398,9 @@
               <div id="ngTextCustomWrap" style="display:${existingGame && existingGame.textFont==='custom'?'block':'none'};margin-top:8px;">
                 <div class="media-toggle" id="ngTextCustomToggle">
                   ${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-                  <button type="button" data-m="file" class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Upload</button>
+                  <button type="button" data-m="file" >Upload</button>
                   <button type="button" data-m="url">Web URL</button>
-                  <button type="button" data-m="path">Local file path</button>
+                  <button type="button" data-m="path"class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Local file path</button>
                 </div>
                 <input type="file" id="ngTextFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? 'display:none;':''}">
                 <input type="url" id="ngTextFontUrl" placeholder="https://…/font.woff2" style="display:none;">
@@ -1497,6 +1526,7 @@
         return;
       }
       const id = existingGame ? existingGame.id : uid();
+      const groups = existingGame ? existingGame.groups : [];
 
       const titleFontVal = overlay.querySelector('#ngTitleFont').value;
       const textFontVal = overlay.querySelector('#ngTextFont').value;
@@ -1543,7 +1573,8 @@
         titleFont: titleFontVal,
         textFont: textFontVal,
         customTitleFont, customTextFont,
-        createdAt: existingGame ? existingGame.createdAt : Date.now()
+        createdAt: existingGame ? existingGame.createdAt : Date.now(),
+        groups
       };
       const ok = await sSet('game:'+id, game);
       if(!ok){ toast('Could not save the game — please try again, or link the image instead of uploading it.'); btn.disabled=false; btn.textContent = existingGame? 'Save changes':'Save game'; return; }
@@ -1582,7 +1613,7 @@
     const gh = document.createElement('div');
     gh.className='game-header';
     gh.innerHTML = `
-      <div class="art" style="${game.image?`background-image:url('${game.image}')`:''}"></div>
+      <div class="art" style="${game.image?`background-image:url('${game?.imageSubdir+game.image}')`:''}"></div>
       <div class="meta">
         <h2>${renderTitle(game.name)}</h2>
         <div class="desc">${renderMarkdown(game.description||'')}</div>
@@ -1635,7 +1666,7 @@
     const list = document.createElement('div');
     list.className='log-list';
     entries.forEach(({node,record})=>{
-        if ((node.choices||[]).find(c=>c.id===record.choiceId)?.label === 'Otherwise proceed...') return
+      //  if ((node.choices||[]).find(c=>c.id===record.choiceId)?.label === 'Otherwise proceed...') return
       const item = document.createElement('div');
       item.className='log-item';
       const when = record.completedAt ? new Date(record.completedAt).toLocaleString() : 'Available from the start';
@@ -1955,7 +1986,7 @@
           d = `M${from.x+circleR},${from.y} C${midx},${from.y} ${midx},${to.y} ${to.x-circleR},${to.y}`;
           labelX = midx; labelY = (from.y+to.y)/2 - 6;
         }
-        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'?'stroke-dasharray="4 3"':''}/>`;
+        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'&&false?'stroke-dasharray="4 3"':''}/>`;
         if(label){
           lines += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="9" class="map-node-label" fill="${pal.connDone}" style="font-style:italic;">${escapeHtml(label)}</text>`;
         }
@@ -1976,8 +2007,8 @@
       const normPrereqs = normalizedPrereqs(n);
       const anyCount = normPrereqs.filter(p=>p.group==='any').length;
       const allCount = normPrereqs.length - anyCount;
-      const isOr = anyCount>0;
-      const orLabelText = (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
+      const isOr = false // anyCount>0;
+      const orLabelText = '' // (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
       const fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
       const stroke = done ? pal.doneStroke : (avail ? pal.availStroke : pal.lockedStroke);
       const textColor = avail ? pal.textAvail : pal.textLocked;
@@ -2022,7 +2053,7 @@
         const bw = 132, bh = 60;
         const lines = labelMode==='none' ? [] : wrapLines(labelSrc, 17, 2);
         const titleBlockY = lines.length<=1 ? p.y - 2 : p.y - 11;
-        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${isOr?'4 3':'0'}"/>`;
+        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${isOr&&false?'4 3':'0'}"/>`;
         labelSvg = lines.map((line,i)=>
           `<text x="${p.x}" y="${titleBlockY + i*14}" text-anchor="middle" font-size="11" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
         ).join('') + `<text x="${p.x}" y="${p.y+bh/2-8}" text-anchor="middle" font-size="9" class="map-node-label" fill="${stroke}" style="letter-spacing:.06em;">${statusWord}</text>`;
@@ -2040,7 +2071,7 @@
         // the circle (or play-icon, or its no-audio dot fallback), centered at p.x,p.y
         const isDotFallback = shapeMode==='playIcon' && !n.audio;
         const r = isDotFallback ? 9 : circleR;
-        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr?'3 3':'0'}"/>`;
+        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr&&false?'3 3':'0'}"/>`;
         if(asPlayIcon){
           shapeSvg += `
             <g class="${showPlay?'map-mini-play':''}" data-id="${n.id}" style="cursor:${showPlay?'pointer':'inherit'};">
@@ -2170,7 +2201,7 @@
     const contentHtml = `
       <div class="content">
         <h2>${renderTitle(n.title)}</h2>
-        ${(!readerResult && n.audio) ? buildAudioMarkup(n.audio) : ''}
+        ${(!readerResult && n.audio) ? buildAudioMarkup(n?.audioSubdir+n.audio) : ''}
         ${(!readerResult && !n.audio) ? `<div class="hint" style="margin-bottom:16px;">No audio attached to this narration.</div>` : ''}
         ${!readerResult ? `<div class="body-text">${renderMarkdown(n.text||'')}</div>` : ''}
         <div id="readerAction"></div>
@@ -2482,14 +2513,14 @@
           <label>Narration audio</label>
           <div class="media-toggle" data-t="audio">
             ${editingNode && editingNode.audio? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-            <button type="button" data-m="file" class="${editingNode && editingNode.audio? '':'active'}">Upload file</button>
+            <button type="button" data-m="file">Upload file</button>
             <button type="button" data-m="url">Web URL</button>
-            <button type="button" data-m="path">Local file path</button>
+            <button type="button" data-m="path" class="${editingNode && editingNode.audio? '':'active'}">Local file path</button>
           </div>
           <input type="file" id="nAudioFile" accept="audio/*" style="${editingNode && editingNode.audio? 'display:none;':''}">
           <input type="url" id="nAudioUrl" placeholder="https://…" style="display:none;">
           <div id="nAudioPathRow" style="display:none;">
-            <input type="text" id="nAudioSubdir" placeholder="Optional subfolder, e.g. audio or assets/narration" style="margin-bottom:6px;">
+            <input type="text" id="nAudioSubdir" placeholder="Optional subfolder, e.g. audio or assets/narration" style="margin-bottom:6px;" value="${(editingNode && editingNode.audioSubdir) ? escapeHtml(editingNode.audioSubdir) : ''}">
             <div class="path-picker-row">
               <input type="text" id="nAudioPath" placeholder="e.g. audio/shrine.mp3 or file:///C:/Games/shrine.mp3" value="${editingNode && editingNode.audio && !/^https?:\/\//i.test(editingNode.audio) && !editingNode.audio.startsWith('data:') ? escapeHtml(editingNode.audio) : ''}">
               <button type="button" class="btn ghost small" id="nAudioPathBrowse">Browse…</button>
@@ -2503,14 +2534,15 @@
           <label>Image (optional)</label>
           <div class="media-toggle" data-t="image">
             ${editingNode && editingNode.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-            <button type="button" data-m="file" class="${editingNode && editingNode.image? '':'active'}">Upload file</button>
+            <button type="button" data-m="file">Upload file</button>
             <button type="button" data-m="url">Web URL</button>
-            <button type="button" data-m="path">Local file path</button>
+            <button type="button" data-m="path" class="${editingNode && editingNode.image? '':'active'}">Local file path</button>
           </div>
           <input type="file" id="nImageFile" accept="image/*" style="${editingNode && editingNode.image? 'display:none;':''}">
           <input type="url" id="nImageUrl" placeholder="https://…" style="display:none;">
           <div id="nImagePathRow" style="display:none;">
-            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;">
+<!--            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;">-->
+            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;" value="${(editingNode && editingNode.imageSubdir) ? escapeHtml(editingNode.imageSubdir) : ''}">
             <div class="path-picker-row">
               <input type="text" id="nImagePath" placeholder="e.g. images/shrine.jpg or file:///C:/Games/shrine.jpg" value="${editingNode && editingNode.image && !/^https?:\/\//i.test(editingNode.image) && !editingNode.image.startsWith('data:') ? escapeHtml(editingNode.image) : ''}">
               <button type="button" class="btn ghost small" id="nImagePathBrowse">Browse…</button>
@@ -2675,7 +2707,11 @@
       saveBtn.disabled = true; saveBtn.textContent='Saving…';
 
       let audio = editingNode ? (editingNode.audio||'') : '';
+      let audioSubdir = editingNode ? (editingNode.audioSubdir||'') : '';
       let image = editingNode ? (editingNode.image||'') : '';
+      let imageSubdir = editingNode ? (editingNode.imageSubdir||'') : '';
+      // console.log('EDITINGNODE',editingNode)
+      // let imageSubdir = editingNode ? (editingNode.nImageSubdir||'') : '';
 
       try{
         const audioMode = panel.querySelector('.media-toggle[data-t="audio"] button.active').dataset.m;
@@ -2684,7 +2720,8 @@
         } else if(audioMode==='url'){
           audio = panel.querySelector('#nAudioUrl').value.trim();
         } else if(audioMode==='path'){
-          audio = panel.querySelector('#nAudioPath').value.trim();
+            audioSubdir = panel.querySelector('#nAudioSubdir').value.trim()
+            audio = panel.querySelector('#nAudioPath').value.trim();
         } else if(audioMode==='file' && !panel.querySelector('#nAudioFile').files[0] && !editingNode){
           audio = '';
         }
@@ -2694,7 +2731,10 @@
         } else if(imageMode==='url'){
           image = panel.querySelector('#nImageUrl').value.trim();
         } else if(imageMode==='path'){
-          image = panel.querySelector('#nImagePath').value.trim();
+            imageSubdir = panel.querySelector('#nImageSubdir').value.trim()
+                // joinSubdirPath(panel.querySelector('#nImageSubdir').value.trim(), panel.querySelector('#nImagePath').value.trim())
+            // console.log('IMAGE',image)
+            image = panel.querySelector('#nImagePath').value.trim();
         } else if(imageMode==='file' && !panel.querySelector('#nImageFile').files[0] && !editingNode){
           image = '';
         }
@@ -2732,7 +2772,7 @@
       const node = {
         id, gameId: game.id, title,
         text: panel.querySelector('#nText').value.trim(),
-        audio, image, imagePosition, prerequisites, choices, multiChoice,
+        audio, audioSubdir, image, imageSubdir, imagePosition, prerequisites, choices, multiChoice,
         hidden, completedByDefault, logMode, mapShape, mapLabel, mapTooltip, groupId, order,
         createdAt: editingNode ? editingNode.createdAt : Date.now()
       };
@@ -2776,6 +2816,7 @@
       const row = document.createElement('div');
       row.className = 'node-manage-item';
       row.draggable = true;
+      row.dataset.id = n.id;
       const normPrereqs = normalizedPrereqs(n);
       const anyCount = normPrereqs.filter(p=>p.group==='any').length;
       const allCount = normPrereqs.length - anyCount;
@@ -3036,8 +3077,11 @@
     if(pathBtn) pathBtn.click();
     field.focus();
     try{
-      const text = await navigator.clipboard.readText();
-      if(text){
+        // const subdir = (field?.parentNode?.parentNode?.querySelector('[id*="Subdir"]')?.value || '').trim()
+        // console.log('SBDIR',subdir, field)
+      // const text = joinSubdirPath(subdir,await navigator.clipboard.readText());
+        const text = await navigator.clipboard.readText();
+        if(text){
         field.value = text;
         field.dispatchEvent(new Event('input', {bubbles:true}));
         toast('Pasted from clipboard.');
@@ -3097,6 +3141,25 @@
       if(titleInput){ titleInput.focus(); titleInput.select(); }
     }, 30);
   }
+  // Cycles editingNodeId through whatever narration rows are currently visible in Manage
+  // Codex (i.e. inside expanded groups, plus Ungrouped), in their displayed order. Scrolls
+  // the title into view but deliberately does not focus it, so repeated presses keep working.
+  function cycleManageNode(direction){
+    const rows = Array.from(document.querySelectorAll('.manage-panel #narrationsList .node-manage-item'))
+      .filter(r=> r.offsetParent!==null);
+    if(rows.length===0){ toast('No narrations are visible to cycle through — expand a group first.'); return; }
+    const ids = rows.map(r=>r.dataset.id);
+    const idx = ids.indexOf(editingNodeId);
+    let nextIdx;
+    if(idx===-1){ nextIdx = direction>0 ? 0 : ids.length-1; }
+    else { nextIdx = (idx + direction + ids.length) % ids.length; }
+    editingNodeId = ids[nextIdx];
+    render();
+    setTimeout(()=>{
+      const titleField = document.querySelector('.manage-panel #nTitle');
+      if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 30);
+  }
   document.addEventListener('keydown', (e)=>{
     if(!manageMode) return;
     const active = document.activeElement;
@@ -3124,6 +3187,11 @@
     if(e.shiftKey && e.key==='ArrowDown' && !isTextEditing){
       e.preventDefault();
       quickChainFromLastEdited();
+      return;
+    }
+    if(e.key==='>' && !isTextEditing){
+      e.preventDefault();
+      cycleManageNode(e.ctrlKey ? -1 : 1);
     }
   });
 

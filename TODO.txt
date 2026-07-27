@@ -101,21 +101,30 @@ OK TEST 55 Make an animation of new nodes when new nodes are unlocked.
 OK TEST 55 Also make an animationof the modal box when it is opened.
 OK TEST 55 Add the animations as a new option is settings.
 TEST 56 Make the style of the checkbox to better match the selected style.
+TEST 57 Save the structure and progress to localStorage so a page refresh returns to the same state.
+TEST 58 load the stored structure and progress from localStorage after refresh
+TEST 59 In manage codex-mode, add a shortcut to cycle through the next node that is shown in an open group folder. Go to the title, but do not focus on it. The keys to focus next available node in an open group is SHIFT->. CTRL-SHIFT-> goes in reverse.
 
+If local path entered, select it when a node is opened.
+OK MANUAL All groups are removed when saving the game.
 OK MANUAL Multiple choices to multiple lines in log.
 OK MANUAL kursiv och nurad för varje alternativ i multi-logg.
 OK MANUAL Add symbol tokens font arkhamslim
 OK MANUAL Change name of the project to Loquitur with the subtitle  "it speaks for itself", Res ipsa loquitur:
 OK MANUAL LOG ENTRY alt. Full ... -> Choice made
 OK MANUAL Maintain new lines in tooltip texts.
+MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
 MANUAL add encounter set icons
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.
+Errata box (red-pinkish)
+Extra rule box (square corners)
+Edit game använder shortcuts för underliggande node.
 
+Favicon
 Hide line in graph behind nodes.
 HEARD should only be shown on narrative nodes. Otherwise, checkmark?
 change style
-Gör OR-linjer heldragna och inte streckade som de är nu.
 
 If a folder doesn't have anything to show, hide it.
 Automatically open the folder if it has any nodes.
@@ -157,3 +166,27 @@ QUIT
  LOQ
  U I
  TUR
+
+ What improvements to the app do you suggest?
+
+
+ Inventoried existing features and synthesized impactful enhancement opportunities
+ Inventoried existing features and synthesized impactful enhancement opportunities
+ Looking back at everything we've built, here's where I'd focus next, roughly in order of impact:
+
+ The edit form has grown large. A narration now has title, group, hidden, auto-complete, log mode, map shape/label/tooltip, text, audio, image + position, prerequisites, choices, multi-choice — that's a lot for a form used constantly. I'd collapse the less-common settings (map appearance, log mode, hidden/auto-complete) behind an "Advanced" disclosure, so a normal add-a-narration flow is just title, text, audio, prerequisites, save.
+
+ Finding things gets hard as a codex grows. There's no search or filter in Manage Codex — with dozens of narrations across several groups, scrolling and hunting is the only option. A simple search box filtering the "Existing narrations" list by title/text would pay for itself quickly, especially now that you've got the cycling fast keys to complement it.
+
+ Structural validation. Nothing currently warns about orphaned narrations (unreachable from any start node), prerequisite cycles, or choices with no downstream content. Even a lightweight "check my campaign" report in Manage Codex would catch authoring mistakes before a player hits a dead end.
+
+ The map's group-folder split loses cross-group connections — I flagged this as a known tradeoff when I built it, and it's still true. A small "N narrations in other groups depend on this" indicator, or an option to show unified cross-group connectors as short stub arrows at folder edges, would close that gap.
+
+ Player-side keyboard/accessibility. Manage Codex now has extensive fast keys, but the actual playing experience (shelf, map, reader) has none beyond Space and Esc — no arrow-key navigation between cards, and the custom audio players and mini-play buttons likely need ARIA labels for screen readers.
+
+ Data safety. Everything lives in browser/localStorage with manual export as the only backup path. A gentle periodic reminder ("it's been a while since you exported") or an auto-download-on-close option would reduce the risk of losing work to a cleared cache.
+
+ Touch/tablet support. The drag-and-drop reordering (narrations and groups) uses the HTML5 drag API, which doesn't work on touchscreens — worth a fallback (up/down buttons, or a touch-drag polyfill) if you'd ever use this on a tablet at the table.
+
+ If you want, I can pick one and actually build it — the search box or the advanced-fields collapse would probably give you the most day-to-day relief for the least effort.
+
