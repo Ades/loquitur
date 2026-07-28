@@ -255,7 +255,7 @@
   .reader .close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.4);border:1px solid var(--line);
     color:var(--parchment-dim);width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;display:flex;
     align-items:center;justify-content:center;}
-  .reader-relative{position:relative;}
+  .reader-relative{position:relative;height:100%;}
   .reader .body-text{font-size:15.5px;line-height:1.75;color:var(--parchment);margin-bottom:20px;}
   .body-text p, .result-text p{margin:0 0 10px;}
   .body-text p:last-child, .result-text p:last-child{margin-bottom:0;}
@@ -1613,7 +1613,7 @@
     const gh = document.createElement('div');
     gh.className='game-header';
     gh.innerHTML = `
-      <div class="art" style="${game.image?`background-image:url('${game?.imageSubdir+game.image}')`:''}"></div>
+      <div class="art" style="${game.image?`background-image:url('${game.image}')`:''}"></div>
       <div class="meta">
         <h2>${renderTitle(game.name)}</h2>
         <div class="desc">${renderMarkdown(game.description||'')}</div>
@@ -2201,7 +2201,7 @@
     const contentHtml = `
       <div class="content">
         <h2>${renderTitle(n.title)}</h2>
-        ${(!readerResult && n.audio) ? buildAudioMarkup(n?.audioSubdir+n.audio) : ''}
+        ${(!readerResult && n.audio) ? buildAudioMarkup(n.audio) : ''}
         ${(!readerResult && !n.audio) ? `<div class="hint" style="margin-bottom:16px;">No audio attached to this narration.</div>` : ''}
         ${!readerResult ? `<div class="body-text">${renderMarkdown(n.text||'')}</div>` : ''}
         <div id="readerAction"></div>
@@ -2520,7 +2520,7 @@
           <input type="file" id="nAudioFile" accept="audio/*" style="${editingNode && editingNode.audio? 'display:none;':''}">
           <input type="url" id="nAudioUrl" placeholder="https://…" style="display:none;">
           <div id="nAudioPathRow" style="display:none;">
-            <input type="text" id="nAudioSubdir" placeholder="Optional subfolder, e.g. audio or assets/narration" style="margin-bottom:6px;" value="${(editingNode && editingNode.audioSubdir) ? escapeHtml(editingNode.audioSubdir) : ''}">
+            <input type="text" id="nAudioSubdir" placeholder="Optional subfolder, e.g. audio or assets/narration" style="margin-bottom:6px;">
             <div class="path-picker-row">
               <input type="text" id="nAudioPath" placeholder="e.g. audio/shrine.mp3 or file:///C:/Games/shrine.mp3" value="${editingNode && editingNode.audio && !/^https?:\/\//i.test(editingNode.audio) && !editingNode.audio.startsWith('data:') ? escapeHtml(editingNode.audio) : ''}">
               <button type="button" class="btn ghost small" id="nAudioPathBrowse">Browse…</button>
@@ -2541,8 +2541,7 @@
           <input type="file" id="nImageFile" accept="image/*" style="${editingNode && editingNode.image? 'display:none;':''}">
           <input type="url" id="nImageUrl" placeholder="https://…" style="display:none;">
           <div id="nImagePathRow" style="display:none;">
-<!--            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;">-->
-            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;" value="${(editingNode && editingNode.imageSubdir) ? escapeHtml(editingNode.imageSubdir) : ''}">
+            <input type="text" id="nImageSubdir" placeholder="Optional subfolder, e.g. images or assets/narration" style="margin-bottom:6px;">
             <div class="path-picker-row">
               <input type="text" id="nImagePath" placeholder="e.g. images/shrine.jpg or file:///C:/Games/shrine.jpg" value="${editingNode && editingNode.image && !/^https?:\/\//i.test(editingNode.image) && !editingNode.image.startsWith('data:') ? escapeHtml(editingNode.image) : ''}">
               <button type="button" class="btn ghost small" id="nImagePathBrowse">Browse…</button>
@@ -2596,7 +2595,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence.</span>
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+Shift+&gt;</strong> for the previous one) without stealing focus from the title field.</span>
         <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
       </div>
 
@@ -2707,11 +2706,7 @@
       saveBtn.disabled = true; saveBtn.textContent='Saving…';
 
       let audio = editingNode ? (editingNode.audio||'') : '';
-      let audioSubdir = editingNode ? (editingNode.audioSubdir||'') : '';
       let image = editingNode ? (editingNode.image||'') : '';
-      let imageSubdir = editingNode ? (editingNode.imageSubdir||'') : '';
-      // console.log('EDITINGNODE',editingNode)
-      // let imageSubdir = editingNode ? (editingNode.nImageSubdir||'') : '';
 
       try{
         const audioMode = panel.querySelector('.media-toggle[data-t="audio"] button.active').dataset.m;
@@ -2720,7 +2715,6 @@
         } else if(audioMode==='url'){
           audio = panel.querySelector('#nAudioUrl').value.trim();
         } else if(audioMode==='path'){
-            audioSubdir = panel.querySelector('#nAudioSubdir').value.trim()
             audio = panel.querySelector('#nAudioPath').value.trim();
         } else if(audioMode==='file' && !panel.querySelector('#nAudioFile').files[0] && !editingNode){
           audio = '';
@@ -2731,9 +2725,6 @@
         } else if(imageMode==='url'){
           image = panel.querySelector('#nImageUrl').value.trim();
         } else if(imageMode==='path'){
-            imageSubdir = panel.querySelector('#nImageSubdir').value.trim()
-                // joinSubdirPath(panel.querySelector('#nImageSubdir').value.trim(), panel.querySelector('#nImagePath').value.trim())
-            // console.log('IMAGE',image)
             image = panel.querySelector('#nImagePath').value.trim();
         } else if(imageMode==='file' && !panel.querySelector('#nImageFile').files[0] && !editingNode){
           image = '';
@@ -2772,7 +2763,7 @@
       const node = {
         id, gameId: game.id, title,
         text: panel.querySelector('#nText').value.trim(),
-        audio, audioSubdir, image, imageSubdir, imagePosition, prerequisites, choices, multiChoice,
+        audio, image, imagePosition, prerequisites, choices, multiChoice,
         hidden, completedByDefault, logMode, mapShape, mapLabel, mapTooltip, groupId, order,
         createdAt: editingNode ? editingNode.createdAt : Date.now()
       };
