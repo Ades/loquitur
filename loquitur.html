@@ -2009,7 +2009,8 @@
       const allCount = normPrereqs.length - anyCount;
       const isOr = false // anyCount>0;
       const orLabelText = '' // (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
-      const fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
+      let fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
+      if (fill && n?.mapShape === 'boxErrata') fill = fill.replace(/\d+/,'255')
       const stroke = done ? pal.doneStroke : (avail ? pal.availStroke : pal.lockedStroke);
       const textColor = avail ? pal.textAvail : pal.textLocked;
       const showPlay = !manageMode && n.audio && avail;
@@ -2020,7 +2021,7 @@
       else if(n.mapTooltip==='full' && n.text) tooltipBody = `${n.title} — ${statusWord}\n\n${plainPreview(n.text)}`;
       else tooltipBody = `${n.title} — ${statusWord}`;
       const tooltip = `<title>${escapeHtml(tooltipBody)}</title>`;
-      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle'));
+      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='boxRule'||n.mapShape==='boxErrata' ?'boxRule': (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle')))
       const labelMode = n.mapLabel || 'title';
       const asPlayIcon = shapeMode==='playIcon' && !!n.audio;
       const iconColor = (done||avail) ? '#161109' : pal.textLocked;
@@ -2049,11 +2050,13 @@
           `<text x="${p.x}" y="${blockY + i*14}" text-anchor="middle" font-size="12" class="map-node-label" fill="${stroke}">${escapeHtml(line)}</text>`
         ).join('');
         orSvg = orLabelText? `<text x="${p.x}" y="${blockY-34}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
-      } else if(shapeMode==='box'){
+      } else if(shapeMode==='box'||shapeMode==='boxRule'||shapeMode==='boxErrata'){
         const bw = 132, bh = 60;
         const lines = labelMode==='none' ? [] : wrapLines(labelSrc, 17, 2);
         const titleBlockY = lines.length<=1 ? p.y - 2 : p.y - 11;
-        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${isOr&&false?'4 3':'0'}"/>`;
+        const dashArray = shapeMode==='boxRule' ? '6 3' : '0' // isOr&&false?'4 3':'0'
+        const rx = shapeMode==='boxRule' ? '0' : '6'
+        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${dashArray}"/>`;
         labelSvg = lines.map((line,i)=>
           `<text x="${p.x}" y="${titleBlockY + i*14}" text-anchor="middle" font-size="11" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
         ).join('') + `<text x="${p.x}" y="${p.y+bh/2-8}" text-anchor="middle" font-size="9" class="map-node-label" fill="${stroke}" style="letter-spacing:.06em;">${statusWord}</text>`;
@@ -2482,9 +2485,11 @@
         <div class="field">
           <label>Map shape</label>
           <select id="nMapShape" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
-            <option value="circle" ${(!editingNode || (editingNode.mapShape||'circle')==='circle')?'selected':''}>Small circle</option>
+            <option value="box" ${(!editingNode || (editingNode.mapShape||'box')==='box')?'selected':''}>Box (label + status inside)</option>
+            <option value="circle" ${(editingNode && editingNode.mapShape==='circle')?'selected':''}>Small circle</option>
             <option value="playIcon" ${editingNode && editingNode.mapShape==='playIcon'?'selected':''}>Play icon if it has audio, else a small dot</option>
-            <option value="box" ${editingNode && editingNode.mapShape==='box'?'selected':''}>Box (label + status inside)</option>
+            <option value="boxRule" ${editingNode && editingNode.mapShape==='boxRule'?'selected':''}>Box, rule (label + status inside)</option>
+            <option value="boxErrata" ${editingNode && editingNode.mapShape==='boxErrata'?'selected':''}>Box, errata (label + status inside)</option>
           </select>
         </div>
         <div class="field">
@@ -2595,7 +2600,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+Shift+&gt;</strong> for the previous one) without stealing focus from the title field.</span>
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field.</span>
         <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
       </div>
 
@@ -3182,7 +3187,11 @@
     }
     if(e.key==='>' && !isTextEditing){
       e.preventDefault();
-      cycleManageNode(e.ctrlKey ? -1 : 1);
+      cycleManageNode(1);
+    }
+    if(e.key==='<' && !isTextEditing && e.ctrlKey){
+      e.preventDefault();
+      cycleManageNode(-1);
     }
   });
 

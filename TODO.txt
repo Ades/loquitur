@@ -101,9 +101,9 @@ OK TEST 55 Make an animation of new nodes when new nodes are unlocked.
 OK TEST 55 Also make an animationof the modal box when it is opened.
 OK TEST 55 Add the animations as a new option is settings.
 TEST 56 Make the style of the checkbox to better match the selected style.
-TEST 57 Save the structure and progress to localStorage so a page refresh returns to the same state.
-TEST 58 load the stored structure and progress from localStorage after refresh
-TEST 59 In manage codex-mode, add a shortcut to cycle through the next node that is shown in an open group folder. Go to the title, but do not focus on it. The keys to focus next available node in an open group is SHIFT->. CTRL-SHIFT-> goes in reverse.
+OK TEST 57 Save the structure and progress to localStorage so a page refresh returns to the same state.
+OK TEST 58 load the stored structure and progress from localStorage after refresh
+OK TEST 59 In manage codex-mode, add a shortcut to cycle through the next node that is shown in an open group folder. Go to the title, but do not focus on it. The keys to focus next available node in an open group is SHIFT->. CTRL-SHIFT-> goes in reverse.
 
 If local path entered, select it when a node is opened.
 OK MANUAL All groups are removed when saving the game.
@@ -113,15 +113,15 @@ OK MANUAL Add symbol tokens font arkhamslim
 OK MANUAL Change name of the project to Loquitur with the subtitle  "it speaks for itself", Res ipsa loquitur:
 OK MANUAL LOG ENTRY alt. Full ... -> Choice made
 OK MANUAL Maintain new lines in tooltip texts.
-MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
+OK MANUAL Favicon
+OK MANUAL Errata box (red-pinkish)
+OK MANUAL Extra rule box (square corners) stroke-dasharray="4 4"
+OK MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
 MANUAL add encounter set icons
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.
-Errata box (red-pinkish)
-Extra rule box (square corners)
 Edit game använder shortcuts för underliggande node.
 
-Favicon
 Hide line in graph behind nodes.
 HEARD should only be shown on narrative nodes. Otherwise, checkmark?
 change style
