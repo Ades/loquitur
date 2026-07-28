@@ -117,7 +117,8 @@ OK MANUAL Favicon
 OK MANUAL Errata box (red-pinkish)
 OK MANUAL Extra rule box (square corners) stroke-dasharray="4 4"
 OK MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
-MANUAL add encounter set icons
+OK MANUAL add encounter set icons — går med <img src="public/images/IV-encountersets.png" style="height:4em" alt="icons"/>
+
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.
 Edit game använder shortcuts för underliggande node.
