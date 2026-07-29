@@ -947,12 +947,32 @@
     ember:   {label:'Ember',   dark:{brass:'#d98a3d',dim:'#a8611f',bright:'#f0a75c'}, light:{brass:'#b5701f',dim:'#d98a3d',bright:'#8a5316'}},
     slate:   {label:'Slate',   dark:{brass:'#8a97a8',dim:'#5f6b7a',bright:'#aab6c4'}, light:{brass:'#5f6b7a',dim:'#8a97a8',bright:'#3f4854'}}
   };
+  const COLOR_ROLES = ['bg','bgPanel','brass','brassDim','brassBright'];
+  const COLOR_ROLE_LABELS = {bg:'Background', bgPanel:'Panel background', brass:'Accent', brassDim:'Accent (dim)', brassBright:'Accent (bright)'};
+  function baseThemeColors(mode){
+    return mode==='light'
+      ? { bg:'#f3ead2', bgPanel:'#fdf8ea', brass:'#8a6114', brassDim:'#a9812c', brassBright:'#6b480d' }
+      : { bg:'#181310', bgPanel:'#221b15', brass:'#c9a24b', brassDim:'#8c7431', brassBright:'#e2bc63' };
+  }
+  // Merges, per mode: this game's own custom picks (highest priority) over its style
+  // preset's accent colors (if any) over the app's base theme colors (lowest priority).
+  function effectiveGameColors(game, mode){
+    const merged = baseThemeColors(mode);
+    const presetKey = (game && game.stylePreset) || 'default';
+    const preset = GAME_STYLES[presetKey];
+    if(preset && preset[mode]){
+      merged.brass = preset[mode].brass;
+      merged.brassDim = preset[mode].dim;
+      merged.brassBright = preset[mode].bright;
+    }
+    const custom = game && game.customColors && game.customColors[mode];
+    if(custom){ COLOR_ROLES.forEach(role=>{ if(custom[role]) merged[role] = custom[role]; }); }
+    return merged;
+  }
   function gameAccentVars(game){
-    const key = (game && game.stylePreset) || 'default';
-    const preset = GAME_STYLES[key];
-    if(!preset || !preset.dark) return '';
-    const set = settings.theme==='light' ? preset.light : preset.dark;
-    return `--brass:${set.brass};--brass-dim:${set.dim};--brass-bright:${set.bright};`;
+    const mode = settings.theme==='light' ? 'light' : 'dark';
+    const c = effectiveGameColors(game, mode);
+    return `--brass:${c.brass};--brass-dim:${c.brassDim};--brass-bright:${c.brassBright};--bg:${c.bg};--bg-panel:${c.bgPanel};`;
   }
   function gameFontStyle(game){
     ensureCustomFontFaces(game);
@@ -1378,7 +1398,32 @@
             <select id="ngStylePreset" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:8px 10px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:13px;width:100%;">
               ${Object.keys(GAME_STYLES).map(k=>`<option value="${k}" ${((existingGame&&existingGame.stylePreset)||'default')===k?'selected':''}>${GAME_STYLES[k].label}</option>`).join('')}
             </select>
-            <div class="hint">Recolors this game's borders, buttons and highlights — everywhere else in the codex keeps the shared dark/light theme from Settings.</div>
+            <div class="hint">A quick starting point — pick a custom color below to override any of it.</div>
+          </div>
+          <div class="field">
+            <label>Custom colors (optional)</label>
+            <div class="field-row">
+              ${['dark','light'].map(mode=>{
+                const eff = effectiveGameColors(existingGame, mode);
+                const custom = (existingGame && existingGame.customColors && existingGame.customColors[mode]) || {};
+                return `
+                <div class="field">
+                  <label style="text-transform:none;font-size:11px;">${mode==='dark'?'Dark mode':'Light mode'}</label>
+                  <div style="border:1px solid var(--line);border-radius:var(--radius);padding:10px;background:var(--bg);">
+                    ${COLOR_ROLES.map(role=>`
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                        <span style="font-size:12px;color:var(--parchment-dim);">${COLOR_ROLE_LABELS[role]}</span>
+                        <span style="display:flex;align-items:center;gap:6px;">
+                          <input type="color" id="ngColor-${mode}-${role}" value="${custom[role] || eff[role]}" ${!custom[role]?'data-cleared="1"':''} style="width:34px;height:24px;padding:0;border:1px solid var(--line);border-radius:3px;background:none;cursor:pointer;">
+                          <button type="button" class="small-x" data-clear-color="${mode}-${role}" data-default-color="${eff[role]}" title="Reset to default" style="width:22px;height:22px;font-size:12px;">↺</button>
+                        </span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+            <div class="hint">Overrides this game's background, panel, and accent colors independently for dark and light mode. Leave any color at its default (↺ resets it) to keep following the color style above.</div>
           </div>
           <div class="field-row">
             <div class="field">
@@ -1522,6 +1567,29 @@
       overlay.querySelector('#ngTextCustomWrap').style.display = e.target.value==='custom' ? 'block' : 'none';
     };
 
+    overlay.querySelector('#ngStylePreset').onchange = (e)=>{
+      const tempGame = {stylePreset: e.target.value};
+      ['dark','light'].forEach(mode=>{
+        const eff = effectiveGameColors(tempGame, mode);
+        COLOR_ROLES.forEach(role=>{
+          const inp = overlay.querySelector('#ngColor-'+mode+'-'+role);
+          const btn = overlay.querySelector('[data-clear-color="'+mode+'-'+role+'"]');
+          if(btn) btn.dataset.defaultColor = eff[role];
+          if(inp && inp.dataset.cleared==='1'){ inp.value = eff[role]; }
+        });
+      });
+    };
+    overlay.querySelectorAll('input[id^="ngColor-"]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{ delete inp.dataset.cleared; });
+    });
+    overlay.querySelectorAll('[data-clear-color]').forEach(btn=>{
+      btn.onclick = ()=>{
+        const key = btn.dataset.clearColor;
+        const inp = overlay.querySelector('#ngColor-'+key);
+        if(inp){ inp.value = btn.dataset.defaultColor; inp.dataset.cleared='1'; }
+      };
+    });
+
     overlay.querySelector('#saveAddGame').onclick = async ()=>{
       const name = overlay.querySelector('#ngName').value.trim();
       if(!name){ toast('Give the game a name first.'); return; }
@@ -1584,11 +1652,22 @@
         return;
       }
 
+      const customColors = {};
+      ['dark','light'].forEach(mode=>{
+        const modeColors = {};
+        COLOR_ROLES.forEach(role=>{
+          const inp = overlay.querySelector('#ngColor-'+mode+'-'+role);
+          if(inp && inp.dataset.cleared!=='1'){ modeColors[role] = inp.value; }
+        });
+        if(Object.keys(modeColors).length) customColors[mode] = modeColors;
+      });
+
       const game = {
         id, name,
         description: overlay.querySelector('#ngDesc').value.trim(),
         image,
         stylePreset: overlay.querySelector('#ngStylePreset').value,
+        customColors,
         titleFont: titleFontVal,
         textFont: textFontVal,
         customTitleFont, customTextFont,
@@ -1955,22 +2034,19 @@
     return `rgba(${r},${g},${b},${alpha})`;
   }
   function mapPalette(game){
-    const base = settings.theme==='light'
+    const mode = settings.theme==='light' ? 'light' : 'dark';
+    const base = mode==='light'
       ? { doneFill:'rgba(75,107,52,.14)', doneStroke:'#4b6b34', availFill:'rgba(138,97,20,.10)', availStroke:'#8a6114',
           lockedFill:'rgba(168,152,114,.20)', lockedStroke:'#a89872', textAvail:'#2b2013', textLocked:'#8a7c5c',
           connDone:'#a9812c', connLocked:'#c9b57e', orLabel:'#8a6114' }
       : { doneFill:'rgba(111,138,83,.16)', doneStroke:'#6f8a53', availFill:'rgba(201,162,75,.12)', availStroke:'#c9a24b',
           lockedFill:'rgba(74,64,56,.25)', lockedStroke:'#4a4038', textAvail:'#ece1c4', textLocked:'#7a7160',
           connDone:'#8c7431', connLocked:'#3a3128', orLabel:'#8c7431' };
-    const key = (game && game.stylePreset) || 'default';
-    const preset = GAME_STYLES[key];
-    if(preset && preset.dark){
-      const set = settings.theme==='light' ? preset.light : preset.dark;
-      base.availStroke = set.brass;
-      base.connDone = set.dim;
-      base.orLabel = set.brass;
-      base.availFill = hexToRgba(set.brass, settings.theme==='light'?0.10:0.12);
-    }
+    const c = effectiveGameColors(game, mode);
+    base.availStroke = c.brass;
+    base.connDone = c.brassDim;
+    base.orLabel = c.brass;
+    base.availFill = hexToRgba(c.brass, mode==='light'?0.10:0.12);
     return base;
   }
 
