@@ -104,8 +104,8 @@ OK TEST 57 Save the structure and progress to localStorage so a page refresh ret
 OK TEST 58 load the stored structure and progress from localStorage after refresh
 OK TEST 59 In manage codex-mode, add a shortcut to cycle through the next node that is shown in an open group folder. Go to the title, but do not focus on it. The keys to focus next available node in an open group is SHIFT->. CTRL-SHIFT-> goes in reverse.
 OK TEST 60 Add a list of nodes besides Index and map.
-TEST 61 Mope the. nodes in the campaign map to that the lines always goes forward, if it is possible
-TEST 63 For each game make it possible to set all fonts and colors for both light and dark mode.
+OK TEST 61 Mope the. nodes in the campaign map to that the lines always goes forward, if it is possible
+OK TEST 63 For each game make it possible to set all fonts and colors for both light and dark mode.
 TEST 64 Mark group as completed when all items in the group are completed.
 Map shape as dot
 
