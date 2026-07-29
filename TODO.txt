@@ -94,7 +94,6 @@ OK TEST 49 Make index and campaign map organized in folders corresponding to the
 OK TEST 50 Also make an option to have the nodes show the full text as a tooltip.
 OK TEST 51 Add an alternative to map tooltip - text only
 MAYBE TEST 52 Add an alternative to map shape - label only
-    Map shape as dot
 OK TEST 53 Add multiple choice option to the nodes with no res as pos.
 OK TEST 54 Accept zero alternatives in multi choice.
 OK TEST 55 Make an animation of new nodes when new nodes are unlocked.
@@ -104,6 +103,12 @@ TEST 56 Make the style of the checkbox to better match the selected style.
 OK TEST 57 Save the structure and progress to localStorage so a page refresh returns to the same state.
 OK TEST 58 load the stored structure and progress from localStorage after refresh
 OK TEST 59 In manage codex-mode, add a shortcut to cycle through the next node that is shown in an open group folder. Go to the title, but do not focus on it. The keys to focus next available node in an open group is SHIFT->. CTRL-SHIFT-> goes in reverse.
+OK TEST 60 Add a list of nodes besides Index and map.
+TEST 61 Mope the. nodes in the campaign map to that the lines always goes forward, if it is possible
+TEST 63 For each game make it possible to set all fonts and colors for both light and dark mode.
+TEST 64 Mark group as completed when all items in the group are completed.
+Map shape as dot
+
 
 If local path entered, select it when a node is opened.
 OK MANUAL All groups are removed when saving the game.
@@ -118,6 +123,9 @@ OK MANUAL Errata box (red-pinkish)
 OK MANUAL Extra rule box (square corners) stroke-dasharray="4 4"
 OK MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
 OK MANUAL add encounter set icons — går med <img src="public/images/IV-encountersets.png" style="height:4em" alt="icons"/>
+Tajtare lista - nu är det en del tomrum (men den ser bra ut).
+Tydligare skillnad mellan lyssnat och icke-lyssnat.
+
 
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.
