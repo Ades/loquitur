@@ -106,7 +106,9 @@ OK TEST 59 In manage codex-mode, add a shortcut to cycle through the next node t
 OK TEST 60 Add a list of nodes besides Index and map.
 OK TEST 61 Mope the. nodes in the campaign map to that the lines always goes forward, if it is possible
 OK TEST 63 For each game make it possible to set all fonts and colors for both light and dark mode.
-TEST 64 Mark group as completed when all items in the group are completed.
+OK TEST 64 Mark group as completed when all items in the group are completed.
+OK         Do it for map and index and list as well.
+           Exclude Errata and Rule from Complete-count.
 Map shape as dot
 
 
