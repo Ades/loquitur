@@ -2,7 +2,7 @@ Add an option for hidden nodes that should only be shown in "Manage Codex". Also
 
 Change order of items, and add possibility to group items, in lists in Manage Codex. Add functionality to open and close groups.
 
-Add font option for title and text for each game.
+Add font option for title and text for each game.
 
 Also save settings together with the structure.
 
@@ -57,7 +57,7 @@ Setting: Add scribe sound when adding to log.
           choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
 // MODIFY: kursiv och nurad för varje alternativ i multi-logg.
           choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
-
+Æ Æ -> <span class="arkhamslim">Y</span>
 Add a file selector when adding narration and images.
 Setting: Change direction of log. latest first, latest last.
 FIX Add the subdirectory path to the image and narration as well.
@@ -109,9 +109,12 @@ OK TEST 63 For each game make it possible to set all fonts and colors for both l
 OK TEST 64 Mark group as completed when all items in the group are completed.
 OK         Do it for map and index and list as well.
            Exclude Errata and Rule from Complete-count.
+TEST 65 Add a new shortcut, SHIFT+up arrow, to copy the latest edited node.
 Map shape as dot
 
-
+Do something with Suggested Location Placement
+    Läsa korten (flavortexten)
+    Visa bilderna
 If local path entered, select it when a node is opened.
 OK MANUAL All groups are removed when saving the game.
 OK MANUAL Multiple choices to multiple lines in log.

@@ -2831,7 +2831,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field.</span>
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field.</span>
         <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
       </div>
 
@@ -3368,6 +3368,39 @@
       if(titleInput){ titleInput.focus(); titleInput.select(); }
     }, 30);
   }
+  // Duplicates the most recently saved narration as-is (same prerequisites as the
+  // original, not chained after it) — the keyboard equivalent of the row's Copy button.
+  async function copyLastEdited(){
+    const original = findNodeById(lastEditedNodeId);
+    if(!original){ toast('Save a narration first, then Shift+↑ copies it.'); return; }
+    const game = games.find(g=>g.id===original.gameId);
+    if(!game){ toast('Could not find the game for that narration.'); return; }
+    const siblings = (nodesByGame[game.id]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
+    const copy = {
+      ...original,
+      id: uid(),
+      title: original.title + ' (copy)',
+      choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
+      prerequisites: (original.prerequisites||[]).map(p=> ({...p})),
+      order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
+      createdAt: Date.now()
+    };
+    const ok = await sSet('node:'+copy.id, copy);
+    if(!ok){ toast('Could not copy this narration — please try again.'); return; }
+    const nodeIndex = await sGet('node-index:'+game.id) || [];
+    nodeIndex.push(copy.id);
+    await sSet('node-index:'+game.id, nodeIndex);
+    nodesByGame[game.id].push(copy);
+    route = {view:'game', gameId: game.id};
+    editingNodeId = copy.id;
+    lastEditedNodeId = copy.id;
+    toast('Narration copied.');
+    render();
+    setTimeout(()=>{
+      const titleInput = document.querySelector('.manage-panel #nTitle');
+      if(titleInput){ titleInput.focus(); titleInput.select(); }
+    }, 30);
+  }
   // Cycles editingNodeId through whatever narration rows are currently visible in Manage
   // Codex (i.e. inside expanded groups, plus Ungrouped), in their displayed order. Scrolls
   // the title into view but deliberately does not focus it, so repeated presses keep working.
@@ -3414,6 +3447,13 @@
     if(e.shiftKey && e.key==='ArrowDown' && !isTextEditing){
       e.preventDefault();
       quickChainFromLastEdited();
+      return;
+    }
+    console.log(e.shiftKey, e.key==='ArrowUp')
+    if(e.shiftKey && e.key==='ArrowUp' && !isTextEditing){
+        console.log('SHIFT+UP')
+      e.preventDefault();
+      copyLastEdited();
       return;
     }
     if(e.key==='>' && !isTextEditing){
