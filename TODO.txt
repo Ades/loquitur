@@ -110,6 +110,8 @@ OK TEST 64 Mark group as completed when all items in the group are completed.
 OK         Do it for map and index and list as well.
            Exclude Errata and Rule from Complete-count.
 TEST 65 Add a new shortcut, SHIFT+up arrow, to copy the latest edited node.
+TEST 66 Add a settings for each group (at least for the shelf and the list but also for the map). The settings should contain options for the group to: Show first nodes in the group, Show hidden nodes, Hide heard narrations, Automatically open the next node when it unlocks. The settings are similar to the global settings.
+TEST 67 Order the prerequisites in groups.
 Map shape as dot
 
 Do something with Suggested Location Placement
@@ -131,7 +133,7 @@ OK MANUAL add encounter set icons — går med <img src="public/images/IV-encoun
 Tajtare lista - nu är det en del tomrum (men den ser bra ut).
 Tydligare skillnad mellan lyssnat och icke-lyssnat.
 
-
+MANUAL Default: do not add to log
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.
 Edit game använder shortcuts för underliggande node.
@@ -140,7 +142,7 @@ Hide line in graph behind nodes.
 HEARD should only be shown on narrative nodes. Otherwise, checkmark?
 change style
 
-If a folder doesn't have anything to show, hide it.
+--- DET VERKAR VARA SÅ: If a folder doesn't have anything to show, hide it.
 Automatically open the folder if it has any nodes.
 Replace "any one of" in Campaign log with the selection that was done.
 MAYBE Change the icon on an index card to a player icon that can play content if there is any. Otherwise don't show an icon.
