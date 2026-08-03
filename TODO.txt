@@ -111,7 +111,11 @@ OK         Do it for map and index and list as well.
            Exclude Errata and Rule from Complete-count.
 TEST 65 Add a new shortcut, SHIFT+up arrow, to copy the latest edited node.
 TEST 66 Add a settings for each group (at least for the shelf and the list but also for the map). The settings should contain options for the group to: Show first nodes in the group, Show hidden nodes, Hide heard narrations, Automatically open the next node when it unlocks. The settings are similar to the global settings.
-TEST 67 Order the prerequisites in groups.
+OK TEST 67 Order the prerequisites in groups.
+TEST 68 Add a back button that goes back to the previous node.
+Spara audio/image path.
+När man klistar in med SHIFT+höger/vänster, lägg till path.
+
 Map shape as dot
 
 Do something with Suggested Location Placement

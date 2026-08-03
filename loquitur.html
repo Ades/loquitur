@@ -349,7 +349,12 @@
   input[type=file]{width:100%;font-size:12px;color:var(--parchment-dim);font-family:'IBM Plex Mono',monospace;}
   .file-status{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--moss);margin-top:6px;}
   .file-error{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#d99;margin-top:6px;}
-  .prereq-box{border:1px solid var(--line);border-radius:var(--radius);padding:12px;max-height:180px;overflow:auto;background:var(--bg);}
+  .prereq-box{border:1px solid var(--line);border-radius:var(--radius);padding:12px;max-height:260px;overflow:auto;background:var(--bg);}
+  .prereq-group-label{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--brass-dim);margin:10px 0 2px;padding-top:8px;border-top:1px solid var(--line);
+  }
+  .prereq-group-label:first-child{margin-top:0;padding-top:0;border-top:none;}
   .prereq-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;flex-wrap:wrap;}
   .prereq-item select{
     background:var(--bg-panel-raised);border:1px solid var(--line);color:var(--parchment-dim);
@@ -396,13 +401,6 @@
   "use strict";
 
   // ---------------- Storage helpers ----------------
-  //   window.storage = {
-  //     set:(k,v)=>{
-  //       localStorage.setItem(k,v)
-  //       return localStorage.getItem(k).length
-  //     },
-  //     get: k=>localStorage.getItem(k)
-  //   }
     // Prefers the platform's persistent artifact storage (window.storage) when available.
     // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
     // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
@@ -694,6 +692,16 @@
       noise.stop(now + duration + 0.02);
     }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
   }
+  // True if the given narration should auto-advance — either the app-wide setting is on,
+  // or its group has "Automatically open the next node" enabled specifically.
+  function shouldAutoAdvance(node){
+    if(settings.autoAdvance) return true;
+    if(!node || !node.groupId) return false;
+    const game = games.find(g=>g.id===node.gameId);
+    if(!game) return false;
+    const group = (game.groups||[]).find(g=>g.id===node.groupId);
+    return !!(group && group.autoAdvanceGroup);
+  }
   function openReaderFor(node, autoplay){
     const resolved = resolveJunctions(node);
     const skipped = resolved !== node;
@@ -877,6 +885,7 @@
   // null, the Ungrouped bucket) has been heard — used to badge folders as complete on the
   // shelf and list views, independent of any "hide completed" filtering applied to display.
   function isGroupComplete(visibleNodes, validGroupIds, groupId){
+      if (!visibleNodes) return false
     const members = groupId===null
       ? visibleNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
       : visibleNodes.filter(n=> n.groupId===groupId);
@@ -1684,8 +1693,8 @@
         titleFont: titleFontVal,
         textFont: textFontVal,
         customTitleFont, customTextFont,
-        createdAt: existingGame ? existingGame.createdAt : Date.now(),
-        groups
+        groups,
+        createdAt: existingGame ? existingGame.createdAt : Date.now()
       };
       const ok = await sSet('game:'+id, game);
       if(!ok){ toast('Could not save the game — please try again, or link the image instead of uploading it.'); btn.disabled=false; btn.textContent = existingGame? 'Save changes':'Save game'; return; }
@@ -1779,7 +1788,6 @@
     const list = document.createElement('div');
     list.className='log-list';
     entries.forEach(({node,record})=>{
-      //  if ((node.choices||[]).find(c=>c.id===record.choiceId)?.label === 'Otherwise proceed...') return
       const item = document.createElement('div');
       item.className='log-item';
       const when = record.completedAt ? new Date(record.completedAt).toLocaleString() : 'Available from the start';
@@ -1914,11 +1922,30 @@
       box.appendChild(buildGrid(available));
     } else {
       const validGroupIds = groups.map(g=>g.id);
-      const ungrouped = available.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+
+      function computeGroupList(g){
+        const groupId = g ? g.id : null;
+        let members = groupId===null
+          ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
+          : nodes.filter(n=> n.groupId===groupId);
+        if(!manageMode){
+          const allowHidden = g && g.showHiddenNodes;
+          if(!allowHidden) members = members.filter(n=>!n.hidden);
+        }
+        members = members.filter(isAvailable);
+        if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
+        if(g && g.showFirstOnly && members.length>0){
+          const minOrder = Math.min(...members.map(n=>n.order||0));
+          members = members.filter(n=>(n.order||0)===minOrder);
+        }
+        return members;
+      }
+
+      const ungroupedList = computeGroupList(null);
       const sections = [];
-      if(ungrouped.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungrouped});
+      if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       groups.forEach(g=>{
-        const list = available.filter(n=>n.groupId===g.id);
+        const list = computeGroupList(g);
         if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
       });
       sections.forEach(sec=>{
@@ -2007,11 +2034,30 @@
       box.appendChild(buildRows(available));
     } else {
       const validGroupIds = groups.map(g=>g.id);
-      const ungrouped = available.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+
+      function computeGroupList(g){
+        const groupId = g ? g.id : null;
+        let members = groupId===null
+          ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
+          : nodes.filter(n=> n.groupId===groupId);
+        if(!manageMode){
+          const allowHidden = g && g.showHiddenNodes;
+          if(!allowHidden) members = members.filter(n=>!n.hidden);
+        }
+        members = members.filter(isAvailable);
+        if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
+        if(g && g.showFirstOnly && members.length>0){
+          const minOrder = Math.min(...members.map(n=>n.order||0));
+          members = members.filter(n=>(n.order||0)===minOrder);
+        }
+        return members;
+      }
+
+      const ungroupedList = computeGroupList(null);
       const sections = [];
-      if(ungrouped.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungrouped});
+      if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       groups.forEach(g=>{
-        const list = available.filter(n=>n.groupId===g.id);
+        const list = computeGroupList(g);
         if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
       });
       sections.forEach(sec=>{
@@ -2094,7 +2140,7 @@
     return lines;
   }
 
-  function renderCampaignMapCore(nodes, game){
+  function renderCampaignMapCore(nodes, game, groupOverride){
     const wrap = document.createElement('div');
     if(nodes.length===0){
       wrap.innerHTML = '<div class="empty" style="border:none;">Add narrations to see the campaign map.</div>';
@@ -2113,12 +2159,22 @@
     let visibleNodes = nodes;
     let hiddenLockedCount = 0;
     if(!manageMode){
+      const allowHidden = groupOverride && groupOverride.showHiddenNodes;
+      const hideHeardHere = settings.hideCompleted || (groupOverride && groupOverride.hideHeard);
       visibleNodes = nodes.filter(n=>{
-        if(n.hidden) return false;
-        if(settings.hideCompleted && isCompleted(n.id)) return false;
+        if(n.hidden && !allowHidden) return false;
+        if(hideHeardHere && isCompleted(n.id)) return false;
         if(settings.hideLockedInMap && !isAvailable(n)){ hiddenLockedCount++; return false; }
         return true;
       });
+      if(groupOverride && groupOverride.showFirstOnly){
+        const availableHere = visibleNodes.filter(n=>isAvailable(n) && !isCompleted(n.id));
+        if(availableHere.length>0){
+          const minOrder = Math.min(...availableHere.map(n=>n.order||0));
+          const dropIds = new Set(availableHere.filter(n=>(n.order||0)!==minOrder).map(n=>n.id));
+          visibleNodes = visibleNodes.filter(n=>!dropIds.has(n.id));
+        }
+      }
     }
     if(!manageMode && hiddenLockedCount>0){
       const hint = document.createElement('div');
@@ -2389,11 +2445,11 @@
       header.style.cursor = sec.id===null ? 'default' : 'pointer';
       const complete = isGroupComplete(sectionWithAvailable.list, validGroupIds, sec.id);
       header.innerHTML = sec.id===null
-          ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sectionWithAvailable.list.length}</span>${complete?groupCompleteBadge():''}`
-          : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sectionWithAvailable.list.length}/${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
+        ? `<span class="group-name">Ungrouped</span>`
+        : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span>`;
       wrap.appendChild(header);
       if(!sec.collapsed){
-        wrap.appendChild(renderCampaignMapCore(sec.list, game));
+        wrap.appendChild(renderCampaignMapCore(sec.list, game, sec.id===null ? null : groups.find(x=>x.id===sec.id)));
       }
       if(sec.id!==null){
         header.querySelector('.group-toggle').onclick = async ()=>{
@@ -2490,7 +2546,7 @@
         if(hasChoices) return; // a choice still has to be made manually
         if(!done){
           const next = await markCompletedAndFindNext(n, null);
-          if(settings.autoAdvance && next){ advanceTo(next); return; }
+          if(shouldAutoAdvance(n) && next){ advanceTo(next); return; }
           toast('Marked as heard — new narrations may be available.');
         }
         closeAndRerender();
@@ -2522,7 +2578,7 @@
       `;
       actionBox.querySelector('#closeResult').onclick = ()=>{
         const next = readerResult.advanceTo;
-        if(settings.autoAdvance && next){ advanceTo(next); return; }
+        if(shouldAutoAdvance(n) && next){ advanceTo(next); return; }
         closeAndRerender();
       };
       return overlay;
@@ -2543,7 +2599,7 @@
             readerResult = {text: c.resultText.trim(), advanceTo: next};
             overlay.remove();
             render();
-          } else if(settings.autoAdvance && next){
+          } else if(shouldAutoAdvance(n) && next){
             advanceTo(next);
           } else {
             toast('Choice recorded — new narrations may be available.');
@@ -2584,7 +2640,7 @@
           readerResult = {text: resultTexts.join('\n\n'), advanceTo: next};
           overlay.remove();
           render();
-        } else if(settings.autoAdvance && next){
+        } else if(shouldAutoAdvance(n) && next){
           advanceTo(next);
         } else {
           toast(ids.length ? 'Choices recorded — new narrations may be available.' : 'No answer recorded — new narrations may be available.');
@@ -2655,7 +2711,7 @@
         b.textContent='Mark as heard';
         b.onclick = async ()=>{
           const next = await markCompletedAndFindNext(n, null);
-          if(settings.autoAdvance && next){ advanceTo(next); return; }
+          if(shouldAutoAdvance(n) && next){ advanceTo(next); return; }
           toast('Marked as heard — new narrations may be available.');
           closeAndRerender();
         };
@@ -2800,7 +2856,8 @@
         <label>Unlocked only after (prerequisites)</label>
         <div class="prereq-box" id="prereqBox">
           ${otherNodes.length===0? '<div class="hint">No other narrations yet — this will be available from the start.</div>' :
-            otherNodes.map(n=>{
+            (()=>{
+              function prereqItem(n){
               const checked = existingPrereqIds.includes(n.id);
               const hasChoices = n.choices && n.choices.length;
               const grp = existingPrereqGroup[n.id] || 'all';
@@ -2817,7 +2874,25 @@
                   ${hasChoices? n.choices.map(c=>`<option value="${c.id}" ${existingPrereqChoice[n.id]===c.id?'selected':''}>requires choice: ${escapeHtml(c.label)}</option>`).join(''):''}
                 </select>
               </div>`;
-            }).join('')}
+              }
+              const gameGroups = game.groups || [];
+              if(gameGroups.length===0){
+                return otherNodes.map(prereqItem).join('');
+              }
+              const validGroupIds = gameGroups.map(g=>g.id);
+              const ungrouped = otherNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+              let html = '';
+              if(ungrouped.length){
+                html += `<div class="prereq-group-label">Ungrouped</div>` + ungrouped.map(prereqItem).join('');
+              }
+              gameGroups.forEach(g=>{
+                const list = otherNodes.filter(n=>n.groupId===g.id);
+                if(list.length){
+                  html += `<div class="prereq-group-label">${escapeHtml(g.name)}</div>` + list.map(prereqItem).join('');
+                }
+              });
+              return html;
+            })()}
         </div>
         <div class="hint">Leave all unchecked for a narration available from the start. Mark a checked prerequisite "AND" if it's always required, or "OR" if satisfying just one of the OR-marked prerequisites is enough — the narration unlocks once all AND prerequisites are met, and (if any are marked OR) at least one OR prerequisite too.</div>
       </div>
@@ -3025,6 +3100,54 @@
     // ---- Existing narrations: grouped, drag-and-drop reorderable list ----
     let dragInfo = null; // {type:'node'|'group', id}
     async function persistGroups(){ await sSet('game:'+game.id, game); }
+    function openGroupSettingsModal(game, g){
+      const overlay = document.createElement('div');
+      overlay.className='reader-overlay' + (settings.animationsEnabled ? ' anim-in' : '');
+      overlay.innerHTML = `
+        <div class="reader" style="max-width:460px;">
+          <div class="content reader-relative">
+            <button class="close" id="closeGroupSettings">&times;</button>
+            <h2 style="margin-bottom:6px;">“${escapeHtml(g.name)}” display settings</h2>
+            <div class="hint" style="margin-bottom:14px;">Similar to the app-wide settings, but scoped to just this group — on the shelf, list, and campaign map.</div>
+            <label class="setting-toggle" style="margin-top:4px;">
+              <input type="checkbox" id="gsFirstOnly" ${g.showFirstOnly?'checked':''}> Show only the first available narration in this group
+            </label>
+            <div class="hint">Instead of every unlocked narration, only the earliest one (by its order in Manage Codex) is shown at a time.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="gsShowHidden" ${g.showHiddenNodes?'checked':''}> Show hidden narrations in this group
+            </label>
+            <div class="hint">Overrides "Hidden" narrations normally being visible only in Manage Codex — just for this group.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="gsHideHeard" ${g.hideHeard?'checked':''}> Hide narrations you've already heard, in this group
+            </label>
+            <div class="hint">Applies here even if the app-wide "Hide narrations you've already heard" setting is off.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="gsAutoAdvance" ${g.autoAdvanceGroup?'checked':''}> Automatically open the next node when it unlocks, in this group
+            </label>
+            <div class="hint">Applies here even if the app-wide "Automatically open the next narration" setting is off.</div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+              <button class="btn primary" id="doneGroupSettings">Done</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      const close = ()=>overlay.remove();
+      overlay.querySelector('#closeGroupSettings').onclick = close;
+      overlay.querySelector('#doneGroupSettings').onclick = close;
+      overlay.onclick = (e)=>{ if(e.target===overlay) close(); };
+      const save = async ()=>{
+        g.showFirstOnly = overlay.querySelector('#gsFirstOnly').checked;
+        g.showHiddenNodes = overlay.querySelector('#gsShowHidden').checked;
+        g.hideHeard = overlay.querySelector('#gsHideHeard').checked;
+        g.autoAdvanceGroup = overlay.querySelector('#gsAutoAdvance').checked;
+        await persistGroups();
+        render();
+      };
+      ['gsFirstOnly','gsShowHidden','gsHideHeard','gsAutoAdvance'].forEach(id=>{
+        overlay.querySelector('#'+id).onchange = save;
+      });
+    }
     async function persistNodes(ids){
       for(const id of ids){
         const nd = nodesByGame[game.id].find(x=>x.id===id);
@@ -3178,6 +3301,7 @@
           <button class="group-toggle" type="button">${g.collapsed?'▸':'▾'}</button>
           <span class="group-name">${escapeHtml(g.name)}</span>
           <span style="flex:1;"></span>
+          <button class="btn ghost small" data-groupsettings="1" title="Group display settings">⚙</button>
           <button class="btn ghost small" data-rename="1">Rename</button>
           <button class="btn danger small" data-delgroup="1">Delete</button>
         `;
@@ -3188,6 +3312,7 @@
         listWrap.appendChild(bucket);
 
         header.querySelector('.group-toggle').onclick = async ()=>{ g.collapsed = !g.collapsed; await persistGroups(); render(); };
+        header.querySelector('[data-groupsettings]').onclick = ()=> openGroupSettingsModal(game, g);
         header.querySelector('[data-rename]').onclick = async ()=>{
           const name = prompt('Rename group', g.name);
           if(name && name.trim()){ g.name = name.trim(); await persistGroups(); render(); }
