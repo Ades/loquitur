@@ -117,6 +117,9 @@ OK TEST 71 Also add a forward button together with the back button
 OK TEST 72 Make the unheard cards stand out better.
         alt. Slightly dim heard items to make the unheard items stand out.
         alt. Separate unheard available items from heard items.
+OK TEST 73 Try to make lines in map always go forward.
+
+Hide lines, or at least try to avoid to show lines over other nodes.
 
 Don't animate modal boxes if one is closed and another is automatically opened.
 

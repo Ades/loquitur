@@ -2243,15 +2243,28 @@
     }
 
     const idToNode = {}; nodes.forEach(n=>idToNode[n.id]=n);
-    function depth(n, seen){
-      seen = seen || new Set();
-      if(seen.has(n.id)) return 0;
-      seen.add(n.id);
-      if(!n.prerequisites || n.prerequisites.length===0) return 0;
-      let m = 0;
-      n.prerequisites.forEach(p=>{ const pn = idToNode[p.nodeId]; if(pn) m = Math.max(m, depth(pn, seen)+1); });
-      return m;
+    // Assigns each node a layer such that it always sits strictly after every one of its
+    // prerequisites — by relaxation (like a longest-path pass) rather than a single
+    // recursive walk, so a node gets pushed forward as far as needed even when it has
+    // several prerequisites arriving from different depths. Capped in iterations so an
+    // accidental prerequisite cycle can't loop forever; a genuine cycle has no valid
+    // all-forward layering (by definition), so that's the one case this can't fully fix.
+    const layerOf = {};
+    nodes.forEach(n=>{ layerOf[n.id] = 0; });
+    let relaxed = true, guardIter = 0;
+    const maxIter = nodes.length + 5;
+    while(relaxed && guardIter < maxIter){
+      relaxed = false; guardIter++;
+      nodes.forEach(n=>{
+        (n.prerequisites||[]).forEach(p=>{
+          const pn = idToNode[p.nodeId];
+          if(!pn || layerOf[pn.id]===undefined) return; // prerequisite outside this graph — nothing to enforce
+          const need = layerOf[pn.id] + 1;
+          if(need > layerOf[n.id]){ layerOf[n.id] = need; relaxed = true; }
+        });
+      });
     }
+    function depth(n){ return layerOf[n.id] || 0; }
     const layers = {};
     visibleNodes.forEach(n=>{ const d = depth(n); layers[d] = layers[d]||[]; layers[d].push(n); });
     const layerKeys = Object.keys(layers).map(Number).sort((a,b)=>a-b);
