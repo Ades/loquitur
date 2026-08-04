@@ -1,3 +1,4 @@
+<!--© 2026 Anders Ive. All Rights Reserved.-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -426,6 +427,7 @@
 <div id="app"><div class="loading-note">Opening the codex…</div></div>
 
 <script>
+    // © 2026 Anders Ive. All Rights Reserved.
 (function(){
   "use strict";
 
@@ -2985,7 +2987,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field.</span>
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field, <strong>Shift+A</strong> go to next checked prerequisite.</span>
         <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
       </div>
 
@@ -3624,7 +3626,8 @@
       if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'});
     }, 30);
   }
-  document.addEventListener('keydown', (e)=>{
+    var pos = 0
+    document.addEventListener('keydown', (e)=>{
     if(!manageMode) return;
     const active = document.activeElement;
     const tag = active && active.tagName;
@@ -3666,6 +3669,22 @@
       e.preventDefault();
       cycleManageNode(-1);
     }
+    if(e.key==='A' && !isTextEditing && e.shiftKey){
+        // e.preventDefault();
+        // let checkedPrerequisites = document.querySelectorAll('.prereqChoice:not([disabled])');
+        setTimeout(()=>{
+            let checkedPrerequisites = document.querySelectorAll('.prereqCk[checked]');
+            checkedPrerequisites?.[pos]?.scrollIntoView({
+                behaviour: "smooth",
+                block: "center",
+                inline: "start",
+            })
+            pos = ((pos+1) % checkedPrerequisites?.length) || 0
+            /* if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'}); */
+        }, 30);
+        // console.log('POS',pos)
+    }
+
   });
 
   loadAll();

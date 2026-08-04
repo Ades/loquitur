@@ -118,8 +118,25 @@ OK TEST 72 Make the unheard cards stand out better.
         alt. Slightly dim heard items to make the unheard items stand out.
         alt. Separate unheard available items from heard items.
 OK TEST 73 Try to make lines in map always go forward.
+Make the prerequisites in the same order as the Existing Narrations-list.
+Anpassa till mobil (eller mindre fönster)
+Gör möjligt att skicka meddelanden.
 
 Hide lines, or at least try to avoid to show lines over other nodes.
+
+Markera avsnitt i en text och med snabbtangenter flytta texten till respektiver ruta. (titel, brödtext, nytt alternativ, nytt alternativ, bild, audio (kanske leta efter titelnamn lokalt på hårddisken?)) Man kan också skapa nya noder: rule, errata, box, circle.
+Snabbtangenter för att röra sig back och forward.
+Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
+Lite klurigt att man måste spara innan man kan använda SHIFT+ner/upp - borde bara direkt kopiera aktuell nod.
+Rule och errata för map och list.
+Flytta position i prerequisites enligt annan objektförflyttning och att det reflekteras i map.
+Möjlighet att manuellt flytta noder i map?
+Lägg spelikonen på speltriangeln.
+Fler AND villkor som kopplas ihop med OR.
+Alltid visa aktuell nods titel som redigeras.
+Automatiskt ändra utan att behöva spara?
+Automatiskt stänga Complete grupper.
+
 
 Don't animate modal boxes if one is closed and another is automatically opened.
 
@@ -135,11 +152,15 @@ tDL: add all encounter symbols.
 tDL: insert text for Standalone
 tDL: S3: fix DON'T READ ... (two screens with images...) + check all scenarios for this. Check: .reader-overlay.anim-in:animation (transition)
      alt. gör bara fade in och fade out, samtidigt!
+tDL: koppla enligt val
 
 Do something with Suggested Location Placement
     Läsa korten (flavortexten)
     Visa bilderna
 If local path entered, select it when a node is opened.
+
+OK MANUAL Gå automatiskt till första villkoret + knapp för att gå till nästa. (snabbknapp)
+OK MANUAL Lägg till copyright
 OK MANUAL All groups are removed when saving the game.
 OK MANUAL Multiple choices to multiple lines in log.
 OK MANUAL kursiv och nurad för varje alternativ i multi-logg.
