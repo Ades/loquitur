@@ -176,16 +176,28 @@
   .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
   .node-card{
     background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px;
-    cursor:pointer;transition:border-color .15s,transform .15s;position:relative;
+    cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s,opacity .15s;position:relative;
   }
   .node-card:hover{border-color:var(--brass-dim);transform:translateY(-2px);}
-  .node-card.completed{border-color:var(--moss-dim);}
+  .node-card.available{
+    border-color:var(--brass-dim);
+    background:linear-gradient(160deg,var(--bg-panel-raised),var(--bg-panel));
+    box-shadow:0 0 0 1px rgba(201,162,75,.16),0 4px 14px rgba(0,0,0,.22);
+  }
+  .node-card.available:hover{
+    border-color:var(--brass);
+    box-shadow:0 0 0 1px rgba(201,162,75,.32),0 6px 18px rgba(0,0,0,.28);
+    transform:translateY(-3px);
+  }
+  .node-card.available h3{color:var(--brass-bright);}
+  .node-card.completed{border-color:var(--moss-dim);opacity:.75;}
+  .node-card.completed:hover{opacity:1;}
   .node-card .tag{
     font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
     display:inline-block;padding:2px 6px;border-radius:2px;margin-bottom:7px;
   }
   .node-card.completed .tag{background:rgba(111,138,83,.18);color:var(--moss);}
-  .node-card.available .tag{background:rgba(201,162,75,.15);color:var(--brass);}
+  .node-card.available .tag{background:var(--brass);color:#161109;font-weight:600;}
   .node-card h3{font-size:14.5px;color:var(--parchment);margin-bottom:4px;line-height:1.3;}
   .node-card .node-card-text{font-size:12px;color:var(--parchment-dim);line-height:1.45;margin:0;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
@@ -193,6 +205,7 @@
   .node-card .node-card-text ul{margin:0 0 0 1.1em;padding:0;}
   .node-card .node-card-text code{background:var(--bg-panel-raised);padding:0 3px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:.92em;}
   .node-card .icon-row{position:absolute;top:11px;right:11px;color:var(--brass-dim);}
+  .node-card.available .icon-row{color:var(--brass-bright);}
   .mini-play{
     position:absolute;bottom:10px;right:10px;width:26px;height:26px;border-radius:50%;
     background:var(--brass);color:#161109;display:flex;align-items:center;justify-content:center;
@@ -207,11 +220,20 @@
   .node-list-item{
     display:flex;align-items:center;gap:10px;padding:10px 14px;
     background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);
-    cursor:pointer;transition:border-color .15s,transform .1s;
+    cursor:pointer;transition:border-color .15s,transform .1s,box-shadow .15s,opacity .15s;
   }
   .node-list-item:hover{border-color:var(--brass-dim);transform:translateX(2px);}
-  .node-list-item.completed{border-color:var(--moss-dim);}
+  .node-list-item.available{
+    border-color:var(--brass-dim);
+    background:linear-gradient(160deg,var(--bg-panel-raised),var(--bg-panel));
+    box-shadow:0 0 0 1px rgba(201,162,75,.14);
+  }
+  .node-list-item.available:hover{border-color:var(--brass);box-shadow:0 0 0 1px rgba(201,162,75,.28);}
+  .node-list-item.available .node-list-title{color:var(--brass-bright);}
+  .node-list-item.completed{border-color:var(--moss-dim);opacity:.75;}
+  .node-list-item.completed:hover{opacity:1;}
   .node-list-item .node-list-icon{flex:none;color:var(--brass-dim);display:flex;}
+  .node-list-item.available .node-list-icon{color:var(--brass-bright);}
   .node-list-item.completed .node-list-icon{color:var(--moss);}
   .node-list-item .node-list-title{flex:1;min-width:0;font-size:14px;color:var(--parchment);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -220,7 +242,7 @@
     padding:2px 7px;border-radius:2px;flex:none;
   }
   .node-list-item.completed .tag{background:rgba(111,138,83,.18);color:var(--moss);}
-  .node-list-item.available .tag{background:rgba(201,162,75,.15);color:var(--brass);}
+  .node-list-item.available .tag{background:var(--brass);color:#161109;font-weight:600;}
   .locked-note{
     grid-column:1/-1;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--locked);
     border-top:1px dashed var(--line);padding-top:10px;margin-top:2px;letter-spacing:.03em;

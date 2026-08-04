@@ -114,7 +114,7 @@ TEST 66 Add a settings for each group (at least for the shelf and the list but a
 OK TEST 67 Order the prerequisites in groups.
 OK TEST 68 Add a back button that goes back to the previous node.
 OK TEST 71 Also add a forward button together with the back button
-TEST 72 Make the unheard cards stand out better.
+OK TEST 72 Make the unheard cards stand out better.
         alt. Slightly dim heard items to make the unheard items stand out.
         alt. Separate unheard available items from heard items.
 
