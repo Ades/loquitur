@@ -274,7 +274,14 @@
   .reader .close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.4);border:1px solid var(--line);
     color:var(--parchment-dim);width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;display:flex;
     align-items:center;justify-content:center;}
-  .reader-relative{position:relative;height:100%;}
+  .reader .nav-btn-group{position:absolute;top:14px;left:14px;display:flex;gap:6px;}
+  .reader .nav-btn-group button{
+    background:rgba(0,0,0,.4);border:1px solid var(--line);
+      color:var(--parchment-dim);padding:0 12px;height:30px;border-radius:15px;font-size:12.5px;
+      display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Spectral',serif;transition:border-color .15s,color .15s;
+  }
+  .reader .nav-btn-group button:hover{border-color:var(--brass-dim);color:var(--parchment);}
+  .reader-relative{position:relative;}
   .reader .body-text{font-size:15.5px;line-height:1.75;color:var(--parchment);margin-bottom:20px;}
   .body-text p, .result-text p{margin:0 0 10px;}
   .body-text p:last-child, .result-text p:last-child{margin-bottom:0;}
@@ -474,6 +481,8 @@
   let readerNode = null;
   let readerResult = null; // {text, advanceTo} shown after a choice is played
   let readerAutoPlay = false; // consumed once by renderReader to autoplay audio
+  let readerHistory = []; // node ids visited earlier in the current chain of reader navigations, for the Back button
+  let readerForward = []; // node ids to redo forward to, populated by the Back button, for the Forward button
   let editingNodeId = null; // node currently being edited in manage panel, or null = "add new"
   let gameSubView = 'shelf';
   let undoStack = []; // [{nodeId, previous}] for progress changes, most recent last
@@ -705,11 +714,39 @@
   function openReaderFor(node, autoplay){
     const resolved = resolveJunctions(node);
     const skipped = resolved !== node;
+    // if we're already viewing something and moving on to a different node, remember
+    // where we came from so the reader's Back button can return to it.
+    if(resolved && readerNode && readerNode.id !== resolved.id){ readerHistory.push(readerNode.id); }
+    readerForward = []; // a fresh forward move invalidates whatever we could have redone to
     stopInlinePlay();
     readerNode = resolved;
     readerResult = null;
     readerAutoPlay = !!(resolved && resolved.audio && (autoplay || skipped));
     if(resolved) playTickSound();
+    render();
+  }
+  function goBack(){
+    if(readerHistory.length===0) return;
+    const prevId = readerHistory.pop();
+    const prevNode = findNodeById(prevId);
+    if(!prevNode){ goBack(); return; } // that one's gone (e.g. deleted) — try the one before it
+    if(readerNode) readerForward.push(readerNode.id);
+    stopInlinePlay();
+    readerNode = prevNode;
+    readerResult = null;
+    readerAutoPlay = false;
+    render();
+  }
+  function goForward(){
+    if(readerForward.length===0) return;
+    const nextId = readerForward.pop();
+    const nextNode = findNodeById(nextId);
+    if(!nextNode){ goForward(); return; } // that one's gone (e.g. deleted) — try the one after it
+    if(readerNode) readerHistory.push(readerNode.id);
+    stopInlinePlay();
+    readerNode = nextNode;
+    readerResult = null;
+    readerAutoPlay = false;
     render();
   }
   async function saveSettings(){ await sSet('settings', settings); }
@@ -2478,7 +2515,7 @@
     const done = isCompleted(n.id);
     const hasChoices = n.choices && n.choices.length>0;
 
-    const closeAndRerender = ()=>{ readerNode=null; readerResult=null; readerAutoPlay=false; overlay.remove(); render(); };
+    const closeAndRerender = ()=>{ readerNode=null; readerResult=null; readerAutoPlay=false; readerHistory=[]; readerForward=[]; overlay.remove(); render(); };
     const advanceTo = (nextNode)=>{ openReaderFor(nextNode, true); };
 
     const pos = n.image ? (n.imagePosition || 'top') : 'top';
@@ -2498,18 +2535,21 @@
       </div>
     `;
 
+    const navButtons = (readerHistory.length? `<button id="backReader">← Back</button>` : '') + (readerForward.length? `<button id="forwardReader">Forward →</button>` : '');
+    const backBtnHtml = navButtons ? `<div class="nav-btn-group">${navButtons}</div>` : '';
     let bodyMarkup;
     if(isRow){
       bodyMarkup = `
         <div class="reader-relative" style="display:flex;flex-direction:${pos==='left'?'row':'row-reverse'};max-height:92vh;overflow:hidden;">
           <div style="flex:0 0 34%;align-self:stretch;">${artHtml}</div>
           <div style="flex:1;min-width:0;max-height:92vh;overflow:auto;">${contentHtml}</div>
+          ${backBtnHtml}
           <button class="close" id="closeReader">&times;</button>
         </div>`;
     } else if(pos==='bottom'){
-      bodyMarkup = `<div class="reader-relative">${contentHtml}${artHtml}<button class="close" id="closeReader">&times;</button></div>`;
+      bodyMarkup = `<div class="reader-relative">${contentHtml}${artHtml}${backBtnHtml}<button class="close" id="closeReader">&times;</button></div>`;
     } else {
-      bodyMarkup = `<div class="reader-relative">${artHtml}<button class="close" id="closeReader">&times;</button>${contentHtml}</div>`;
+      bodyMarkup = `<div class="reader-relative">${artHtml}${backBtnHtml}<button class="close" id="closeReader">&times;</button>${contentHtml}</div>`;
     }
     overlay.innerHTML = `<div class="reader">${bodyMarkup}</div>`;
     const ownerGame = games.find(g=>g.id===n.gameId);
@@ -2517,6 +2557,10 @@
 
     document.body.appendChild(overlay);
     overlay.onclick = (e)=>{ if(e.target===overlay) closeAndRerender(); };
+    const backBtnEl = overlay.querySelector('#backReader');
+    if(backBtnEl){ backBtnEl.onclick = goBack; }
+    const forwardBtnEl = overlay.querySelector('#forwardReader');
+    if(forwardBtnEl){ forwardBtnEl.onclick = goForward; }
     overlay.querySelector('#closeReader').onclick = closeAndRerender;
 
     const audioEl = overlay.querySelector('audio');
@@ -3387,7 +3431,7 @@
     const reader = document.getElementById('narrationReaderOverlay');
     if(reader){
       e.preventDefault();
-      readerNode = null; readerResult = null; readerAutoPlay = false;
+      readerNode = null; readerResult = null; readerAutoPlay = false; readerHistory = []; readerForward = [];
       reader.remove();
       render();
       return;
@@ -3574,9 +3618,7 @@
       quickChainFromLastEdited();
       return;
     }
-    // console.log(e.shiftKey, e.key==='ArrowUp')
     if(e.shiftKey && e.key==='ArrowUp' && !isTextEditing){
-        console.log('SHIFT+UP')
       e.preventDefault();
       copyLastEdited();
       return;

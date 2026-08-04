@@ -109,14 +109,29 @@ OK TEST 63 For each game make it possible to set all fonts and colors for both l
 OK TEST 64 Mark group as completed when all items in the group are completed.
 OK         Do it for map and index and list as well.
            Exclude Errata and Rule from Complete-count.
-TEST 65 Add a new shortcut, SHIFT+up arrow, to copy the latest edited node.
+OK TEST 65 Add a new shortcut, SHIFT+up arrow, to copy the latest edited node.
 TEST 66 Add a settings for each group (at least for the shelf and the list but also for the map). The settings should contain options for the group to: Show first nodes in the group, Show hidden nodes, Hide heard narrations, Automatically open the next node when it unlocks. The settings are similar to the global settings.
 OK TEST 67 Order the prerequisites in groups.
-TEST 68 Add a back button that goes back to the previous node.
+OK TEST 68 Add a back button that goes back to the previous node.
+OK TEST 71 Also add a forward button together with the back button
+TEST 72 Make the unheard cards stand out better.
+        alt. Slightly dim heard items to make the unheard items stand out.
+        alt. Separate unheard available items from heard items.
+
+Don't animate modal boxes if one is closed and another is automatically opened.
+
+Check light index card background
+
 Spara audio/image path.
 När man klistar in med SHIFT+höger/vänster, lägg till path.
 
 Map shape as dot
+Görs redan: Automatically open closed groups when new items become available.
+
+tDL: add all encounter symbols.
+tDL: insert text for Standalone
+tDL: S3: fix DON'T READ ... (two screens with images...) + check all scenarios for this. Check: .reader-overlay.anim-in:animation (transition)
+     alt. gör bara fade in och fade out, samtidigt!
 
 Do something with Suggested Location Placement
     Läsa korten (flavortexten)
