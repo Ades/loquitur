@@ -118,7 +118,7 @@ OK TEST 72 Make the unheard cards stand out better.
         alt. Slightly dim heard items to make the unheard items stand out.
         alt. Separate unheard available items from heard items.
 OK TEST 73 Try to make lines in map always go forward.
-Make the prerequisites in the same order as the Existing Narrations-list.
+OK TEST 74 Make the prerequisites in the same order as the Existing Narrations-list.
 Anpassa till mobil (eller mindre fönster)
 Gör möjligt att skicka meddelanden.
 
@@ -136,6 +136,7 @@ Fler AND villkor som kopplas ihop med OR.
 Alltid visa aktuell nods titel som redigeras.
 Automatiskt ändra utan att behöva spara?
 Automatiskt stänga Complete grupper.
+Remove game.
 
 
 Don't animate modal boxes if one is closed and another is automatically opened.

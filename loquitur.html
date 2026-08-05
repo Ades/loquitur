@@ -2956,18 +2956,19 @@
                 </select>
               </div>`;
               }
+              const byOrder = (a,b)=>(a.order||0)-(b.order||0);
               const gameGroups = game.groups || [];
               if(gameGroups.length===0){
-                return otherNodes.map(prereqItem).join('');
+                return otherNodes.slice().sort(byOrder).map(prereqItem).join('');
               }
               const validGroupIds = gameGroups.map(g=>g.id);
-              const ungrouped = otherNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId));
+              const ungrouped = otherNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId)).sort(byOrder);
               let html = '';
               if(ungrouped.length){
                 html += `<div class="prereq-group-label">Ungrouped</div>` + ungrouped.map(prereqItem).join('');
               }
               gameGroups.forEach(g=>{
-                const list = otherNodes.filter(n=>n.groupId===g.id);
+                const list = otherNodes.filter(n=>n.groupId===g.id).sort(byOrder);
                 if(list.length){
                   html += `<div class="prereq-group-label">${escapeHtml(g.name)}</div>` + list.map(prereqItem).join('');
                 }
@@ -3626,7 +3627,7 @@
       if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'});
     }, 30);
   }
-    var pos = 0
+    var prereqPos = 0
     document.addEventListener('keydown', (e)=>{
     if(!manageMode) return;
     const active = document.activeElement;
@@ -3674,12 +3675,12 @@
         // let checkedPrerequisites = document.querySelectorAll('.prereqChoice:not([disabled])');
         setTimeout(()=>{
             let checkedPrerequisites = document.querySelectorAll('.prereqCk[checked]');
-            checkedPrerequisites?.[pos]?.scrollIntoView({
+            checkedPrerequisites?.[prereqPos]?.scrollIntoView({
                 behaviour: "smooth",
                 block: "center",
                 inline: "start",
             })
-            pos = ((pos+1) % checkedPrerequisites?.length) || 0
+            prereqPos = ((prereqPos+1) % checkedPrerequisites?.length) || 0
             /* if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'}); */
         }, 30);
         // console.log('POS',pos)
