@@ -124,6 +124,13 @@
     transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
   }
   .game-card:hover{transform:translateY(-3px);border-color:var(--brass-dim);box-shadow:var(--shadow);}
+  .game-card-delete{
+    position:absolute;top:8px;right:8px;z-index:2;width:24px;height:24px;border-radius:50%;
+    background:rgba(10,8,6,.55);border:1px solid var(--line);color:var(--parchment-dim);
+    font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .game-card-delete:hover{background:var(--wine);color:#fff;border-color:var(--wine);}
   .game-card .art{
     height:104px;background:linear-gradient(160deg,#2c2318,#181310) center/cover no-repeat;
     display:flex;align-items:center;justify-content:center;color:var(--locked);
@@ -1423,6 +1430,7 @@
       card.setAttribute('style', gameAccentVars(g));
       card.innerHTML = `
         <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>'}</div>
+        ${manageMode? `<button class="game-card-delete" data-delgame="${g.id}" title="Remove this game">&times;</button>` : ''}
         <div class="body">
           <h3>${renderTitle(g.name)}</h3>
           <div class="node-card-text">${renderMarkdown(g.description||'')}</div>
@@ -1430,6 +1438,24 @@
         </div>
       `;
       card.onclick = ()=>{ route = {view:'game', gameId:g.id}; gameSubView='shelf'; editingNodeId=null; render(); };
+      if(manageMode){
+        const delBtn = card.querySelector('[data-delgame]');
+        delBtn.onclick = async (e)=>{
+          e.stopPropagation();
+          if(!confirm(`Remove "${g.name}" and all its narrations? This cannot be undone.`)) return;
+          const gameNodes = nodesByGame[g.id]||[];
+          for(const n of gameNodes){ await sDel('node:'+n.id); }
+          await sDel('node-index:'+g.id);
+          await sDel('game:'+g.id);
+          let idx = await sGet('game-index') || [];
+          idx = idx.filter(x=>x!==g.id);
+          await sSet('game-index', idx);
+          games = games.filter(x=>x.id!==g.id);
+          delete nodesByGame[g.id];
+          toast('Game removed.');
+          render();
+        };
+      }
       grid.appendChild(card);
     });
 

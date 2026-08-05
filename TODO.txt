@@ -119,8 +119,11 @@ OK TEST 72 Make the unheard cards stand out better.
         alt. Separate unheard available items from heard items.
 OK TEST 73 Try to make lines in map always go forward.
 OK TEST 74 Make the prerequisites in the same order as the Existing Narrations-list.
+OK TEST 75 Remove game.
 Anpassa till mobil (eller mindre fönster)
 Gör möjligt att skicka meddelanden.
+Automatically load preset games...
+Show open group's nodes explicitly in map manage mode.
 
 Hide lines, or at least try to avoid to show lines over other nodes.
 
@@ -136,7 +139,6 @@ Fler AND villkor som kopplas ihop med OR.
 Alltid visa aktuell nods titel som redigeras.
 Automatiskt ändra utan att behöva spara?
 Automatiskt stänga Complete grupper.
-Remove game.
 
 
 Don't animate modal boxes if one is closed and another is automatically opened.
