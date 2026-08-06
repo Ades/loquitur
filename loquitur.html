@@ -51,6 +51,7 @@
     --bg-glow:#fffaf0;
     --shadow: 0 8px 20px rgba(60,45,20,.18);
   }
+  body.large-font{ zoom:1.18; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -498,7 +499,8 @@
     scratchSoundEnabled:true,
     logOrder:'latestFirst',
     audioPlayerStyle:'native',
-    animationsEnabled:true
+    animationsEnabled:true,
+    largeFont:false
   };
 
   // ---------------- State ----------------
@@ -554,6 +556,7 @@
     progress = await sGet('progress') || {completed:{}};
     settings = Object.assign({}, DEFAULT_SETTINGS, await sGet('settings') || {});
     applyTheme();
+    applyLargeFont();
     // seed with everything already available so nothing "unlock-animates" on first load —
     // only genuinely new unlocks during this session should get the animation.
     games.forEach(g=>{
@@ -564,6 +567,9 @@
 
   function applyTheme(){
     document.body.classList.toggle('light', settings.theme==='light');
+  }
+  function applyLargeFont(){
+    document.body.classList.toggle('large-font', !!settings.largeFont);
   }
 
   // ---------------- Unlock logic ----------------
@@ -1217,6 +1223,10 @@
               <input type="checkbox" id="animationsCk" ${settings.animationsEnabled?'checked':''}> Animate newly-unlocked narrations and opening windows
             </label>
             <div class="hint">Gives a brief pulse to narrations the moment they unlock on the shelf and map, and a short pop-in when a window opens. Turn off for an instant, static interface.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="largeFontCk" ${settings.largeFont?'checked':''}> Large font
+            </label>
+            <div class="hint">Scales up all text, buttons and spacing together — useful for reading narrations from across the table.</div>
             <label style="display:block;margin-top:12px;">Log order</label>
             <div class="media-toggle" id="logOrderToggle" style="margin-top:4px;">
               <button type="button" data-order="latestFirst" class="${settings.logOrder!=='latestLast'?'active':''}">Latest first</button>
@@ -1300,6 +1310,9 @@
     };
     overlay.querySelector('#animationsCk').onchange = async (e)=>{
       settings.animationsEnabled = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#largeFontCk').onchange = async (e)=>{
+      settings.largeFont = e.target.checked; await saveSettings(); applyLargeFont();
     };
     overlay.querySelector('#autoCloseCk').onchange = async (e)=>{
       settings.autoCloseOnAudioEnd = e.target.checked; await saveSettings();

@@ -119,11 +119,15 @@ OK TEST 72 Make the unheard cards stand out better.
         alt. Separate unheard available items from heard items.
 OK TEST 73 Try to make lines in map always go forward.
 OK TEST 74 Make the prerequisites in the same order as the Existing Narrations-list.
-OK TEST 75 Remove game.
-Anpassa till mobil (eller mindre fönster)
-Gör möjligt att skicka meddelanden.
-Automatically load preset games...
-Show open group's nodes explicitly in map manage mode.
+OK TEST 75 Remove game. (DUPLIKAT)
+OK TEST 76 Add a setting to have large font.
+Anpassa till mobil (eller mindre fönster) - large font option
+On The Shelf, under Your Games, show a list of games that can be added.
+    Automatically load preset games... If no local structure is found, load a default ...
+    When you press Add a game show a list of game structures that can be loaded.
+    alt. Under Your Games, show a list of games that can be added.
+TEST 77 Show open group's nodes explicitly in map manage mode.
+Gör möjligt att skicka meddelanden, t ex en bugfix request, new feature...
 
 Hide lines, or at least try to avoid to show lines over other nodes.
 
@@ -132,14 +136,16 @@ Snabbtangenter för att röra sig back och forward.
 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 Lite klurigt att man måste spara innan man kan använda SHIFT+ner/upp - borde bara direkt kopiera aktuell nod.
 Rule och errata för map och list.
-Flytta position i prerequisites enligt annan objektförflyttning och att det reflekteras i map.
+TEST Flytta position i prerequisites enligt annan objektförflyttning och att det reflekteras i map.
 Möjlighet att manuellt flytta noder i map?
 Lägg spelikonen på speltriangeln.
 Fler AND villkor som kopplas ihop med OR.
 Alltid visa aktuell nods titel som redigeras.
 Automatiskt ändra utan att behöva spara?
 Automatiskt stänga Complete grupper.
-
+Count and present completed groups instead of number of narrations.
+MANUAL Byt text Add a game -> Create a game
+set save name to game name + structure, game name + progress
 
 Don't animate modal boxes if one is closed and another is automatically opened.
 
@@ -151,14 +157,15 @@ När man klistar in med SHIFT+höger/vänster, lägg till path.
 Map shape as dot
 Görs redan: Automatically open closed groups when new items become available.
 
+tDL: Remove spoken word "prologue" from end of "Their hand is at your throats..."
 tDL: add all encounter symbols.
 tDL: insert text for Standalone
 tDL: S3: fix DON'T READ ... (two screens with images...) + check all scenarios for this. Check: .reader-overlay.anim-in:animation (transition)
      alt. gör bara fade in och fade out, samtidigt!
-tDL: koppla enligt val
+tDL: koppla allt enligt val, t ex fixa kopplingen mellan 1A och 1B
 
 Do something with Suggested Location Placement
-    Läsa korten (flavortexten)
+    Läsa korten (flavortexten — ska den läsas?)
     Visa bilderna
 If local path entered, select it when a node is opened.
 
@@ -177,7 +184,7 @@ OK MANUAL Extra rule box (square corners) stroke-dasharray="4 4"
 OK MANUAL Gör OR-linjer heldragna och inte streckade som de är nu.
 OK MANUAL add encounter set icons — går med <img src="public/images/IV-encountersets.png" style="height:4em" alt="icons"/>
 Tajtare lista - nu är det en del tomrum (men den ser bra ut).
-Tydligare skillnad mellan lyssnat och icke-lyssnat.
+OK Tydligare skillnad mellan lyssnat och icke-lyssnat.
 
 MANUAL Default: do not add to log
 MANUAL Default Box without resolution
