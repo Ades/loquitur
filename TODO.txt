@@ -121,12 +121,12 @@ OK TEST 73 Try to make lines in map always go forward.
 OK TEST 74 Make the prerequisites in the same order as the Existing Narrations-list.
 OK TEST 75 Remove game. (DUPLIKAT)
 OK TEST 76 Add a setting to have large font.
+OK TEST 77 Show open group's nodes explicitly in map manage mode.
 Anpassa till mobil (eller mindre fönster) - large font option
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
     When you press Add a game show a list of game structures that can be loaded.
     alt. Under Your Games, show a list of games that can be added.
-TEST 77 Show open group's nodes explicitly in map manage mode.
 Gör möjligt att skicka meddelanden, t ex en bugfix request, new feature...
 
 Hide lines, or at least try to avoid to show lines over other nodes.

@@ -2496,7 +2496,13 @@
       const mapWasSeen = seenAvailableIds.has(n.id);
       if(avail && !mapWasSeen) seenAvailableIds.add(n.id);
       const isNewMapNode = settings.animationsEnabled && !manageMode && !done && avail && !mapWasSeen;
-      boxes += `<g class="map-node${isNewMapNode?' newly-unlocked':''}" data-id="${n.id}" style="cursor:${(avail||manageMode)?'pointer':'default'}">${tooltip}${orSvg}${shapeSvg}${labelSvg}</g>`;
+      let manageStyle = '';
+      if(manageMode){
+        const nodeGroup = n.groupId ? (game.groups||[]).find(g=>g.id===n.groupId) : null;
+        const isCollapsed = nodeGroup && nodeGroup.collapsed;
+        manageStyle = isCollapsed ? 'opacity:.3;' : '';
+      }
+      boxes += `<g class="map-node${isNewMapNode?' newly-unlocked':''}" data-id="${n.id}" style="cursor:${(avail||manageMode)?'pointer':'default'};${manageStyle}">${tooltip}${orSvg}${shapeSvg}${labelSvg}</g>`;
     });
 
     mapBox.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}" style="${isVertical? 'display:block;margin:0 auto;':''}">${lines}${boxes}</svg>`;
