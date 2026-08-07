@@ -521,6 +521,7 @@
   let undoStack = []; // [{nodeId, previous}] for progress changes, most recent last
   let lastEditedNodeId = null; // most recently saved narration, for the Shift+↓ quick-chain fast key
   let seenAvailableIds = new Set(); // node ids already shown as available — anything new here gets the unlock animation once
+  let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
 
   // inline (card / map) audio preview
   const inlineAudio = new Audio();
@@ -1480,7 +1481,119 @@
       grid.appendChild(addCard);
     }
     wrap.appendChild(grid);
+    wrap.appendChild(renderAvailableStructures());
     return wrap;
+  }
+
+  // ---------------- Available game structures (from a loaded file, not yet in Your Games) ----------------
+  function renderAvailableStructures(){
+    const section = document.createElement('div');
+    section.style.marginTop='28px';
+
+    const head = document.createElement('div');
+    head.className='library-head';
+    head.innerHTML = `<div><div class="eyebrow">From a file</div><h2 style="font-size:18px;margin-top:4px;">Available game structures</h2></div>`;
+    const loadBtn = document.createElement('button');
+    loadBtn.className='btn ghost small';
+    loadBtn.textContent = 'Load a structure file…';
+    const fileInp = document.createElement('input');
+    fileInp.type='file'; fileInp.accept='application/json'; fileInp.style.display='none';
+    loadBtn.onclick = ()=> fileInp.click();
+    fileInp.onchange = async ()=>{
+      const f = fileInp?.files[0];
+      fileInp.value='';
+      if(!f) return;
+      try{
+        const loaded = await importLibraryFromFile(f);
+        const existingIds = new Set(games.map(g=>g.id));
+        importCandidates = loaded.games
+          .filter(g=>!existingIds.has(g.id))
+          .map(g=>({game:g, nodes: loaded.nodesByGame[g.id]||[]}));
+        if(importCandidates.length===0){
+          toast('Every game in that file is already in Your Games.');
+          importCandidates = null;
+        }
+        render();
+      }catch(e){ toast(e.message); }
+    };
+
+      function fetchJSONData() {
+          fetch('./default_codex.json')
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  const existingIds = new Set(games.map(g => g.id));
+                  const loaded = data
+                  importCandidates = loaded.games
+                      .filter(g => !existingIds?.has(g.id))
+                      .map(g => ({game: g, nodes: loaded.nodesByGame[g.id] || []}));
+                  if (importCandidates.length === 0) {
+                      toast('Every game in that file is already in Your Games.');
+                      importCandidates = null;
+                  }
+                  render();
+              })
+              .catch(error => console.error('Failed to fetch data:', error));
+      }
+      if (importCandidates===null) fetchJSONData()
+
+    head.appendChild(loadBtn);
+    head.appendChild(fileInp);
+    section.appendChild(head);
+
+    if(!importCandidates || importCandidates.length===0){
+      const empty = document.createElement('div');
+      empty.className='empty';
+      empty.innerHTML = `<h3>Nothing loaded yet</h3><p>Load a "structure" file — the kind Settings → "Save structure to file" produces — to see any games in it that aren't already in Your Games, and add them individually.</p>`;
+      section.appendChild(empty);
+      return section;
+    }
+
+    const grid = document.createElement('div');
+    grid.className='grid';
+    importCandidates.forEach(cand=>{
+      const g = cand.game;
+      const card = document.createElement('div');
+      card.className='game-card';
+      card.style.cursor='default';
+      card.innerHTML = `
+        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>'}</div>
+        <div class="body">
+          <h3>${renderTitle(g.name)}</h3>
+          <div class="node-card-text">${renderMarkdown(g.description||'')}</div>
+          <div class="stat-row"><span>${cand.nodes.length} NARRATION${cand.nodes.length===1?'':'S'}</span><span></span></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn primary small" data-add="1">Add to Your Games</button>
+            <button class="btn ghost small" data-dismiss="1">Dismiss</button>
+          </div>
+        </div>
+      `;
+      card.querySelector('[data-add]').onclick = async ()=>{
+        const ok = await sSet('game:'+g.id, g);
+        if(!ok){ toast('Could not add this game — please try again.'); return; }
+        await sSet('node-index:'+g.id, cand.nodes.map(n=>n.id));
+        for(const n of cand.nodes){ await sSet('node:'+n.id, n); }
+        const idx = await sGet('game-index') || [];
+        idx.push(g.id);
+        await sSet('game-index', idx);
+        games.push(g);
+        nodesByGame[g.id] = cand.nodes;
+        importCandidates = importCandidates.filter(c=>c!==cand);
+        toast(`"${g.name}" added to Your Games.`);
+        render();
+      };
+      card.querySelector('[data-dismiss]').onclick = ()=>{
+        importCandidates = importCandidates.filter(c=>c!==cand);
+        render();
+      };
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    return section;
   }
 
   // ---------------- Add / Edit Game modal ----------------

@@ -122,6 +122,9 @@ OK TEST 74 Make the prerequisites in the same order as the Existing Narrations-l
 OK TEST 75 Remove game. (DUPLIKAT)
 OK TEST 76 Add a setting to have large font.
 OK TEST 77 Show open group's nodes explicitly in map manage mode.
+OK TEST 78 Under "Your Games" on the shelf, add a section with available game structures that can be added to Your Games.
+    NO If no structure is found, load a default structure.
+
 Anpassa till mobil (eller mindre fönster) - large font option
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
@@ -131,8 +134,8 @@ Gör möjligt att skicka meddelanden, t ex en bugfix request, new feature...
 
 Hide lines, or at least try to avoid to show lines over other nodes.
 
+Count and present completed groups instead of number of narrations.
 Markera avsnitt i en text och med snabbtangenter flytta texten till respektiver ruta. (titel, brödtext, nytt alternativ, nytt alternativ, bild, audio (kanske leta efter titelnamn lokalt på hårddisken?)) Man kan också skapa nya noder: rule, errata, box, circle.
-Snabbtangenter för att röra sig back och forward.
 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 Lite klurigt att man måste spara innan man kan använda SHIFT+ner/upp - borde bara direkt kopiera aktuell nod.
 Rule och errata för map och list.
@@ -143,9 +146,9 @@ Fler AND villkor som kopplas ihop med OR.
 Alltid visa aktuell nods titel som redigeras.
 Automatiskt ändra utan att behöva spara?
 Automatiskt stänga Complete grupper.
-Count and present completed groups instead of number of narrations.
 MANUAL Byt text Add a game -> Create a game
 set save name to game name + structure, game name + progress
+Snabbtangenter för att röra sig back och forward.
 
 Don't animate modal boxes if one is closed and another is automatically opened.
 
