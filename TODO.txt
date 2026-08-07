@@ -172,6 +172,7 @@ Do something with Suggested Location Placement
     Visa bilderna
 If local path entered, select it when a node is opened.
 
+OK Byt projektnamn till loquitur
 OK MANUAL Gå automatiskt till första villkoret + knapp för att gå till nästa. (snabbknapp)
 OK MANUAL Lägg till copyright
 OK MANUAL All groups are removed when saving the game.
