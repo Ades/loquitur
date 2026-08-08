@@ -124,8 +124,10 @@ OK TEST 76 Add a setting to have large font.
 OK TEST 77 Show open group's nodes explicitly in map manage mode.
 OK TEST 78 Under "Your Games" on the shelf, add a section with available game structures that can be added to Your Games.
     NO If no structure is found, load a default structure.
+TEST 80 Adapt to a mobile phone.
+    Anpassa till mobil (eller mindre fönster) - large font option
+TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 
-Anpassa till mobil (eller mindre fönster) - large font option
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
     When you press Add a game show a list of game structures that can be loaded.
@@ -136,7 +138,6 @@ Hide lines, or at least try to avoid to show lines over other nodes.
 
 Count and present completed groups instead of number of narrations.
 Markera avsnitt i en text och med snabbtangenter flytta texten till respektiver ruta. (titel, brödtext, nytt alternativ, nytt alternativ, bild, audio (kanske leta efter titelnamn lokalt på hårddisken?)) Man kan också skapa nya noder: rule, errata, box, circle.
-Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 Lite klurigt att man måste spara innan man kan använda SHIFT+ner/upp - borde bara direkt kopiera aktuell nod.
 Rule och errata för map och list.
 TEST Flytta position i prerequisites enligt annan objektförflyttning och att det reflekteras i map.

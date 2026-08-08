@@ -3,7 +3,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Loquitur</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Loquitur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
@@ -522,6 +523,7 @@
   let lastEditedNodeId = null; // most recently saved narration, for the Shift+↓ quick-chain fast key
   let seenAvailableIds = new Set(); // node ids already shown as available — anything new here gets the unlock animation once
   let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
+    let alreadyTried = false;
 
   // inline (card / map) audio preview
   const inlineAudio = new Audio();
@@ -1539,7 +1541,10 @@
               })
               .catch(error => console.error('Failed to fetch data:', error));
       }
-      if (importCandidates===null) fetchJSONData()
+      if (importCandidates===null && !alreadyTried) {
+          alreadyTried = true
+          fetchJSONData()
+      }
 
     head.appendChild(loadBtn);
     head.appendChild(fileInp);
@@ -2498,7 +2503,6 @@
     // Strips HTML/markdown syntax down to plain text for a compact map preview.
     function plainPreview(src){
       return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').trim();
-      // return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
     }
 
     let boxes = '';
