@@ -124,16 +124,15 @@ OK TEST 76 Add a setting to have large font.
 OK TEST 77 Show open group's nodes explicitly in map manage mode.
 OK TEST 78 Under "Your Games" on the shelf, add a section with available game structures that can be added to Your Games.
      NO If no structure is found, load a default structure.
-TEST 80 Adapt to a mobile phone.
+OK TEST 80 Adapt to a mobile phone.
         Anpassa till mobil (eller mindre fönster) - large font option
 OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
-Automatically open groups where new cards become available.
-Always close modal if a start node is about to be opened.
-Add a setting to show all narrations even thoug they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
-large font makes button outside screen on mobile.
+TEST 82 Automatically open groups where new cards become available.
+TEST 83 Always close modal if a start node is about to be opened.
 Shortcut to change log entry — maybe show which nodes have entry by color.
+large font makes button outside screen on mobile.
+Add a setting to show all narrations even though they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
 
-Add readme.
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
     When you press Add a game show a list of game structures that can be loaded.
@@ -180,7 +179,8 @@ Do something with Suggested Location Placement
     Visa bilderna
 If local path entered, select it when a node is opened.
 
-OK Byt projektnamn till loquitur
+OK MANUAL Add readme.
+OK MANUAL Byt projektnamn till loquitur
 OK MANUAL Gå automatiskt till första villkoret + knapp för att gå till nästa. (snabbknapp)
 OK MANUAL Lägg till copyright
 OK MANUAL All groups are removed when saving the game.
@@ -198,6 +198,7 @@ OK MANUAL add encounter set icons — går med <img src="public/images/IV-encoun
 Tajtare lista - nu är det en del tomrum (men den ser bra ut).
 OK Tydligare skillnad mellan lyssnat och icke-lyssnat.
 
+path -> url for content
 MANUAL Default: do not add to log
 MANUAL Default Box without resolution
 ??? MANUAL Add option to hide heard cards but keep heard in campaign log.

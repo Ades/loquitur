@@ -52,7 +52,7 @@
     --bg-glow:#fffaf0;
     --shadow: 0 8px 20px rgba(60,45,20,.18);
   }
-  body.large-font{ zoom:1.18; }
+  body.large-font{ transform:scale(1.18); }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -3901,7 +3901,7 @@
         setTimeout(()=>{
             let checkedPrerequisites = document.querySelectorAll('.prereqCk[checked]');
             checkedPrerequisites?.length && checkedPrerequisites?.[prereqPos || 0]?.scrollIntoView({
-                behaviour: "smooth",
+                behavior: "smooth",
                 block: "center",
                 inline: "start",
             })
