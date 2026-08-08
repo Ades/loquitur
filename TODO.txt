@@ -123,10 +123,12 @@ OK TEST 75 Remove game. (DUPLIKAT)
 OK TEST 76 Add a setting to have large font.
 OK TEST 77 Show open group's nodes explicitly in map manage mode.
 OK TEST 78 Under "Your Games" on the shelf, add a section with available game structures that can be added to Your Games.
-    NO If no structure is found, load a default structure.
+     NO If no structure is found, load a default structure.
 TEST 80 Adapt to a mobile phone.
-    Anpassa till mobil (eller mindre fönster) - large font option
-TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
+        Anpassa till mobil (eller mindre fönster) - large font option
+OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
+Automatically open groups where new cards become available.
+Always close modal if a start node is about to be opened.
 
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
