@@ -1,17 +1,88 @@
 {
   "type": "campaign-codex-library",
-  "exportedAt": "2026-08-06T07:37:41.248Z",
+  "exportedAt": "2026-08-07T09:19:59.602Z",
   "games": [
     {
-      "id": "gt7siisau1qp",
-      "name": "XXXThe Dunwich Legacy",
-      "description": "Some text about the game ...",
+      "id": "mrkgwl8wrfif",
+      "name": "The Dunwich Legacy",
+      "description": "",
       "image": "public/images/ahc02_preview1.jpg",
       "stylePreset": "default",
       "customColors": {},
-      "titleFont": "cinzel",
+      "titleFont": "custom",
       "textFont": "spectral",
-      "createdAt": 1784405284945
+      "customTitleFont": {
+        "family": "gf-title-mrkgwl8wrfif",
+        "source": "public/fonts/Teutonic.ttf"
+      },
+      "customTextFont": null,
+      "groups": [
+        {
+          "id": "qbvvquloxq9s",
+          "name": "Introduction",
+          "collapsed": true,
+          "showFirstOnly": false,
+          "showHiddenNodes": false,
+          "hideHeard": false,
+          "autoAdvanceGroup": false
+        },
+        {
+          "id": "altssi6ps5u2",
+          "name": "Prologue",
+          "collapsed": true
+        },
+        {
+          "id": "8h1ob7ytp30o",
+          "name": "Scenario I",
+          "collapsed": false
+        },
+        {
+          "id": "rjuw6tdw47tz",
+          "name": "Interlude-I",
+          "collapsed": true
+        },
+        {
+          "id": "t5veovohjhiv",
+          "name": "Scenario II",
+          "collapsed": false
+        },
+        {
+          "id": "w6nf4o4o2932",
+          "name": "Scenario-III",
+          "collapsed": true
+        },
+        {
+          "id": "1odljjs9y4dp",
+          "name": "Scenario IV",
+          "collapsed": true
+        },
+        {
+          "id": "wgojuku8pshs",
+          "name": "Interlude II",
+          "collapsed": true
+        },
+        {
+          "id": "p7uh6q7arbq0",
+          "name": "Scenario V",
+          "collapsed": false
+        },
+        {
+          "id": "7bp59x3n0oyu",
+          "name": "Scenario VI",
+          "collapsed": true
+        },
+        {
+          "id": "vab6g6up9a2o",
+          "name": "Scenario VII",
+          "collapsed": true
+        },
+        {
+          "id": "xlmmknyalmv8",
+          "name": "Epilogue",
+          "collapsed": true
+        }
+      ],
+      "createdAt": 1784494182471
     },
     {
       "id": "rez9lxddmtri",
@@ -59,1144 +130,18 @@
       ]
     },
     {
-      "id": "mrkgwl8wrfif",
-      "name": "The Dunwich Legacy",
-      "description": "",
+      "id": "gt7siisau1qp",
+      "name": "XXXThe Dunwich Legacy",
+      "description": "Some text about the game ...",
       "image": "public/images/ahc02_preview1.jpg",
       "stylePreset": "default",
       "customColors": {},
-      "titleFont": "custom",
+      "titleFont": "cinzel",
       "textFont": "spectral",
-      "customTitleFont": {
-        "family": "gf-title-mrkgwl8wrfif",
-        "source": "public/fonts/Teutonic.ttf"
-      },
-      "customTextFont": null,
-      "groups": [
-        {
-          "id": "qbvvquloxq9s",
-          "name": "Introduction",
-          "collapsed": true,
-          "showFirstOnly": false,
-          "showHiddenNodes": false,
-          "hideHeard": false,
-          "autoAdvanceGroup": false
-        },
-        {
-          "id": "altssi6ps5u2",
-          "name": "Prologue",
-          "collapsed": true
-        },
-        {
-          "id": "8h1ob7ytp30o",
-          "name": "Scenario I",
-          "collapsed": true
-        },
-        {
-          "id": "rjuw6tdw47tz",
-          "name": "Interlude-I",
-          "collapsed": true
-        },
-        {
-          "id": "t5veovohjhiv",
-          "name": "Scenario II",
-          "collapsed": true
-        },
-        {
-          "id": "w6nf4o4o2932",
-          "name": "Scenario-III",
-          "collapsed": true
-        },
-        {
-          "id": "1odljjs9y4dp",
-          "name": "Scenario IV",
-          "collapsed": true
-        },
-        {
-          "id": "wgojuku8pshs",
-          "name": "Interlude II",
-          "collapsed": false
-        },
-        {
-          "id": "p7uh6q7arbq0",
-          "name": "Scenario V",
-          "collapsed": true
-        },
-        {
-          "id": "7bp59x3n0oyu",
-          "name": "Scenario VI",
-          "collapsed": true
-        },
-        {
-          "id": "vab6g6up9a2o",
-          "name": "Scenario VII",
-          "collapsed": true
-        },
-        {
-          "id": "xlmmknyalmv8",
-          "name": "Epilogue",
-          "collapsed": true
-        }
-      ],
-      "createdAt": 1784494182471
+      "createdAt": 1784405284945
     }
   ],
   "nodesByGame": {
-    "gt7siisau1qp": [
-      {
-        "id": "k7bfznrdvqcj",
-        "gameId": "gt7siisau1qp",
-        "title": "Introduction",
-        "text": "",
-        "audio": "public/audio/tDL/tDL-Introduction.mp3",
-        "image": "public/images/ahc02_preview1.jpg",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "prerequisiteMode": "all",
-        "choices": [],
-        "createdAt": 1784405363491
-      },
-      {
-        "id": "hhcy1khbywdu",
-        "gameId": "gt7siisau1qp",
-        "title": "Prologue",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "k7bfznrdvqcj",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "all",
-        "choices": [
-          {
-            "id": "vd9habppzg5e",
-            "label": "Scenario I-A",
-            "resultText": "**BOLD** *italics*\n\n## title"
-          },
-          {
-            "id": "98wlztwwzyoi",
-            "label": "Scenario I-B",
-            "resultText": "What happens next?"
-          }
-        ],
-        "createdAt": 1784405511282
-      },
-      {
-        "id": "rcxv53351urn",
-        "gameId": "gt7siisau1qp",
-        "title": "Scenario I-A: Introduction",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "hhcy1khbywdu",
-            "choiceId": "vd9habppzg5e"
-          },
-          {
-            "nodeId": "xip8mlaw3dth",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "any",
-        "choices": [],
-        "createdAt": 1784405649155
-      },
-      {
-        "id": "i7d1d1pp26ny",
-        "gameId": "gt7siisau1qp",
-        "title": "Scenario I-A: Resolution",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "rcxv53351urn",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "all",
-        "choices": [
-          {
-            "id": "n2z8c5yp6eyv",
-            "label": "No Resolution",
-            "resultText": ""
-          },
-          {
-            "id": "l9kofoyq6j04",
-            "label": "R1",
-            "resultText": ""
-          },
-          {
-            "id": "am02g9cx6l6y",
-            "label": "R2",
-            "resultText": ""
-          },
-          {
-            "id": "37z7207n6n8b",
-            "label": "R3",
-            "resultText": ""
-          },
-          {
-            "id": "w5mwbdme6pkp",
-            "label": "R4",
-            "resultText": ""
-          }
-        ],
-        "createdAt": 1784405664574
-      },
-      {
-        "id": "n4lwo50t3196",
-        "gameId": "gt7siisau1qp",
-        "title": "Scenario I-B: Introduction",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "hhcy1khbywdu",
-            "choiceId": "98wlztwwzyoi"
-          },
-          {
-            "nodeId": "i7d1d1pp26ny",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "any",
-        "choices": [],
-        "createdAt": 1784405704218
-      },
-      {
-        "id": "xip8mlaw3dth",
-        "gameId": "gt7siisau1qp",
-        "title": "Scenario I-B: Resolution",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "n4lwo50t3196",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "all",
-        "choices": [
-          {
-            "id": "rorfnvx278fu",
-            "label": "No Resolution",
-            "resultText": ""
-          },
-          {
-            "id": "jh1ipscq7d8v",
-            "label": "R1",
-            "resultText": ""
-          },
-          {
-            "id": "01qgafp57dt9",
-            "label": "R2",
-            "resultText": ""
-          },
-          {
-            "id": "zr4nbskz7hja",
-            "label": "R3",
-            "resultText": ""
-          },
-          {
-            "id": "jrjw6tnq7jq7",
-            "label": "R4",
-            "resultText": ""
-          }
-        ],
-        "createdAt": 1784405720501
-      },
-      {
-        "id": "2587kenyc1zd",
-        "gameId": "gt7siisau1qp",
-        "title": "Scenario II",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "i7d1d1pp26ny",
-            "choiceId": null
-          },
-          {
-            "nodeId": "xip8mlaw3dth",
-            "choiceId": null
-          }
-        ],
-        "prerequisiteMode": "all",
-        "choices": [],
-        "createdAt": 1784406125065
-      }
-    ],
-    "rez9lxddmtri": [
-      {
-        "id": "y9l8qcl1noou",
-        "gameId": "rez9lxddmtri",
-        "title": "start",
-        "text": "",
-        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [
-          {
-            "id": "cqav89axqook",
-            "label": "Scenario 1A",
-            "resultText": ""
-          },
-          {
-            "id": "j7uzaz0aqufi",
-            "label": "Scenario 1B",
-            "resultText": ""
-          }
-        ],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "612hsz84vaxj",
-        "order": 0,
-        "createdAt": 1784438580414
-      },
-      {
-        "id": "q527he9lpk5b",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 1A startt",
-        "text": "",
-        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "y9l8qcl1noou",
-            "choiceId": "cqav89axqook",
-            "group": "any"
-          },
-          {
-            "nodeId": "4n4vylal8d3u",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wp63r6pfabsc",
-        "order": 0,
-        "createdAt": 1784438667839
-      },
-      {
-        "id": "wowpygodpy31",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 1B start",
-        "text": "",
-        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "y9l8qcl1noou",
-            "choiceId": "j7uzaz0aqufi",
-            "group": "any"
-          },
-          {
-            "nodeId": "7jhp8xv49wpf",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 0,
-        "createdAt": 1784438685901
-      },
-      {
-        "id": "jw2ifbmvzetz",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 1A:. Resolution",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "q527he9lpk5b",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [
-          {
-            "id": "zmkykuw9a22m",
-            "label": "Scenario 1A:. No Resolution",
-            "resultText": ""
-          },
-          {
-            "id": "f8vbxcu1a6tu",
-            "label": "Scenario 1A:. R1",
-            "resultText": ""
-          },
-          {
-            "id": "psmo5ckmab77",
-            "label": "Scenario 1A:. R2",
-            "resultText": ""
-          }
-        ],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wp63r6pfabsc",
-        "order": 1,
-        "createdAt": 1784439127511
-      },
-      {
-        "id": "dhj68k5e07jr",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 1B:. Resolution",
-        "text": "**bold**\n*italic*\n###header",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "wowpygodpy31",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [
-          {
-            "id": "53ent7knar13",
-            "label": "Scenario 1B:. No Resolution",
-            "resultText": ""
-          },
-          {
-            "id": "i07ju2rpb0p9",
-            "label": "Scenario 1B:. R1",
-            "resultText": ""
-          },
-          {
-            "id": "6ljto3wpb1ye",
-            "label": "Scenario 1B:. R2",
-            "resultText": ""
-          }
-        ],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 1,
-        "createdAt": 1784439164727
-      },
-      {
-        "id": "nkav6z58d04k",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 2",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "4n4vylal8d3u",
-            "choiceId": null,
-            "group": "all"
-          },
-          {
-            "nodeId": "7jhp8xv49wpf",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wbhlvi5frsji",
-        "order": 0,
-        "createdAt": 1784439761636
-      },
-      {
-        "id": "ys0oetw5fdvy",
-        "gameId": "rez9lxddmtri",
-        "title": "scenario 2 marker",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "nkav6z58d04k",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": true,
-        "completedByDefault": true,
-        "groupId": "wbhlvi5frsji",
-        "order": 2,
-        "createdAt": 1784439872782
-      },
-      {
-        "id": "bo6pso92g515",
-        "gameId": "rez9lxddmtri",
-        "title": "Scenario 2: Resolution",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "ys0oetw5fdvy",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wbhlvi5frsji",
-        "order": 1,
-        "createdAt": 1784439907961
-      },
-      {
-        "id": "x4t604kgyj3p",
-        "gameId": "rez9lxddmtri",
-        "title": "I-B: R1",
-        "text": "Resolution 1: You flee to the end of the block and pause to\nrecover. Before you can catch your breath, the ground shakes\nwith a thunderous crash. People emerge from their homes and\nstorefronts to see what the ruckus is, and a crowd forms on\nthe street. You head to the front of the crowd and are horrified\nto see the building from which you fled just minutes earlier\nreduced to rubble. There is no sign of Dr. Morgan anywhere.\nÆ Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.\nÆ Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.\nÆ Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.\nÆ Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.\nEach investigator earns 1 experience as he or she\nreflects on the night’s events.\nÆ Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "dhj68k5e07jr",
-            "choiceId": "i07ju2rpb0p9",
-            "group": "any"
-          },
-          {
-            "nodeId": "dx7s9ktkzu0n",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 3,
-        "createdAt": 1784442445621
-      },
-      {
-        "id": "dx7s9ktkzu0n",
-        "gameId": "rez9lxddmtri",
-        "title": "IB: No Resolution",
-        "text": "**If no resolution was reached (each investigator resigned before <b>Act 3</b> or was defeated):** \n*You barely made it out of the club alive.*\n Go to **Resolution 1**.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "dhj68k5e07jr",
-            "choiceId": "53ent7knar13",
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "full",
-        "groupId": "wvqrv3r0158f",
-        "order": 2,
-        "createdAt": 1784442506423
-      },
-      {
-        "id": "k9pjyosv0l0j",
-        "gameId": "rez9lxddmtri",
-        "title": "IB: R2",
-        "text": "Resolution 1: You flee to the end of the block and pause to\nrecover. Before you can catch your breath, the ground shakes\nwith a thunderous crash. People emerge from their homes and\nstorefronts to see what the ruckus is, and a crowd forms on\nthe street. You head to the front of the crowd and are horrified\nto see the building from which you fled just minutes earlier\nreduced to rubble. There is no sign of Dr. Morgan anywhere.\nÆ Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.\nÆ Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.\nÆ Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.\nÆ Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.\nEach investigator earns 1 experience as he or she\nreflects on the night’s events.\nÆ Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "dhj68k5e07jr",
-            "choiceId": "6ljto3wpb1ye",
-            "group": "all"
-          },
-          {
-            "nodeId": "bo6pso92g515",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 4,
-        "createdAt": 1784442541411
-      },
-      {
-        "id": "4n4vylal8d3u",
-        "gameId": "rez9lxddmtri",
-        "title": "I-B: completed marker",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "k9pjyosv0l0j",
-            "choiceId": null,
-            "group": "any"
-          },
-          {
-            "nodeId": "obrkldsxji9e",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": true,
-        "completedByDefault": true,
-        "logMode": "full",
-        "groupId": "wvqrv3r0158f",
-        "order": 11,
-        "createdAt": 1784442904410
-      },
-      {
-        "id": "7jhp8xv49wpf",
-        "gameId": "rez9lxddmtri",
-        "title": "I-A: completed marker",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "3dvtfjudf77u",
-            "choiceId": null,
-            "group": "any"
-          },
-          {
-            "nodeId": "00blj6sqfvq7",
-            "choiceId": null,
-            "group": "any"
-          },
-          {
-            "nodeId": "2t9ckvfegbwc",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": true,
-        "completedByDefault": true,
-        "groupId": "wp63r6pfabsc",
-        "order": 5,
-        "createdAt": 1784442976467
-      },
-      {
-        "id": "3dvtfjudf77u",
-        "gameId": "rez9lxddmtri",
-        "title": "I-A: No Resolution",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "jw2ifbmvzetz",
-            "choiceId": "zmkykuw9a22m",
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wp63r6pfabsc",
-        "order": 2,
-        "createdAt": 1784443223370
-      },
-      {
-        "id": "00blj6sqfvq7",
-        "gameId": "rez9lxddmtri",
-        "title": "I-A: R1",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "jw2ifbmvzetz",
-            "choiceId": "f8vbxcu1a6tu",
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wp63r6pfabsc",
-        "order": 3,
-        "createdAt": 1784443255135
-      },
-      {
-        "id": "2t9ckvfegbwc",
-        "gameId": "rez9lxddmtri",
-        "title": "I-A: R2",
-        "text": "",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "jw2ifbmvzetz",
-            "choiceId": "psmo5ckmab77",
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wp63r6pfabsc",
-        "order": 4,
-        "createdAt": 1784443276092
-      },
-      {
-        "id": "zesjs6646hz3",
-        "gameId": "rez9lxddmtri",
-        "title": "*The **O’Bannion** gang has a bone to pick with the investigators.*",
-        "text": "Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "x4t604kgyj3p",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 5,
-        "createdAt": 1784444497023
-      },
-      {
-        "id": "a8chqwqt7ipq",
-        "gameId": "rez9lxddmtri",
-        "title": "**Dr. Francis Morgan** was kidnapped.",
-        "text": "Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "zesjs6646hz3",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 6,
-        "createdAt": 1784444544638
-      },
-      {
-        "id": "oavbbq0wdn5o",
-        "gameId": "rez9lxddmtri",
-        "title": "\"cheated\"?",
-        "text": "Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "a8chqwqt7ipq",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [
-          {
-            "id": "h5sg3vqw85yk",
-            "label": "No",
-            "resultText": ""
-          },
-          {
-            "id": "n93fh020h9p6",
-            "label": "Yes",
-            "resultText": "Add 1 󲅾 chaos token to the chaos bag for the remainder of the campaign."
-          }
-        ],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 9,
-        "createdAt": 1784444830332
-      },
-      {
-        "id": "vkx91i2shvw8",
-        "gameId": "rez9lxddmtri",
-        "title": "Victory-X",
-        "text": "Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "oavbbq0wdn5o",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [
-          {
-            "id": "0ls48z3ggtpa",
-            "label": "0",
-            "resultText": ""
-          },
-          {
-            "id": "tghgfl9hgwio",
-            "label": "1",
-            "resultText": ""
-          },
-          {
-            "id": "0z8q9lp1gyka",
-            "label": "2",
-            "resultText": ""
-          },
-          {
-            "id": "h54m7jlmh0hf",
-            "label": "3",
-            "resultText": ""
-          },
-          {
-            "id": "b7evpumth2el",
-            "label": "4",
-            "resultText": ""
-          },
-          {
-            "id": "e87k0xayh4qe",
-            "label": "5",
-            "resultText": ""
-          },
-          {
-            "id": "b2w0m3jth735",
-            "label": "6",
-            "resultText": ""
-          },
-          {
-            "id": "iddp41xkha2r",
-            "label": "7",
-            "resultText": ""
-          },
-          {
-            "id": "bien4c1rhc3o",
-            "label": "8",
-            "resultText": ""
-          },
-          {
-            "id": "z6hqwrl9hen5",
-            "label": "9",
-            "resultText": ""
-          }
-        ],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 7,
-        "createdAt": 1784445028280
-      },
-      {
-        "id": "8l46iwmaike6",
-        "gameId": "rez9lxddmtri",
-        "title": "1XP",
-        "text": "Each investigator earns 1 experience as he or she reflects on the night’s events.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "vkx91i2shvw8",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 8,
-        "createdAt": 1784445060030
-      },
-      {
-        "id": "obrkldsxji9e",
-        "gameId": "rez9lxddmtri",
-        "title": "Next",
-        "text": "Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "8l46iwmaike6",
-            "choiceId": null,
-            "group": "all"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "groupId": "wvqrv3r0158f",
-        "order": 10,
-        "createdAt": 1784445103922
-      },
-      {
-        "id": "oj5z05wu61cm",
-        "gameId": "rez9lxddmtri",
-        "title": "Log only title",
-        "text": "This text will not be shown in the log",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "titleOnly",
-        "groupId": "o36cupqxupf8",
-        "order": 3,
-        "createdAt": 1784466310486
-      },
-      {
-        "id": "323msmd58aes",
-        "gameId": "rez9lxddmtri",
-        "title": "Title: Text only in log",
-        "text": "Text only in log",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "textOnly",
-        "groupId": "o36cupqxupf8",
-        "order": 2,
-        "createdAt": 1784466415540
-      },
-      {
-        "id": "xyjqq10l90wl",
-        "gameId": "rez9lxddmtri",
-        "title": "Title: Both **in** <b>log</b>",
-        "text": "Title: Both **in** <b>log</b>\nThis text will be shown in log in BOTH mode\n<b>no text</b> <i>italics</i>\n**BOLD MD** * Italics MD*",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "full",
-        "groupId": "o36cupqxupf8",
-        "order": 1,
-        "createdAt": 1784466449877
-      },
-      {
-        "id": "r5tcb0ir9ugh",
-        "gameId": "rez9lxddmtri",
-        "title": "Title: No Text",
-        "text": "<b>no text</b> <i>italics</i>\n**BOLD MD** * Italics MD*",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "o36cupqxupf8",
-        "order": 0,
-        "createdAt": 1784466488177
-      },
-      {
-        "id": "7u893x17gyj1",
-        "gameId": "rez9lxddmtri",
-        "title": "A",
-        "text": "AA",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 0,
-        "createdAt": 1784468499661
-      },
-      {
-        "id": "j0awzdr7he4e",
-        "gameId": "rez9lxddmtri",
-        "title": "B",
-        "text": "BB",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 1,
-        "createdAt": 1784468519870
-      },
-      {
-        "id": "o5o9ckkfhv3d",
-        "gameId": "rez9lxddmtri",
-        "title": "C",
-        "text": "CC",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 2,
-        "createdAt": 1784468541865
-      },
-      {
-        "id": "pyb4t5bci3yu",
-        "gameId": "rez9lxddmtri",
-        "title": "D",
-        "text": "DD",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 3,
-        "createdAt": 1784468553366
-      },
-      {
-        "id": "gbeh8nd7jwl8",
-        "gameId": "rez9lxddmtri",
-        "title": "and A, and B, or C, or D",
-        "text": "What happens when *and A, and B, or C, or D*?",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "7u893x17gyj1",
-            "choiceId": null,
-            "group": "all"
-          },
-          {
-            "nodeId": "j0awzdr7he4e",
-            "choiceId": null,
-            "group": "all"
-          },
-          {
-            "nodeId": "o5o9ckkfhv3d",
-            "choiceId": null,
-            "group": "any"
-          },
-          {
-            "nodeId": "pyb4t5bci3yu",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 5,
-        "createdAt": 1784468637116
-      },
-      {
-        "id": "zq9rfli7sha7",
-        "gameId": "rez9lxddmtri",
-        "title": "or A, and B, and C, or D",
-        "text": "Borde bli: B and C + any of A or D\nA && B && (A || D)",
-        "audio": "",
-        "image": "",
-        "imagePosition": "top",
-        "prerequisites": [
-          {
-            "nodeId": "7u893x17gyj1",
-            "choiceId": null,
-            "group": "any"
-          },
-          {
-            "nodeId": "j0awzdr7he4e",
-            "choiceId": null,
-            "group": "all"
-          },
-          {
-            "nodeId": "o5o9ckkfhv3d",
-            "choiceId": null,
-            "group": "all"
-          },
-          {
-            "nodeId": "pyb4t5bci3yu",
-            "choiceId": null,
-            "group": "any"
-          }
-        ],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "none",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 4,
-        "createdAt": 1784469037183
-      },
-      {
-        "id": "8b1h6l31kvbe",
-        "gameId": "rez9lxddmtri",
-        "title": "tst",
-        "text": "test",
-        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
-        "image": "public/images/armitage.png",
-        "imagePosition": "right",
-        "prerequisites": [],
-        "choices": [],
-        "hidden": false,
-        "completedByDefault": false,
-        "logMode": "full",
-        "groupId": "9ylyu4c2g0sv",
-        "order": 6,
-        "createdAt": 1784493876362
-      }
-    ],
     "mrkgwl8wrfif": [
       {
         "id": "vmn3vprf9oz6",
@@ -2668,7 +1613,7 @@
         "gameId": "mrkgwl8wrfif",
         "title": "Scenario V: Undimensioned and Unseen",
         "text": "Your search of the village of Dunwich has\nuncovered a number of documents, journal entries,\nand esoteric theories. Reading through these\nmaterials leaves you exhausted and emotionally\ndrained. Most of the content was written by\na single source — a man named Seth Bishop.\nWhen you ask around town, you learn that Seth\nis a citizen of Dunwich. Along with several others, Seth had witnessed\nfirsthand the devastation wrought by the events of “the Dunwich\nhorror,” as Armitage had dubbed the incident. Curiously, since that time,\nvery few people had seen Seth around town, and those who did claimed\nhis eyes had been bloodshot and his face sweaty and pale.\nYou don’t doubt that somebody who has seen what Seth has seen would\nappear nervous or paranoid. But the more you read of his frantic and\nunhinged writings, the more you believe he is involved in recent events.\nHis writings speak of having “gathered the remains” and of using\narcane methods to “imbue the fathers’ essence” into other creatures, and\neventually, into other people. The explanations and diagrams that follow\nare unfathomably complex and defy understanding.\nBefore you are able to find Seth and confront him, several men and\nwomen from the village approach you in a panic. “It’s back!” one of them\nwails. You recognize him as Curtis Whateley, of the undecayed branch.\n“Whatever it was that killed them Fryes, it’s back! Up and smashed the\nBishops’ home like it were made o’ paper!” Curtis and the other townsfolk\nare clamoring amongst themselves, raising their voices in a panic.\n\n<span class=\"arkhamslim\">Y</span> The investigators must decide (choose one):",
-        "audio": "public/audio/tDL/tDL-S4-ElevenLabs_2026-07-23T12_50_18_Matthew Schmitz - Warm Mountain Man_pvc_sp90_s41_sb69_v3.mp3",
+        "audio": "public/audio/tDL/tDL-S5-ElevenLabs_2026-08-01T06_39_31_Cletus - Hillbilly_pvc_sp100_s50_sb75_v3_fixed.mp3",
         "image": "public/images/UndimensionedAndUnseenPack_.png",
         "imagePosition": "left",
         "prerequisites": [
@@ -6140,6 +5085,1061 @@
         "order": 1,
         "createdAt": 1785842600489
       }
+    ],
+    "rez9lxddmtri": [
+      {
+        "id": "y9l8qcl1noou",
+        "gameId": "rez9lxddmtri",
+        "title": "start",
+        "text": "",
+        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [
+          {
+            "id": "cqav89axqook",
+            "label": "Scenario 1A",
+            "resultText": ""
+          },
+          {
+            "id": "j7uzaz0aqufi",
+            "label": "Scenario 1B",
+            "resultText": ""
+          }
+        ],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "612hsz84vaxj",
+        "order": 0,
+        "createdAt": 1784438580414
+      },
+      {
+        "id": "q527he9lpk5b",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 1A startt",
+        "text": "",
+        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "y9l8qcl1noou",
+            "choiceId": "cqav89axqook",
+            "group": "any"
+          },
+          {
+            "nodeId": "4n4vylal8d3u",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wp63r6pfabsc",
+        "order": 0,
+        "createdAt": 1784438667839
+      },
+      {
+        "id": "wowpygodpy31",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 1B start",
+        "text": "",
+        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "y9l8qcl1noou",
+            "choiceId": "j7uzaz0aqufi",
+            "group": "any"
+          },
+          {
+            "nodeId": "7jhp8xv49wpf",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 0,
+        "createdAt": 1784438685901
+      },
+      {
+        "id": "jw2ifbmvzetz",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 1A:. Resolution",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "q527he9lpk5b",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [
+          {
+            "id": "zmkykuw9a22m",
+            "label": "Scenario 1A:. No Resolution",
+            "resultText": ""
+          },
+          {
+            "id": "f8vbxcu1a6tu",
+            "label": "Scenario 1A:. R1",
+            "resultText": ""
+          },
+          {
+            "id": "psmo5ckmab77",
+            "label": "Scenario 1A:. R2",
+            "resultText": ""
+          }
+        ],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wp63r6pfabsc",
+        "order": 1,
+        "createdAt": 1784439127511
+      },
+      {
+        "id": "dhj68k5e07jr",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 1B:. Resolution",
+        "text": "**bold**\n*italic*\n###header",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "wowpygodpy31",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [
+          {
+            "id": "53ent7knar13",
+            "label": "Scenario 1B:. No Resolution",
+            "resultText": ""
+          },
+          {
+            "id": "i07ju2rpb0p9",
+            "label": "Scenario 1B:. R1",
+            "resultText": ""
+          },
+          {
+            "id": "6ljto3wpb1ye",
+            "label": "Scenario 1B:. R2",
+            "resultText": ""
+          }
+        ],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 1,
+        "createdAt": 1784439164727
+      },
+      {
+        "id": "nkav6z58d04k",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 2",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "4n4vylal8d3u",
+            "choiceId": null,
+            "group": "all"
+          },
+          {
+            "nodeId": "7jhp8xv49wpf",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wbhlvi5frsji",
+        "order": 0,
+        "createdAt": 1784439761636
+      },
+      {
+        "id": "ys0oetw5fdvy",
+        "gameId": "rez9lxddmtri",
+        "title": "scenario 2 marker",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "nkav6z58d04k",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": true,
+        "completedByDefault": true,
+        "groupId": "wbhlvi5frsji",
+        "order": 2,
+        "createdAt": 1784439872782
+      },
+      {
+        "id": "bo6pso92g515",
+        "gameId": "rez9lxddmtri",
+        "title": "Scenario 2: Resolution",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "ys0oetw5fdvy",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wbhlvi5frsji",
+        "order": 1,
+        "createdAt": 1784439907961
+      },
+      {
+        "id": "x4t604kgyj3p",
+        "gameId": "rez9lxddmtri",
+        "title": "I-B: R1",
+        "text": "Resolution 1: You flee to the end of the block and pause to\nrecover. Before you can catch your breath, the ground shakes\nwith a thunderous crash. People emerge from their homes and\nstorefronts to see what the ruckus is, and a crowd forms on\nthe street. You head to the front of the crowd and are horrified\nto see the building from which you fled just minutes earlier\nreduced to rubble. There is no sign of Dr. Morgan anywhere.\nÆ Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.\nÆ Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.\nÆ Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.\nÆ Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.\nEach investigator earns 1 experience as he or she\nreflects on the night’s events.\nÆ Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "dhj68k5e07jr",
+            "choiceId": "i07ju2rpb0p9",
+            "group": "any"
+          },
+          {
+            "nodeId": "dx7s9ktkzu0n",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 3,
+        "createdAt": 1784442445621
+      },
+      {
+        "id": "dx7s9ktkzu0n",
+        "gameId": "rez9lxddmtri",
+        "title": "IB: No Resolution",
+        "text": "**If no resolution was reached (each investigator resigned before <b>Act 3</b> or was defeated):** \n*You barely made it out of the club alive.*\n Go to **Resolution 1**.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "dhj68k5e07jr",
+            "choiceId": "53ent7knar13",
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "full",
+        "groupId": "wvqrv3r0158f",
+        "order": 2,
+        "createdAt": 1784442506423
+      },
+      {
+        "id": "k9pjyosv0l0j",
+        "gameId": "rez9lxddmtri",
+        "title": "IB: R2",
+        "text": "Resolution 1: You flee to the end of the block and pause to\nrecover. Before you can catch your breath, the ground shakes\nwith a thunderous crash. People emerge from their homes and\nstorefronts to see what the ruckus is, and a crowd forms on\nthe street. You head to the front of the crowd and are horrified\nto see the building from which you fled just minutes earlier\nreduced to rubble. There is no sign of Dr. Morgan anywhere.\nÆ Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.\nÆ Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.\nÆ Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.\nÆ Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.\nEach investigator earns 1 experience as he or she\nreflects on the night’s events.\nÆ Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "dhj68k5e07jr",
+            "choiceId": "6ljto3wpb1ye",
+            "group": "all"
+          },
+          {
+            "nodeId": "bo6pso92g515",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 4,
+        "createdAt": 1784442541411
+      },
+      {
+        "id": "4n4vylal8d3u",
+        "gameId": "rez9lxddmtri",
+        "title": "I-B: completed marker",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "k9pjyosv0l0j",
+            "choiceId": null,
+            "group": "any"
+          },
+          {
+            "nodeId": "obrkldsxji9e",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": true,
+        "completedByDefault": true,
+        "logMode": "full",
+        "groupId": "wvqrv3r0158f",
+        "order": 11,
+        "createdAt": 1784442904410
+      },
+      {
+        "id": "7jhp8xv49wpf",
+        "gameId": "rez9lxddmtri",
+        "title": "I-A: completed marker",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "3dvtfjudf77u",
+            "choiceId": null,
+            "group": "any"
+          },
+          {
+            "nodeId": "00blj6sqfvq7",
+            "choiceId": null,
+            "group": "any"
+          },
+          {
+            "nodeId": "2t9ckvfegbwc",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": true,
+        "completedByDefault": true,
+        "groupId": "wp63r6pfabsc",
+        "order": 5,
+        "createdAt": 1784442976467
+      },
+      {
+        "id": "3dvtfjudf77u",
+        "gameId": "rez9lxddmtri",
+        "title": "I-A: No Resolution",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "jw2ifbmvzetz",
+            "choiceId": "zmkykuw9a22m",
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wp63r6pfabsc",
+        "order": 2,
+        "createdAt": 1784443223370
+      },
+      {
+        "id": "00blj6sqfvq7",
+        "gameId": "rez9lxddmtri",
+        "title": "I-A: R1",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "jw2ifbmvzetz",
+            "choiceId": "f8vbxcu1a6tu",
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wp63r6pfabsc",
+        "order": 3,
+        "createdAt": 1784443255135
+      },
+      {
+        "id": "2t9ckvfegbwc",
+        "gameId": "rez9lxddmtri",
+        "title": "I-A: R2",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "jw2ifbmvzetz",
+            "choiceId": "psmo5ckmab77",
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wp63r6pfabsc",
+        "order": 4,
+        "createdAt": 1784443276092
+      },
+      {
+        "id": "zesjs6646hz3",
+        "gameId": "rez9lxddmtri",
+        "title": "*The **O’Bannion** gang has a bone to pick with the investigators.*",
+        "text": "Æ In your Campaign Log, record that the O’Bannion\ngang has a bone to pick with the investigators.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "x4t604kgyj3p",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 5,
+        "createdAt": 1784444497023
+      },
+      {
+        "id": "a8chqwqt7ipq",
+        "gameId": "rez9lxddmtri",
+        "title": "**Dr. Francis Morgan** was kidnapped.",
+        "text": "Æ In your Campaign Log, record that Dr. Francis Morgan\nwas kidnapped.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "zesjs6646hz3",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 6,
+        "createdAt": 1784444544638
+      },
+      {
+        "id": "oavbbq0wdn5o",
+        "gameId": "rez9lxddmtri",
+        "title": "\"cheated\"?",
+        "text": "Æ If any player “cheated,” add 1 󲅾 chaos token to the\nchaos bag for the remainder of the campaign.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "a8chqwqt7ipq",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [
+          {
+            "id": "h5sg3vqw85yk",
+            "label": "No",
+            "resultText": ""
+          },
+          {
+            "id": "n93fh020h9p6",
+            "label": "Yes",
+            "resultText": "Add 1 󲅾 chaos token to the chaos bag for the remainder of the campaign."
+          }
+        ],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 9,
+        "createdAt": 1784444830332
+      },
+      {
+        "id": "vkx91i2shvw8",
+        "gameId": "rez9lxddmtri",
+        "title": "Victory-X",
+        "text": "Æ Each investigator earns experience equal to the\nVictory X value of each card in the victory display.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "oavbbq0wdn5o",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [
+          {
+            "id": "0ls48z3ggtpa",
+            "label": "0",
+            "resultText": ""
+          },
+          {
+            "id": "tghgfl9hgwio",
+            "label": "1",
+            "resultText": ""
+          },
+          {
+            "id": "0z8q9lp1gyka",
+            "label": "2",
+            "resultText": ""
+          },
+          {
+            "id": "h54m7jlmh0hf",
+            "label": "3",
+            "resultText": ""
+          },
+          {
+            "id": "b7evpumth2el",
+            "label": "4",
+            "resultText": ""
+          },
+          {
+            "id": "e87k0xayh4qe",
+            "label": "5",
+            "resultText": ""
+          },
+          {
+            "id": "b2w0m3jth735",
+            "label": "6",
+            "resultText": ""
+          },
+          {
+            "id": "iddp41xkha2r",
+            "label": "7",
+            "resultText": ""
+          },
+          {
+            "id": "bien4c1rhc3o",
+            "label": "8",
+            "resultText": ""
+          },
+          {
+            "id": "z6hqwrl9hen5",
+            "label": "9",
+            "resultText": ""
+          }
+        ],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 7,
+        "createdAt": 1784445028280
+      },
+      {
+        "id": "8l46iwmaike6",
+        "gameId": "rez9lxddmtri",
+        "title": "1XP",
+        "text": "Each investigator earns 1 experience as he or she reflects on the night’s events.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "vkx91i2shvw8",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 8,
+        "createdAt": 1784445060030
+      },
+      {
+        "id": "obrkldsxji9e",
+        "gameId": "rez9lxddmtri",
+        "title": "Next",
+        "text": "Æ If this is the first scenario of the campaign, proceed to\nScenario I–A: Extracurricular Activity. Otherwise,\nproceed to Interlude I: Armitage’s Fate.",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "8l46iwmaike6",
+            "choiceId": null,
+            "group": "all"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "groupId": "wvqrv3r0158f",
+        "order": 10,
+        "createdAt": 1784445103922
+      },
+      {
+        "id": "oj5z05wu61cm",
+        "gameId": "rez9lxddmtri",
+        "title": "Log only title",
+        "text": "This text will not be shown in the log",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "titleOnly",
+        "groupId": "o36cupqxupf8",
+        "order": 3,
+        "createdAt": 1784466310486
+      },
+      {
+        "id": "323msmd58aes",
+        "gameId": "rez9lxddmtri",
+        "title": "Title: Text only in log",
+        "text": "Text only in log",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "textOnly",
+        "groupId": "o36cupqxupf8",
+        "order": 2,
+        "createdAt": 1784466415540
+      },
+      {
+        "id": "xyjqq10l90wl",
+        "gameId": "rez9lxddmtri",
+        "title": "Title: Both **in** <b>log</b>",
+        "text": "Title: Both **in** <b>log</b>\nThis text will be shown in log in BOTH mode\n<b>no text</b> <i>italics</i>\n**BOLD MD** * Italics MD*",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "full",
+        "groupId": "o36cupqxupf8",
+        "order": 1,
+        "createdAt": 1784466449877
+      },
+      {
+        "id": "r5tcb0ir9ugh",
+        "gameId": "rez9lxddmtri",
+        "title": "Title: No Text",
+        "text": "<b>no text</b> <i>italics</i>\n**BOLD MD** * Italics MD*",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "o36cupqxupf8",
+        "order": 0,
+        "createdAt": 1784466488177
+      },
+      {
+        "id": "7u893x17gyj1",
+        "gameId": "rez9lxddmtri",
+        "title": "A",
+        "text": "AA",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 0,
+        "createdAt": 1784468499661
+      },
+      {
+        "id": "j0awzdr7he4e",
+        "gameId": "rez9lxddmtri",
+        "title": "B",
+        "text": "BB",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 1,
+        "createdAt": 1784468519870
+      },
+      {
+        "id": "o5o9ckkfhv3d",
+        "gameId": "rez9lxddmtri",
+        "title": "C",
+        "text": "CC",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 2,
+        "createdAt": 1784468541865
+      },
+      {
+        "id": "pyb4t5bci3yu",
+        "gameId": "rez9lxddmtri",
+        "title": "D",
+        "text": "DD",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 3,
+        "createdAt": 1784468553366
+      },
+      {
+        "id": "gbeh8nd7jwl8",
+        "gameId": "rez9lxddmtri",
+        "title": "and A, and B, or C, or D",
+        "text": "What happens when *and A, and B, or C, or D*?",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "7u893x17gyj1",
+            "choiceId": null,
+            "group": "all"
+          },
+          {
+            "nodeId": "j0awzdr7he4e",
+            "choiceId": null,
+            "group": "all"
+          },
+          {
+            "nodeId": "o5o9ckkfhv3d",
+            "choiceId": null,
+            "group": "any"
+          },
+          {
+            "nodeId": "pyb4t5bci3yu",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 5,
+        "createdAt": 1784468637116
+      },
+      {
+        "id": "zq9rfli7sha7",
+        "gameId": "rez9lxddmtri",
+        "title": "or A, and B, and C, or D",
+        "text": "Borde bli: B and C + any of A or D\nA && B && (A || D)",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "7u893x17gyj1",
+            "choiceId": null,
+            "group": "any"
+          },
+          {
+            "nodeId": "j0awzdr7he4e",
+            "choiceId": null,
+            "group": "all"
+          },
+          {
+            "nodeId": "o5o9ckkfhv3d",
+            "choiceId": null,
+            "group": "all"
+          },
+          {
+            "nodeId": "pyb4t5bci3yu",
+            "choiceId": null,
+            "group": "any"
+          }
+        ],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "none",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 4,
+        "createdAt": 1784469037183
+      },
+      {
+        "id": "8b1h6l31kvbe",
+        "gameId": "rez9lxddmtri",
+        "title": "tst",
+        "text": "test",
+        "audio": "public/audio/tDL/TDL-Scenario_1A-Resolution_4-ElevenLabs_2026-07-15T07_37_07_Declan Sage - Wise, Deliberate, Captivating_pvc_sp70_s37_sb28_v3 (1).mp3",
+        "image": "public/images/armitage.png",
+        "imagePosition": "right",
+        "prerequisites": [],
+        "choices": [],
+        "hidden": false,
+        "completedByDefault": false,
+        "logMode": "full",
+        "groupId": "9ylyu4c2g0sv",
+        "order": 6,
+        "createdAt": 1784493876362
+      }
+    ],
+    "gt7siisau1qp": [
+      {
+        "id": "k7bfznrdvqcj",
+        "gameId": "gt7siisau1qp",
+        "title": "Introduction",
+        "text": "",
+        "audio": "public/audio/tDL/tDL-Introduction.mp3",
+        "image": "public/images/ahc02_preview1.jpg",
+        "imagePosition": "top",
+        "prerequisites": [],
+        "prerequisiteMode": "all",
+        "choices": [],
+        "createdAt": 1784405363491
+      },
+      {
+        "id": "hhcy1khbywdu",
+        "gameId": "gt7siisau1qp",
+        "title": "Prologue",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "k7bfznrdvqcj",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "all",
+        "choices": [
+          {
+            "id": "vd9habppzg5e",
+            "label": "Scenario I-A",
+            "resultText": "**BOLD** *italics*\n\n## title"
+          },
+          {
+            "id": "98wlztwwzyoi",
+            "label": "Scenario I-B",
+            "resultText": "What happens next?"
+          }
+        ],
+        "createdAt": 1784405511282
+      },
+      {
+        "id": "rcxv53351urn",
+        "gameId": "gt7siisau1qp",
+        "title": "Scenario I-A: Introduction",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "hhcy1khbywdu",
+            "choiceId": "vd9habppzg5e"
+          },
+          {
+            "nodeId": "xip8mlaw3dth",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "any",
+        "choices": [],
+        "createdAt": 1784405649155
+      },
+      {
+        "id": "i7d1d1pp26ny",
+        "gameId": "gt7siisau1qp",
+        "title": "Scenario I-A: Resolution",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "rcxv53351urn",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "all",
+        "choices": [
+          {
+            "id": "n2z8c5yp6eyv",
+            "label": "No Resolution",
+            "resultText": ""
+          },
+          {
+            "id": "l9kofoyq6j04",
+            "label": "R1",
+            "resultText": ""
+          },
+          {
+            "id": "am02g9cx6l6y",
+            "label": "R2",
+            "resultText": ""
+          },
+          {
+            "id": "37z7207n6n8b",
+            "label": "R3",
+            "resultText": ""
+          },
+          {
+            "id": "w5mwbdme6pkp",
+            "label": "R4",
+            "resultText": ""
+          }
+        ],
+        "createdAt": 1784405664574
+      },
+      {
+        "id": "n4lwo50t3196",
+        "gameId": "gt7siisau1qp",
+        "title": "Scenario I-B: Introduction",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "hhcy1khbywdu",
+            "choiceId": "98wlztwwzyoi"
+          },
+          {
+            "nodeId": "i7d1d1pp26ny",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "any",
+        "choices": [],
+        "createdAt": 1784405704218
+      },
+      {
+        "id": "xip8mlaw3dth",
+        "gameId": "gt7siisau1qp",
+        "title": "Scenario I-B: Resolution",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "n4lwo50t3196",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "all",
+        "choices": [
+          {
+            "id": "rorfnvx278fu",
+            "label": "No Resolution",
+            "resultText": ""
+          },
+          {
+            "id": "jh1ipscq7d8v",
+            "label": "R1",
+            "resultText": ""
+          },
+          {
+            "id": "01qgafp57dt9",
+            "label": "R2",
+            "resultText": ""
+          },
+          {
+            "id": "zr4nbskz7hja",
+            "label": "R3",
+            "resultText": ""
+          },
+          {
+            "id": "jrjw6tnq7jq7",
+            "label": "R4",
+            "resultText": ""
+          }
+        ],
+        "createdAt": 1784405720501
+      },
+      {
+        "id": "2587kenyc1zd",
+        "gameId": "gt7siisau1qp",
+        "title": "Scenario II",
+        "text": "",
+        "audio": "",
+        "image": "",
+        "imagePosition": "top",
+        "prerequisites": [
+          {
+            "nodeId": "i7d1d1pp26ny",
+            "choiceId": null
+          },
+          {
+            "nodeId": "xip8mlaw3dth",
+            "choiceId": null
+          }
+        ],
+        "prerequisiteMode": "all",
+        "choices": [],
+        "createdAt": 1784406125065
+      }
     ]
   },
   "settings": {
@@ -6155,7 +6155,7 @@
     "logOrder": "latestFirst",
     "audioPlayerStyle": "minimal",
     "animationsEnabled": true,
-    "largeFont": false,
+    "largeFont": true,
     "mapNodeShape": "box"
   }
 }
