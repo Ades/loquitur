@@ -129,7 +129,11 @@ TEST 80 Adapt to a mobile phone.
 OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 Automatically open groups where new cards become available.
 Always close modal if a start node is about to be opened.
+Add a setting to show all narrations even thoug they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
+large font makes button outside screen on mobile.
+Shortcut to change log entry — maybe show which nodes have entry by color.
 
+Add readme.
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
     When you press Add a game show a list of game structures that can be loaded.
@@ -163,12 +167,13 @@ När man klistar in med SHIFT+höger/vänster, lägg till path.
 Map shape as dot
 Görs redan: Automatically open closed groups when new items become available.
 
+tDL: add narration for 1A, NoR
 tDL: Remove spoken word "prologue" from end of "Their hand is at your throats..."
 tDL: add all encounter symbols.
 tDL: insert text for Standalone
 tDL: S3: fix DON'T READ ... (two screens with images...) + check all scenarios for this. Check: .reader-overlay.anim-in:animation (transition)
      alt. gör bara fade in och fade out, samtidigt!
-tDL: koppla allt enligt val, t ex fixa kopplingen mellan 1A och 1B
+OK tDL: koppla allt enligt val, t ex fixa kopplingen mellan 1A och 1B
 
 Do something with Suggested Location Placement
     Läsa korten (flavortexten — ska den läsas?)
@@ -242,6 +247,16 @@ QUIT
  LOQ
  U I
  TUR
+
+ L
+ OQ
+ UITU
+ R
+
+ LO
+ QU
+ IT
+ UR
 
  What improvements to the app do you suggest?
 
