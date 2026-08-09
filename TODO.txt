@@ -129,9 +129,12 @@ OK TEST 80 Adapt to a mobile phone.
 OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
 OK TEST 82 Automatically open groups where new cards become available.
 OK TEST 83 Always close modal if a start node is about to be opened.
+TEST 84 Add a setting to play a sound when a group becomes completed.
 Shortcut to change log entry — maybe show which nodes have entry by color.
 large font makes button outside screen on mobile.
 Add a setting to show all narrations even though they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
+Add a group setting to set the group as "info only", ie. do not count as completed group.
+TEST 85 MANUAL Count and present completed groups instead of number of narrations.
 
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
@@ -141,7 +144,6 @@ Gör möjligt att skicka meddelanden, t ex en bugfix request, new feature...
 
 Hide lines, or at least try to avoid to show lines over other nodes.
 
-Count and present completed groups instead of number of narrations.
 Markera avsnitt i en text och med snabbtangenter flytta texten till respektiver ruta. (titel, brödtext, nytt alternativ, nytt alternativ, bild, audio (kanske leta efter titelnamn lokalt på hårddisken?)) Man kan också skapa nya noder: rule, errata, box, circle.
 Lite klurigt att man måste spara innan man kan använda SHIFT+ner/upp - borde bara direkt kopiera aktuell nod.
 Rule och errata för map och list.

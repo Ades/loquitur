@@ -541,7 +541,10 @@
     logOrder:'latestFirst',
     audioPlayerStyle:'native',
     animationsEnabled:true,
-    largeFont:false
+    largeFont:false,
+    groupCompleteSoundEnabled:true,
+    countGroupsCompleted: true,
+    hideUnavailableGroups: false,
   };
 
   // ---------------- State ----------------
@@ -1265,6 +1268,10 @@
               <input type="checkbox" id="hideLockedCk" ${settings.hideLockedInMap?'checked':''}> ${ICON_LOCK} Hide narrations you haven't unlocked yet on the campaign map
             </label>
             <div class="hint">On by default, so the map doesn't spoil what's still ahead. Turn it off to see the full tree while you play. In "Manage codex" mode the full tree is always shown.</div>
+            <label class="setting-toggle" style="margin-top:8px;">
+              <input type="checkbox" id="hideUnavailableGroups" ${settings.hideUnavailableGroups?'checked':''}> ${ICON_LOCK} Don't count (NB: should be "Hide") groups you haven't unlocked yet
+            </label>
+            <div class="hint">On by default, so the progress doesn't spoil what's still ahead. Turn it on to see the all groups while you play. In "Manage codex" mode the full tree is always shown.</div>
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="animationsCk" ${settings.animationsEnabled?'checked':''}> Animate newly-unlocked narrations and opening windows
             </label>
@@ -1272,7 +1279,10 @@
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="largeFontCk" ${settings.largeFont?'checked':''}> Large font
             </label>
-            <div class="hint">Scales up all text, buttons and spacing together — useful for reading narrations from across the table.</div>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="countGroupsCompleted" ${settings.countGroupsCompleted?'checked':''}> Count completed groups (otherwise count completed narrations).
+            </label>
+            <div class="hint">The progress numbers and bar under the title shows number of completed groups or narrations</div>
             <label style="display:block;margin-top:12px;">Log order</label>
             <div class="media-toggle" id="logOrderToggle" style="margin-top:4px;">
               <button type="button" data-order="latestFirst" class="${settings.logOrder!=='latestLast'?'active':''}">Latest first</button>
@@ -1354,11 +1364,17 @@
     overlay.querySelector('#hideLockedCk').onchange = async (e)=>{
       settings.hideLockedInMap = e.target.checked; await saveSettings(); render();
     };
+    overlay.querySelector('#hideUnavailableGroups').onchange = async (e)=>{
+      settings.hideUnavailableGroups = e.target.checked; await saveSettings(); render();
+    };
     overlay.querySelector('#animationsCk').onchange = async (e)=>{
       settings.animationsEnabled = e.target.checked; await saveSettings();
     };
     overlay.querySelector('#largeFontCk').onchange = async (e)=>{
       settings.largeFont = e.target.checked; await saveSettings(); applyLargeFont();
+    };
+    overlay.querySelector('#countGroupsCompleted').onchange = async (e)=>{
+      settings.countGroupsCompleted = e.target.checked; await saveSettings(); render();
     };
     overlay.querySelector('#autoCloseCk').onchange = async (e)=>{
       settings.autoCloseOnAudioEnd = e.target.checked; await saveSettings();
@@ -1989,8 +2005,51 @@
     crumb.querySelector('#backLib').onclick = ()=>{ route={view:'library',gameId:null}; render(); };
     wrap.appendChild(crumb);
 
-    const total = nodes.length;
-    const completedCount = nodes.filter(n=>isCompleted(n.id)).length;
+    let total = settings?.hideUnavailableGroups ? game.groups.map(g=>g?.list?.length > 0).length : game?.groups?.length || 0;
+    let completedCount = 0 // nodes.filter(n=>isCompleted(n.id)).length;
+    if (settings?.countGroupsCompleted /* setting about how to count completion*/) {
+        // completed groups
+        function computeGroupList(g){
+            const groupId = g ? g.id : null;
+            let members = groupId===null
+                ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
+                : nodes.filter(n=> n.groupId===groupId);
+            if(!manageMode){
+                const allowHidden = g && g.showHiddenNodes;
+                if(!allowHidden) members = members.filter(n=>!n.hidden);
+            }
+            members = members.filter(isAvailable);
+            if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
+            if(g && g.showFirstOnly && members.length>0){
+                const minOrder = Math.min(...members.map(n=>n.order||0));
+                members = members.filter(n=>(n.order||0)===minOrder);
+            }
+            return members;
+        }
+        total = 0
+        const validGroupIds = game.groups.map(g=>g.id);
+        game.groups.forEach(g=> {
+            const list = computeGroupList(g);
+
+            const visibleNodes = list.filter(n=>{
+                if(n.hidden && !settings?.hideUnavailableGroups/* !allowHidden */) return false;
+                //if(hideHeardHere && isCompleted(n.id)) return false;
+                //if(settings.hideLockedInMap && !isAvailable(n)){ hiddenLockedCount++; return false; }
+                return true;
+            });
+            // console.log('VISIBLENODES',visibleNodes)
+            if (list.length === 0 && settings?.hideUnavailableGroups) {} else {
+                total++
+            }
+
+            const complete = isGroupComplete(visibleNodes, validGroupIds, g.id);
+            if (complete) completedCount++
+        })
+    } else {
+        // completed narrations
+        total = nodes?.length || 0
+        completedCount = nodes.filter(n=>isCompleted(n.id)).length;
+    }
     const gh = document.createElement('div');
     gh.className='game-header';
     gh.innerHTML = `
@@ -1998,8 +2057,8 @@
       <div class="meta">
         <h2>${renderTitle(game.name)}</h2>
         <div class="desc">${renderMarkdown(game.description||'')}</div>
-        <div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
-        <div class="progress-label">${completedCount} OF ${total} NARRATIONS HEARD</div>
+        ${total>0?`<div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
+        <div class="progress-label">${completedCount} OF ${total} ${settings?.countGroupsCompleted?'GROUPS COMPLETED':'NARRATIONS HEARD'}</div>`:'xxx'}
       </div>
     `;
     wrap.appendChild(gh);
@@ -2179,6 +2238,7 @@
     }
 
     const groups = game.groups || [];
+    // console.log('GROUPS',groups)
     if(groups.length===0){
       box.appendChild(buildGrid(available));
     } else {
@@ -2206,7 +2266,9 @@
       const sections = [];
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       // console.log("==========")
-      groups.forEach(g=>{
+      //   console.log('GROUPSX',groups.length)
+
+        groups.forEach(g=>{
         const list = computeGroupList(g);
         const complete = isGroupComplete(list, validGroupIds, g.id);
         // console.log('LIST.length',list.length,complete)
@@ -2226,11 +2288,14 @@
           sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
         }
       });
+      // console.log('SECTIONS.LENGTH',sections.length)
+        let countCompletedGroups = 0
       sections.forEach(sec=>{
         const header = document.createElement('div');
         header.className='group-header';
         header.style.cursor = sec.id===null ? 'default' : 'pointer';
         const complete = isGroupComplete(sec.list, validGroupIds, sec.id);
+        if (complete) countCompletedGroups++
         header.innerHTML = sec.id===null
           ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`
           : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
@@ -2246,6 +2311,7 @@
           openHeader();
         }
       });
+      // console.log('COUNTCOMPLETEDGROUPS',countCompletedGroups)
     }
 
     if(lockedCount>0){
