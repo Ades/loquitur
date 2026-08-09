@@ -52,7 +52,7 @@
     --bg-glow:#fffaf0;
     --shadow: 0 8px 20px rgba(60,45,20,.18);
   }
-  body.large-font{ transform:scale(1.18); }
+  body.large-font{ zoom: 118%; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -564,6 +564,7 @@
   let seenAvailableIds = new Set(); // node ids already shown as available — anything new here gets the unlock animation once
   let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
   let hoveredMapNodeId = null; // node currently under the pointer on the campaign map, for the Shift+N shape-cycling fast key
+  let seenCompleteGroupIds = new Set(); // group ids already known complete — collapsing only fires on the transition into completeness
     let alreadyTried = false;
 
     // inline (card / map) audio preview
@@ -1007,6 +1008,7 @@
     const members = groupId===null
       ? visibleNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
       : visibleNodes.filter(n=> n.groupId===groupId);
+      // console.log('MEMBERS',members,members.map(n=>isCompleted(n.id)))
     return members.length>0 && members.every(n=>isCompleted(n.id));
   }
   function groupCompleteBadge(){
@@ -2203,9 +2205,26 @@
       const ungroupedList = computeGroupList(null);
       const sections = [];
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
+      // console.log("==========")
       groups.forEach(g=>{
         const list = computeGroupList(g);
-        if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+        const complete = isGroupComplete(list, validGroupIds, g.id);
+        // console.log('LIST.length',list.length,complete)
+        if(!manageMode){
+          if(complete && !seenCompleteGroupIds.has(g.id)){
+            seenCompleteGroupIds.add(g.id);
+            if(!g.collapsed){ g.collapsed = true; sSet('game:'+game.id, game); }
+          } else if(!complete && seenCompleteGroupIds.has(g.id)){
+            seenCompleteGroupIds.delete(g.id);
+          }
+        }
+        if(list.length){
+          if(g.collapsed && !manageMode && !complete && list.some(n=> !isCompleted(n.id) && !seenAvailableIds.has(n.id))){
+            g.collapsed = false;
+            sSet('game:'+game.id, game);
+          }
+          sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+        }
       });
       sections.forEach(sec=>{
         const header = document.createElement('div');
@@ -2317,7 +2336,22 @@
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       groups.forEach(g=>{
         const list = computeGroupList(g);
-        if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+        const complete = isGroupComplete(list, validGroupIds, g.id);
+        if(!manageMode){
+          if(complete && !seenCompleteGroupIds.has(g.id)){
+            seenCompleteGroupIds.add(g.id);
+            if(!g.collapsed){ g.collapsed = true; sSet('game:'+game.id, game); }
+          } else if(!complete && seenCompleteGroupIds.has(g.id)){
+            seenCompleteGroupIds.delete(g.id);
+          }
+        }
+        if(list.length){
+          if(g.collapsed && !manageMode && !complete && list.some(n=> !isCompleted(n.id) && !seenAvailableIds.has(n.id))){
+            g.collapsed = false;
+            sSet('game:'+game.id, game);
+          }
+          sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
+        }
       });
       sections.forEach(sec=>{
         const header = document.createElement('div');

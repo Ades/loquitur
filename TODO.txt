@@ -127,8 +127,8 @@ OK TEST 78 Under "Your Games" on the shelf, add a section with available game st
 OK TEST 80 Adapt to a mobile phone.
         Anpassa till mobil (eller mindre fönster) - large font option
 OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man direkt kan se resultatet i grafen.
-TEST 82 Automatically open groups where new cards become available.
-TEST 83 Always close modal if a start node is about to be opened.
+OK TEST 82 Automatically open groups where new cards become available.
+OK TEST 83 Always close modal if a start node is about to be opened.
 Shortcut to change log entry — maybe show which nodes have entry by color.
 large font makes button outside screen on mobile.
 Add a setting to show all narrations even though they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
