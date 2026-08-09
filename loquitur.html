@@ -786,6 +786,30 @@
       noise.stop(now + duration + 0.02);
     }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
   }
+  // A short ascending three-note chime, played once when a group's narrations are all heard.
+  function playGroupCompleteSound(){
+    if(!settings.groupCompleteSoundEnabled) return;
+    try{
+      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
+      const ctx = tickAudioCtx;
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 — a small, bright major triad
+      notes.forEach((freq, i)=>{
+        const t0 = now + i*0.09;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t0);
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(0.14, t0 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.37);
+      });
+    }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
+  }
   // True if the given narration should auto-advance — either the app-wide setting is on,
   // or its group has "Automatically open the next node" enabled specifically.
   function shouldAutoAdvance(node){
@@ -2275,6 +2299,7 @@
         if(!manageMode){
           if(complete && !seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.add(g.id);
+            playGroupCompleteSound();
             if(!g.collapsed){ g.collapsed = true; sSet('game:'+game.id, game); }
           } else if(!complete && seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.delete(g.id);
@@ -2406,6 +2431,7 @@
         if(!manageMode){
           if(complete && !seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.add(g.id);
+            playGroupCompleteSound();
             if(!g.collapsed){ g.collapsed = true; sSet('game:'+game.id, game); }
           } else if(!complete && seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.delete(g.id);

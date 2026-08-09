@@ -130,11 +130,13 @@ OK TEST 81 Använda grafen för att modifiera nodtillstånd - snyggt om man dire
 OK TEST 82 Automatically open groups where new cards become available.
 OK TEST 83 Always close modal if a start node is about to be opened.
 TEST 84 Add a setting to play a sound when a group becomes completed.
+        Add setting to play the sound
 Shortcut to change log entry — maybe show which nodes have entry by color.
 large font makes button outside screen on mobile.
 Add a setting to show all narrations even though they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
 Add a group setting to set the group as "info only", ie. do not count as completed group.
 TEST 85 MANUAL Count and present completed groups instead of number of narrations.
+Mark unavailable narrations and images in map as red nodes (red play button/red frame)
 
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
