@@ -1334,6 +1334,9 @@
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="scratchSoundCk" ${settings.scratchSoundEnabled?'checked':''}> Play a pencil-scratch sound when a new log entry is recorded
             </label>
+            <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="chimeSoundCk" ${settings.groupCompleteSoundEnabled?'checked':''}> Play a chime when a group becomes completed.
+            </label>
             <label style="display:block;margin-top:12px;">Audio player style</label>
             <div class="media-toggle" id="audioStyleToggle" style="margin-top:4px;">
               ${Object.keys(AUDIO_PLAYER_STYLES).map(k=>`<button type="button" data-style="${k}" class="${(settings.audioPlayerStyle||'native')===k?'active':''}">${AUDIO_PLAYER_STYLES[k].label}</button>`).join('')}
@@ -1416,6 +1419,10 @@
     overlay.querySelector('#scratchSoundCk').onchange = async (e)=>{
       settings.scratchSoundEnabled = e.target.checked; await saveSettings();
       if(settings.scratchSoundEnabled) playScratchSound();
+    };
+    overlay.querySelector('#chimeSoundCk').onchange = async (e)=>{
+      settings.groupCompleteSoundEnabled = e.target.checked; await saveSettings();
+      if(settings.groupCompleteSoundEnabled) playGroupCompleteSound();
     };
     overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
       overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
