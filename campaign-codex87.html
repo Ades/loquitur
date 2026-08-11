@@ -1,17 +1,11 @@
-<!--© 2026 Anders Ive. All Rights Reserved.-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Loquitur</title>
+<title>Campaign Codex</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<!--    <link rel="manifest" href="/site.webmanifest" />-->
 <style>
   :root{
     --font-title:'Cinzel',serif;
@@ -52,7 +46,7 @@
     --bg-glow:#fffaf0;
     --shadow: 0 8px 20px rgba(60,45,20,.18);
   }
-  body.large-font{ zoom: 118%; }
+  body.large-font{ zoom:1.18; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -64,21 +58,6 @@
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
     transition:background-color .2s, color .2s;
-  }
-  h1 { font-family: "Kimberley", sans-serif }
-  @font-face {
-      font-family: "Arkhamslim";
-       src: url("public/fonts/arkhamslim.woff2") format("woff2"),
-            url("public/fonts/arkhamslim.woff") format("woff"),
-            url("public/fonts/arkhamslim.ttf") format("truetype");
-       font-display: swap;
-  }
-  .arkhamslim{
-      color:var(--parchment);
-      font-family:'Arkhamslim';
-      min-height:100vh;
-      -webkit-font-smoothing:antialiased;
-      transition:background-color .2s, color .2s;
   }
   ::selection{background:var(--brass-dim);color:#000;}
   .eyebrow{
@@ -301,7 +280,7 @@
   .map-node.newly-unlocked{ animation:unlockPulseSvg .8s ease-out; transform-box:fill-box; transform-origin:center; }
   .reader{
     background:var(--bg-panel);border:1px solid var(--brass-dim);border-radius:var(--radius);
-    width:100%;max-width:96vw;height:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);
+    width:96vw;max-width:96vw;height:92vh;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);
   }
   .reader .art{width:100%;height:220px;background:linear-gradient(160deg,#2c2318,#181310) center/cover no-repeat;border-bottom:1px solid var(--line);}
   .reader .content{padding:24px 32px 32px;max-width:900px;margin:0 auto;}
@@ -312,8 +291,8 @@
   .reader .nav-btn-group{position:absolute;top:14px;left:14px;display:flex;gap:6px;}
   .reader .nav-btn-group button{
     background:rgba(0,0,0,.4);border:1px solid var(--line);
-      color:var(--parchment-dim);padding:0 12px;height:30px;border-radius:15px;font-size:12.5px;
-      display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Spectral',serif;transition:border-color .15s,color .15s;
+    color:var(--parchment-dim);padding:0 12px;height:30px;border-radius:15px;font-size:12.5px;
+    display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Spectral',serif;transition:border-color .15s,color .15s;
   }
   .reader .nav-btn-group button:hover{border-color:var(--brass-dim);color:var(--parchment);}
   .reader-relative{position:relative;}
@@ -476,19 +455,18 @@
 <div id="app"><div class="loading-note">Opening the codex…</div></div>
 
 <script>
-    // © 2026 Anders Ive. All Rights Reserved.
 (function(){
   "use strict";
 
   // ---------------- Storage helpers ----------------
-    // Prefers the platform's persistent artifact storage (window.storage) when available.
-    // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
-    // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
-    // page refresh returns to the same state either way.
-    const LS_PREFIX = 'campaign-codex:';
-    function hasPlatformStorage(){
-        return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
-    }
+  // Prefers the platform's persistent artifact storage (window.storage) when available.
+  // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
+  // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
+  // page refresh returns to the same state either way.
+  const LS_PREFIX = 'campaign-codex:';
+  function hasPlatformStorage(){
+    return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
+  }
   async function sGet(key){
     try{
       if(hasPlatformStorage()){
@@ -542,9 +520,7 @@
     audioPlayerStyle:'native',
     animationsEnabled:true,
     largeFont:false,
-    groupCompleteSoundEnabled:true,
-    countGroupsCompleted: true,
-    hideUnavailableGroups: false,
+    groupCompleteSoundEnabled:true
   };
 
   // ---------------- State ----------------
@@ -568,9 +544,8 @@
   let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
   let hoveredMapNodeId = null; // node currently under the pointer on the campaign map, for the Shift+N shape-cycling fast key
   let seenCompleteGroupIds = new Set(); // group ids already known complete — collapsing only fires on the transition into completeness
-    let alreadyTried = false;
 
-    // inline (card / map) audio preview
+  // inline (card / map) audio preview
   const inlineAudio = new Audio();
   let inlinePlayingId = null;
   let inlineAutoComplete = false; // true only for map "graph" plays with no choices to pick
@@ -794,7 +769,7 @@
       if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
       const ctx = tickAudioCtx;
       const now = ctx.currentTime;
-      const notes = [523.25/2, 659.25/2, 783.99/2]; // C5, E5, G5 — a small, bright major triad
+      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 — a small, bright major triad
       notes.forEach((freq, i)=>{
         const t0 = now + i*0.09;
         const osc = ctx.createOscillator();
@@ -1051,17 +1026,15 @@
   const ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg>';
   const ICON_EYE_OFF = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l18 18M10.6 10.6a2 2 0 1 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c6 0 10 7 10 7a15 15 0 0 1-4 4.6M6.2 6.2C3.6 8 2 12 2 12s4 7 10 7c1.3 0 2.5-.3 3.6-.8"/></svg>';
   const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>';
-  const CREST = '<img src="book-bubble.png" width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.6"><path d="M24 4l16 6v10c0 12-7 19-16 24C15 39 8 32 8 20V10l16-6z"/><path d="M24 14v16M17 21h14" stroke-width="1.3"/></img>';
+  const CREST = '<svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.6"><path d="M24 4l16 6v10c0 12-7 19-16 24C15 39 8 32 8 20V10l16-6z"/><path d="M24 14v16M17 21h14" stroke-width="1.3"/></svg>';
 
   // Whether every non-hidden narration currently belonging to a group (or, for groupId
   // null, the Ungrouped bucket) has been heard — used to badge folders as complete on the
   // shelf and list views, independent of any "hide completed" filtering applied to display.
   function isGroupComplete(visibleNodes, validGroupIds, groupId){
-      if (!visibleNodes) return false
     const members = groupId===null
       ? visibleNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
       : visibleNodes.filter(n=> n.groupId===groupId);
-      // console.log('MEMBERS',members,members.map(n=>isCompleted(n.id)))
     return members.length>0 && members.every(n=>isCompleted(n.id));
   }
   function groupCompleteBadge(){
@@ -1271,8 +1244,8 @@
       <div class="brand">
         ${CREST}
         <div>
-          <h1>res ipsa LOQUITUR  — Campaign Codex</h1>
-          <div class="sub"><i>"it speaks for itself"</i> — VOICE NARRATION LIBRARY FOR TABLETOP CAMPAIGNS</div>
+          <h1>Campaign Codex</h1>
+          <div class="sub">VOICE NARRATION LIBRARY FOR TABLETOP CAMPAIGNS</div>
         </div>
       </div>
       <div class="top-actions">
@@ -1318,10 +1291,6 @@
               <input type="checkbox" id="hideLockedCk" ${settings.hideLockedInMap?'checked':''}> ${ICON_LOCK} Hide narrations you haven't unlocked yet on the campaign map
             </label>
             <div class="hint">On by default, so the map doesn't spoil what's still ahead. Turn it off to see the full tree while you play. In "Manage codex" mode the full tree is always shown.</div>
-            <label class="setting-toggle" style="margin-top:8px;">
-              <input type="checkbox" id="hideUnavailableGroups" ${settings.hideUnavailableGroups?'checked':''}> ${ICON_LOCK} Don't count (NB: should be "Hide") groups you haven't unlocked yet
-            </label>
-            <div class="hint">On by default, so the progress doesn't spoil what's still ahead. Turn it on to see the all groups while you play. In "Manage codex" mode the full tree is always shown.</div>
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="animationsCk" ${settings.animationsEnabled?'checked':''}> Animate newly-unlocked narrations and opening windows
             </label>
@@ -1329,10 +1298,7 @@
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="largeFontCk" ${settings.largeFont?'checked':''}> Large font
             </label>
-            <label class="setting-toggle" style="margin-top:10px;">
-              <input type="checkbox" id="countGroupsCompleted" ${settings.countGroupsCompleted?'checked':''}> Count completed groups (otherwise count completed narrations).
-            </label>
-            <div class="hint">The progress numbers and bar under the title shows number of completed groups or narrations</div>
+            <div class="hint">Scales up all text, buttons and spacing together — useful for reading narrations from across the table.</div>
             <label style="display:block;margin-top:12px;">Log order</label>
             <div class="media-toggle" id="logOrderToggle" style="margin-top:4px;">
               <button type="button" data-order="latestFirst" class="${settings.logOrder!=='latestLast'?'active':''}">Latest first</button>
@@ -1359,9 +1325,6 @@
             </label>
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="scratchSoundCk" ${settings.scratchSoundEnabled?'checked':''}> Play a pencil-scratch sound when a new log entry is recorded
-            </label>
-            <label class="setting-toggle" style="margin-top:10px;">
-              <input type="checkbox" id="chimeSoundCk" ${settings.groupCompleteSoundEnabled?'checked':''}> Play a chime when a group becomes completed.
             </label>
             <label style="display:block;margin-top:12px;">Audio player style</label>
             <div class="media-toggle" id="audioStyleToggle" style="margin-top:4px;">
@@ -1417,17 +1380,11 @@
     overlay.querySelector('#hideLockedCk').onchange = async (e)=>{
       settings.hideLockedInMap = e.target.checked; await saveSettings(); render();
     };
-    overlay.querySelector('#hideUnavailableGroups').onchange = async (e)=>{
-      settings.hideUnavailableGroups = e.target.checked; await saveSettings(); render();
-    };
     overlay.querySelector('#animationsCk').onchange = async (e)=>{
       settings.animationsEnabled = e.target.checked; await saveSettings();
     };
     overlay.querySelector('#largeFontCk').onchange = async (e)=>{
       settings.largeFont = e.target.checked; await saveSettings(); applyLargeFont();
-    };
-    overlay.querySelector('#countGroupsCompleted').onchange = async (e)=>{
-      settings.countGroupsCompleted = e.target.checked; await saveSettings(); render();
     };
     overlay.querySelector('#autoCloseCk').onchange = async (e)=>{
       settings.autoCloseOnAudioEnd = e.target.checked; await saveSettings();
@@ -1445,10 +1402,6 @@
     overlay.querySelector('#scratchSoundCk').onchange = async (e)=>{
       settings.scratchSoundEnabled = e.target.checked; await saveSettings();
       if(settings.scratchSoundEnabled) playScratchSound();
-    };
-    overlay.querySelector('#chimeSoundCk').onchange = async (e)=>{
-      settings.groupCompleteSoundEnabled = e.target.checked; await saveSettings();
-      if(settings.groupCompleteSoundEnabled) playGroupCompleteSound();
     };
     overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
       overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
@@ -1618,7 +1571,7 @@
     fileInp.type='file'; fileInp.accept='application/json'; fileInp.style.display='none';
     loadBtn.onclick = ()=> fileInp.click();
     fileInp.onchange = async ()=>{
-      const f = fileInp?.files[0];
+      const f = fileInp.files[0];
       fileInp.value='';
       if(!f) return;
       try{
@@ -1634,34 +1587,6 @@
         render();
       }catch(e){ toast(e.message); }
     };
-
-      function fetchJSONData() {
-          fetch('./default_codex.json')
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  const existingIds = new Set(games.map(g => g.id));
-                  const loaded = data
-                  importCandidates = loaded.games
-                      .filter(g => !existingIds?.has(g.id))
-                      .map(g => ({game: g, nodes: loaded.nodesByGame[g.id] || []}));
-                  if (importCandidates.length === 0) {
-                      toast('Every game in that file is already in Your Games.');
-                      importCandidates = null;
-                  }
-                  render();
-              })
-              .catch(error => console.error('Failed to fetch data:', error));
-      }
-      if (importCandidates===null && !alreadyTried) {
-          alreadyTried = true
-          fetchJSONData()
-      }
-
     head.appendChild(loadBtn);
     head.appendChild(fileInp);
     section.appendChild(head);
@@ -1732,9 +1657,9 @@
             <label>Cover image (optional)</label>
             <div class="media-toggle" id="ngImgToggle">
               ${existingGame && existingGame.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-              <button type="button" data-m="file">Upload</button>
+              <button type="button" data-m="file" class="${existingGame && existingGame.image? '':'active'}">Upload</button>
               <button type="button" data-m="url">Web URL</button>
-              <button type="button" data-m="path" class="${existingGame && existingGame.image? '':'active'}">Local file path</button>
+              <button type="button" data-m="path">Local file path</button>
             </div>
             <input type="file" id="ngImgFile" accept="image/*" style="${existingGame && existingGame.image? 'display:none;':''}">
             <input type="url" id="ngImgUrl" placeholder="https://…" style="display:none;">
@@ -1791,9 +1716,9 @@
               <div id="ngTitleCustomWrap" style="display:${existingGame && existingGame.titleFont==='custom'?'block':'none'};margin-top:8px;">
                 <div class="media-toggle" id="ngTitleCustomToggle">
                   ${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-                  <button type="button" data-m="file">Upload</button>
+                  <button type="button" data-m="file" class="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '':'active'}">Upload</button>
                   <button type="button" data-m="url">Web URL</button>
-                  <button type="button" data-m="path" class="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? '':'active'}">Local file path</button>
+                  <button type="button" data-m="path">Local file path</button>
                 </div>
                 <input type="file" id="ngTitleFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTitleFont && existingGame.customTitleFont.source? 'display:none;':''}">
                 <input type="url" id="ngTitleFontUrl" placeholder="https://…/font.woff2" style="display:none;">
@@ -1818,9 +1743,9 @@
               <div id="ngTextCustomWrap" style="display:${existingGame && existingGame.textFont==='custom'?'block':'none'};margin-top:8px;">
                 <div class="media-toggle" id="ngTextCustomToggle">
                   ${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-                  <button type="button" data-m="file" >Upload</button>
+                  <button type="button" data-m="file" class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Upload</button>
                   <button type="button" data-m="url">Web URL</button>
-                  <button type="button" data-m="path"class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Local file path</button>
+                  <button type="button" data-m="path">Local file path</button>
                 </div>
                 <input type="file" id="ngTextFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? 'display:none;':''}">
                 <input type="url" id="ngTextFontUrl" placeholder="https://…/font.woff2" style="display:none;">
@@ -1969,7 +1894,6 @@
         return;
       }
       const id = existingGame ? existingGame.id : uid();
-      const groups = existingGame ? existingGame.groups : [];
 
       const titleFontVal = overlay.querySelector('#ngTitleFont').value;
       const textFontVal = overlay.querySelector('#ngTextFont').value;
@@ -2027,7 +1951,6 @@
         titleFont: titleFontVal,
         textFont: textFontVal,
         customTitleFont, customTextFont,
-        groups,
         createdAt: existingGame ? existingGame.createdAt : Date.now()
       };
       const ok = await sSet('game:'+id, game);
@@ -2062,51 +1985,8 @@
     crumb.querySelector('#backLib').onclick = ()=>{ route={view:'library',gameId:null}; render(); };
     wrap.appendChild(crumb);
 
-    let total = settings?.hideUnavailableGroups ? game.groups.map(g=>g?.list?.length > 0).length : game?.groups?.length || 0;
-    let completedCount = 0 // nodes.filter(n=>isCompleted(n.id)).length;
-    if (settings?.countGroupsCompleted /* setting about how to count completion*/) {
-        // completed groups
-        function computeGroupList(g){
-            const groupId = g ? g.id : null;
-            let members = groupId===null
-                ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
-                : nodes.filter(n=> n.groupId===groupId);
-            if(!manageMode){
-                const allowHidden = g && g.showHiddenNodes;
-                if(!allowHidden) members = members.filter(n=>!n.hidden);
-            }
-            members = members.filter(isAvailable);
-            if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
-            if(g && g.showFirstOnly && members.length>0){
-                const minOrder = Math.min(...members.map(n=>n.order||0));
-                members = members.filter(n=>(n.order||0)===minOrder);
-            }
-            return members;
-        }
-        total = 0
-        const validGroupIds = game.groups.map(g=>g.id);
-        game.groups.forEach(g=> {
-            const list = computeGroupList(g);
-
-            const visibleNodes = list.filter(n=>{
-                if(n.hidden && !settings?.hideUnavailableGroups/* !allowHidden */) return false;
-                //if(hideHeardHere && isCompleted(n.id)) return false;
-                //if(settings.hideLockedInMap && !isAvailable(n)){ hiddenLockedCount++; return false; }
-                return true;
-            });
-            // console.log('VISIBLENODES',visibleNodes)
-            if (list.length === 0 && settings?.hideUnavailableGroups) {} else {
-                total++
-            }
-
-            const complete = isGroupComplete(visibleNodes, validGroupIds, g.id);
-            if (complete) completedCount++
-        })
-    } else {
-        // completed narrations
-        total = nodes?.length || 0
-        completedCount = nodes.filter(n=>isCompleted(n.id)).length;
-    }
+    const total = nodes.length;
+    const completedCount = nodes.filter(n=>isCompleted(n.id)).length;
     const gh = document.createElement('div');
     gh.className='game-header';
     gh.innerHTML = `
@@ -2114,8 +1994,8 @@
       <div class="meta">
         <h2>${renderTitle(game.name)}</h2>
         <div class="desc">${renderMarkdown(game.description||'')}</div>
-        ${total>0?`<div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
-        <div class="progress-label">${completedCount} OF ${total} ${settings?.countGroupsCompleted?'GROUPS COMPLETED':'NARRATIONS HEARD'}</div>`:'xxx'}
+        <div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
+        <div class="progress-label">${completedCount} OF ${total} NARRATIONS HEARD</div>
       </div>
     `;
     wrap.appendChild(gh);
@@ -2196,40 +2076,21 @@
 
       let choiceLine = '';
       let resultLine = '';
-      let choicesLength = 0;
       if(Array.isArray(record.choiceIds) && record.choiceIds.length){
         const chosen = (node.choices||[]).filter(c=>record.choiceIds.includes(c.id));
-        choicesLength = chosen.length
         if(chosen.length){
-          choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
+          choiceLine = `<div class="log-choice">Chose: ${chosen.map(c=>`“${escapeHtml(c.label)}”`).join(', ')}</div>`;
           const texts = chosen.filter(c=>c.resultText).map(c=>renderMarkdown(c.resultText));
           if(texts.length) resultLine = `<div class="log-result">${texts.join('')}</div>`;
         }
       } else if(record.choiceId){
         const c = (node.choices||[]).find(c=>c.id===record.choiceId);
         if(c){
-            choicesLength = 1
-          choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
+          choiceLine = `<div class="log-choice">Chose: “${escapeHtml(c.label)}”</div>`;
           if(c.resultText) resultLine = `<div class="log-result">${renderMarkdown(c.resultText)}</div>`;
         }
       }
-      if(mode==='choicesOnly') {
-          if(choicesLength > 0 || manageMode) {
-            item.innerHTML = `
-          <div class="log-top" style="align-items:flex-start;">
-            ${choiceLine}
-            <span class="log-time">${escapeHtml(when)}</span>
-          </div>
-          ${skippedNote}
-        `;
-            list.appendChild(item);
-            return;
-        } else {
-          return
-        }
-      }
-
-        item.innerHTML = `
+      item.innerHTML = `
         <div class="log-top">
           <span class="log-title">${renderTitle(node.title)}</span>
           <span class="log-time">${escapeHtml(when)}</span>
@@ -2295,7 +2156,6 @@
     }
 
     const groups = game.groups || [];
-    // console.log('GROUPS',groups)
     if(groups.length===0){
       box.appendChild(buildGrid(available));
     } else {
@@ -2322,13 +2182,9 @@
       const ungroupedList = computeGroupList(null);
       const sections = [];
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
-      // console.log("==========")
-      //   console.log('GROUPSX',groups.length)
-
-        groups.forEach(g=>{
+      groups.forEach(g=>{
         const list = computeGroupList(g);
-        const complete = isGroupComplete(list, validGroupIds, g.id);
-        // console.log('LIST.length',list.length,complete)
+        const complete = isGroupComplete(visible, validGroupIds, g.id);
         if(!manageMode){
           if(complete && !seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.add(g.id);
@@ -2346,14 +2202,11 @@
           sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
         }
       });
-      // console.log('SECTIONS.LENGTH',sections.length)
-        let countCompletedGroups = 0
       sections.forEach(sec=>{
         const header = document.createElement('div');
         header.className='group-header';
         header.style.cursor = sec.id===null ? 'default' : 'pointer';
-        const complete = isGroupComplete(sec.list, validGroupIds, sec.id);
-        if (complete) countCompletedGroups++
+        const complete = isGroupComplete(visible, validGroupIds, sec.id);
         header.innerHTML = sec.id===null
           ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`
           : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
@@ -2369,7 +2222,6 @@
           openHeader();
         }
       });
-      // console.log('COUNTCOMPLETEDGROUPS',countCompletedGroups)
     }
 
     if(lockedCount>0){
@@ -2460,7 +2312,7 @@
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       groups.forEach(g=>{
         const list = computeGroupList(g);
-        const complete = isGroupComplete(list, validGroupIds, g.id);
+        const complete = isGroupComplete(visible, validGroupIds, g.id);
         if(!manageMode){
           if(complete && !seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.add(g.id);
@@ -2482,7 +2334,7 @@
         const header = document.createElement('div');
         header.className='group-header';
         header.style.cursor = sec.id===null ? 'default' : 'pointer';
-        const complete = isGroupComplete(sec.list, validGroupIds, sec.id);
+        const complete = isGroupComplete(visible, validGroupIds, sec.id);
         header.innerHTML = sec.id===null
           ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`
           : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
@@ -2693,7 +2545,7 @@
           d = `M${from.x+circleR},${from.y} C${midx},${from.y} ${midx},${to.y} ${to.x-circleR},${to.y}`;
           labelX = midx; labelY = (from.y+to.y)/2 - 6;
         }
-        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'&&false?'stroke-dasharray="4 3"':''}/>`;
+        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'?'stroke-dasharray="4 3"':''}/>`;
         if(label){
           lines += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="9" class="map-node-label" fill="${pal.connDone}" style="font-style:italic;">${escapeHtml(label)}</text>`;
         }
@@ -2702,7 +2554,7 @@
 
     // Strips HTML/markdown syntax down to plain text for a compact map preview.
     function plainPreview(src){
-      return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').trim();
+      return (src||'').replace(/<[^>]+>/g,' ').replace(/[*`_#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
     }
 
     let boxes = '';
@@ -2713,10 +2565,9 @@
       const normPrereqs = normalizedPrereqs(n);
       const anyCount = normPrereqs.filter(p=>p.group==='any').length;
       const allCount = normPrereqs.length - anyCount;
-      const isOr = false // anyCount>0;
-      const orLabelText = '' // (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
-      let fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
-      if (fill && n?.mapShape === 'boxErrata') fill = fill.replace(/\d+/,'255')
+      const isOr = anyCount>0;
+      const orLabelText = (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
+      const fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
       const stroke = done ? pal.doneStroke : (avail ? pal.availStroke : pal.lockedStroke);
       const textColor = avail ? pal.textAvail : pal.textLocked;
       const showPlay = !manageMode && n.audio && avail;
@@ -2727,7 +2578,7 @@
       else if(n.mapTooltip==='full' && n.text) tooltipBody = `${n.title} — ${statusWord}\n\n${plainPreview(n.text)}`;
       else tooltipBody = `${n.title} — ${statusWord}`;
       const tooltip = `<title>${escapeHtml(tooltipBody)}</title>`;
-      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='boxRule'||n.mapShape==='boxErrata' ?'boxRule': (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle')))
+      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle'));
       const labelMode = n.mapLabel || 'title';
       const asPlayIcon = shapeMode==='playIcon' && !!n.audio;
       const iconColor = (done||avail) ? '#161109' : pal.textLocked;
@@ -2756,13 +2607,11 @@
           `<text x="${p.x}" y="${blockY + i*14}" text-anchor="middle" font-size="12" class="map-node-label" fill="${stroke}">${escapeHtml(line)}</text>`
         ).join('');
         orSvg = orLabelText? `<text x="${p.x}" y="${blockY-34}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
-      } else if(shapeMode==='box'||shapeMode==='boxRule'||shapeMode==='boxErrata'){
+      } else if(shapeMode==='box'){
         const bw = 132, bh = 60;
         const lines = labelMode==='none' ? [] : wrapLines(labelSrc, 17, 2);
         const titleBlockY = lines.length<=1 ? p.y - 2 : p.y - 11;
-        const dashArray = shapeMode==='boxRule' ? '6 3' : '0' // isOr&&false?'4 3':'0'
-        const rx = shapeMode==='boxRule' ? '0' : '6'
-        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${dashArray}"/>`;
+        shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${isOr?'4 3':'0'}"/>`;
         labelSvg = lines.map((line,i)=>
           `<text x="${p.x}" y="${titleBlockY + i*14}" text-anchor="middle" font-size="11" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
         ).join('') + `<text x="${p.x}" y="${p.y+bh/2-8}" text-anchor="middle" font-size="9" class="map-node-label" fill="${stroke}" style="letter-spacing:.06em;">${statusWord}</text>`;
@@ -2780,7 +2629,7 @@
         // the circle (or play-icon, or its no-audio dot fallback), centered at p.x,p.y
         const isDotFallback = shapeMode==='playIcon' && !n.audio;
         const r = isDotFallback ? 9 : circleR;
-        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr&&false?'3 3':'0'}"/>`;
+        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr?'3 3':'0'}"/>`;
         if(asPlayIcon){
           shapeSvg += `
             <g class="${showPlay?'map-mini-play':''}" data-id="${n.id}" style="cursor:${showPlay?'pointer':'inherit'};">
@@ -2867,21 +2716,10 @@
       const list = nodes.filter(n=>n.groupId===g.id);
       if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
     });
-
-      const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
-      let available = visible.filter(isAvailable);
-      const sectionsWithAvailable = []
-      groups.forEach(g=>{
-          const list = available.filter(n=>n.groupId===g.id);
-          if(list.length) sectionsWithAvailable.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
-      });
-
     sections.forEach(sec=>{
-        const sectionWithAvailable = sectionsWithAvailable.find(g=>sec.id === g.id) || []
       const header = document.createElement('div');
       header.className='group-header';
       header.style.cursor = sec.id===null ? 'default' : 'pointer';
-      const complete = isGroupComplete(sectionWithAvailable.list, validGroupIds, sec.id);
       header.innerHTML = sec.id===null
         ? `<span class="group-name">Ungrouped</span>`
         : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span>`;
@@ -3207,7 +3045,6 @@
         <label>Log entry, once heard</label>
         <select id="nLogMode" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
           <option value="full" ${(!editingNode || (editingNode.logMode||'full')==='full')?'selected':''}>Full — title, choice made, and result text</option>
-          <option value="choicesOnly" ${editingNode && editingNode.logMode==='choicesOnly'?'selected':''}>Choices made only</option>
           <option value="titleOnly" ${editingNode && editingNode.logMode==='titleOnly'?'selected':''}>Title only</option>
           <option value="textOnly" ${editingNode && editingNode.logMode==='textOnly'?'selected':''}>Text only (accompanying text, no title)</option>
           <option value="none" ${editingNode && editingNode.logMode==='none'?'selected':''}>Don't add to the log</option>
@@ -3217,11 +3054,9 @@
         <div class="field">
           <label>Map shape</label>
           <select id="nMapShape" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
-            <option value="box" ${(!editingNode || (editingNode.mapShape||'box')==='box')?'selected':''}>Box (label + status inside)</option>
-            <option value="circle" ${(editingNode && editingNode.mapShape==='circle')?'selected':''}>Small circle</option>
+            <option value="circle" ${(!editingNode || (editingNode.mapShape||'circle')==='circle')?'selected':''}>Small circle</option>
             <option value="playIcon" ${editingNode && editingNode.mapShape==='playIcon'?'selected':''}>Play icon if it has audio, else a small dot</option>
-            <option value="boxRule" ${editingNode && editingNode.mapShape==='boxRule'?'selected':''}>Box, rule (label + status inside)</option>
-            <option value="boxErrata" ${editingNode && editingNode.mapShape==='boxErrata'?'selected':''}>Box, errata (label + status inside)</option>
+            <option value="box" ${editingNode && editingNode.mapShape==='box'?'selected':''}>Box (label + status inside)</option>
           </select>
         </div>
         <div class="field">
@@ -3250,9 +3085,9 @@
           <label>Narration audio</label>
           <div class="media-toggle" data-t="audio">
             ${editingNode && editingNode.audio? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-            <button type="button" data-m="file">Upload file</button>
+            <button type="button" data-m="file" class="${editingNode && editingNode.audio? '':'active'}">Upload file</button>
             <button type="button" data-m="url">Web URL</button>
-            <button type="button" data-m="path" class="${editingNode && editingNode.audio? '':'active'}">Local file path</button>
+            <button type="button" data-m="path">Local file path</button>
           </div>
           <input type="file" id="nAudioFile" accept="audio/*" style="${editingNode && editingNode.audio? 'display:none;':''}">
           <input type="url" id="nAudioUrl" placeholder="https://…" style="display:none;">
@@ -3271,9 +3106,9 @@
           <label>Image (optional)</label>
           <div class="media-toggle" data-t="image">
             ${editingNode && editingNode.image? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-            <button type="button" data-m="file">Upload file</button>
+            <button type="button" data-m="file" class="${editingNode && editingNode.image? '':'active'}">Upload file</button>
             <button type="button" data-m="url">Web URL</button>
-            <button type="button" data-m="path" class="${editingNode && editingNode.image? '':'active'}">Local file path</button>
+            <button type="button" data-m="path">Local file path</button>
           </div>
           <input type="file" id="nImageFile" accept="image/*" style="${editingNode && editingNode.image? 'display:none;':''}">
           <input type="url" id="nImageUrl" placeholder="https://…" style="display:none;">
@@ -3303,22 +3138,22 @@
           ${otherNodes.length===0? '<div class="hint">No other narrations yet — this will be available from the start.</div>' :
             (()=>{
               function prereqItem(n){
-              const checked = existingPrereqIds.includes(n.id);
-              const hasChoices = n.choices && n.choices.length;
-              const grp = existingPrereqGroup[n.id] || 'all';
-              return `
-              <div class="prereq-item">
-                <input type="checkbox" class="prereqCk" value="${n.id}" ${checked?'checked':''}>
-                <span style="flex:1;">${escapeHtml(n.title)}</span>
-                <select class="prereqGroup" data-for="${n.id}" ${checked?'':'disabled'}>
-                  <option value="all" ${grp==='all'?'selected':''}>AND (required)</option>
-                  <option value="any" ${grp==='any'?'selected':''}>OR (any one)</option>
-                </select>
-                <select class="prereqChoice" data-for="${n.id}" ${checked?'':'disabled'}>
-                  <option value="">any completion</option>
-                  ${hasChoices? n.choices.map(c=>`<option value="${c.id}" ${existingPrereqChoice[n.id]===c.id?'selected':''}>requires choice: ${escapeHtml(c.label)}</option>`).join(''):''}
-                </select>
-              </div>`;
+                const checked = existingPrereqIds.includes(n.id);
+                const hasChoices = n.choices && n.choices.length;
+                const grp = existingPrereqGroup[n.id] || 'all';
+                return `
+                <div class="prereq-item">
+                  <input type="checkbox" class="prereqCk" value="${n.id}" ${checked?'checked':''}>
+                  <span style="flex:1;">${escapeHtml(n.title)}</span>
+                  <select class="prereqGroup" data-for="${n.id}" ${checked?'':'disabled'}>
+                    <option value="all" ${grp==='all'?'selected':''}>AND (required)</option>
+                    <option value="any" ${grp==='any'?'selected':''}>OR (any one)</option>
+                  </select>
+                  <select class="prereqChoice" data-for="${n.id}" ${checked?'':'disabled'}>
+                    <option value="">any completion</option>
+                    ${hasChoices? n.choices.map(c=>`<option value="${c.id}" ${existingPrereqChoice[n.id]===c.id?'selected':''}>requires choice: ${escapeHtml(c.label)}</option>`).join(''):''}
+                  </select>
+                </div>`;
               }
               const byOrder = (a,b)=>(a.order||0)-(b.order||0);
               const gameGroups = game.groups || [];
@@ -3352,7 +3187,7 @@
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field, <strong>Shift+A</strong> go to next checked prerequisite.</span>
+        <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+Shift+&gt;</strong> for the previous one) without stealing focus from the title field.</span>
         <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
       </div>
 
@@ -3472,7 +3307,7 @@
         } else if(audioMode==='url'){
           audio = panel.querySelector('#nAudioUrl').value.trim();
         } else if(audioMode==='path'){
-            audio = panel.querySelector('#nAudioPath').value.trim();
+          audio = panel.querySelector('#nAudioPath').value.trim();
         } else if(audioMode==='file' && !panel.querySelector('#nAudioFile').files[0] && !editingNode){
           audio = '';
         }
@@ -3482,7 +3317,7 @@
         } else if(imageMode==='url'){
           image = panel.querySelector('#nImageUrl').value.trim();
         } else if(imageMode==='path'){
-            image = panel.querySelector('#nImagePath').value.trim();
+          image = panel.querySelector('#nImagePath').value.trim();
         } else if(imageMode==='file' && !panel.querySelector('#nImageFile').files[0] && !editingNode){
           image = '';
         }
@@ -3890,11 +3725,8 @@
     if(pathBtn) pathBtn.click();
     field.focus();
     try{
-        // const subdir = (field?.parentNode?.parentNode?.querySelector('[id*="Subdir"]')?.value || '').trim()
-        // console.log('SBDIR',subdir, field)
-      // const text = joinSubdirPath(subdir,await navigator.clipboard.readText());
-        const text = await navigator.clipboard.readText();
-        if(text){
+      const text = await navigator.clipboard.readText();
+      if(text){
         field.value = text;
         field.dispatchEvent(new Event('input', {bubbles:true}));
         toast('Pasted from clipboard.');
@@ -4008,20 +3840,19 @@
   }
   // Cycles the map shape of whatever node is currently hovered on the campaign map,
   // through circle -> play icon -> box -> label only -> back to circle.
-  const MAP_SHAPE_CYCLE = ['circle','playIcon','box','boxRule','boxErrata','labelOnly'];
+  const MAP_SHAPE_CYCLE = ['circle','playIcon','box','labelOnly'];
   async function cycleHoveredNodeShape(){
     if(!hoveredMapNodeId){ toast('Hover a node on the campaign map, then press Shift+N.'); return; }
     const n = findNodeById(hoveredMapNodeId);
     if(!n){ return; }
-    const curIdx = MAP_SHAPE_CYCLE.indexOf(n.mapShape || 'box');
+    const curIdx = MAP_SHAPE_CYCLE.indexOf(n.mapShape || 'circle');
     n.mapShape = MAP_SHAPE_CYCLE[(curIdx + 1) % MAP_SHAPE_CYCLE.length];
     const ok = await sSet('node:'+n.id, n);
     if(!ok){ toast('Could not save the shape change — please try again.'); return; }
-    toast(`Map shape: ${n.mapShape==='playIcon'?'Play icon':n.mapShape==='labelOnly'?'Label only':n.mapShape==='box'?'Box':n.mapShape==='boxRule'?'Box, rule':n.mapShape==='boxErrata'?'Box, errata':'Small circle'}`);
+    toast(`Map shape: ${n.mapShape==='playIcon'?'Play icon':n.mapShape==='labelOnly'?'Label only':n.mapShape==='box'?'Box':'Small circle'}`);
     render();
   }
-    let prereqPos = 0
-    document.addEventListener('keydown', (e)=>{
+  document.addEventListener('keydown', (e)=>{
     if(!manageMode) return;
     const active = document.activeElement;
     const tag = active && active.tagName;
@@ -4062,29 +3893,8 @@
     }
     if(e.key==='>' && !isTextEditing){
       e.preventDefault();
-      cycleManageNode(1);
+      cycleManageNode(e.ctrlKey ? -1 : 1);
     }
-    if(e.key==='<' && !isTextEditing && e.ctrlKey){
-      e.preventDefault();
-      cycleManageNode(-1);
-    }
-    if(e.key==='A' && !isTextEditing && e.shiftKey){
-        // e.preventDefault();
-        // let checkedPrerequisites = document.querySelectorAll('.prereqChoice:not([disabled])');
-
-        setTimeout(()=>{
-            let checkedPrerequisites = document.querySelectorAll('.prereqCk[checked]');
-            checkedPrerequisites?.length && checkedPrerequisites?.[prereqPos || 0]?.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-                inline: "start",
-            })
-            prereqPos = ((prereqPos+1) % checkedPrerequisites?.length) || 0
-            /* if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'}); */
-        }, 30);
-        // console.log('POS',pos)
-    }
-
   });
 
   loadAll();

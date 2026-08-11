@@ -131,13 +131,24 @@ OK TEST 82 Automatically open groups where new cards become available.
 OK TEST 83 Always close modal if a start node is about to be opened.
 TEST 84 Add a setting to play a sound when a group becomes completed.
 OK      Add setting to play the sound
+OK TEST 85 MANUAL Count and present completed groups instead of number of narrations.
+TEST 86 Mark unavailable narrations and images in map as red nodes (red play button/red frame)
+TEST 87 With a shortcut, SHIFT+C, copy the contents of the copy buffer into different sections. The first line should to into the title.
+        The second line should go into Local file path for narration.
+        The third line should go into Local file path for image.
+        The following text should go into "Accopanying text".
+        All the last lines that start with • or ° should be a choice in "Branching choices"
+        If the last lines start with ° tick the Multiple choice box.
+
+When everything has been copied, add the narration.
+Man ser om det är en playknapp för narration, men kollas om den verkligen finns?
 Shortcut to change log entry — maybe show which nodes have entry by color.
 large font makes button outside screen on mobile.
 Add a setting to show all narrations even though they are unavailable. (eller räcker det med att man har tillgång till manage mode?)
 Add a group setting to set the group as "info only", ie. do not count as completed group.
-TEST 85 MANUAL Count and present completed groups instead of number of narrations.
-Mark unavailable narrations and images in map as red nodes (red play button/red frame)
 Make a longer transition/animation of the ""[check] COMPLETE" so it becomes more visible when the modal closes
+Show all groups even though they are empty
+Don't play group-completed sound when game is selected after refresh
 
 On The Shelf, under Your Games, show a list of games that can be added.
     Automatically load preset games... If no local structure is found, load a default ...
