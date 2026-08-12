@@ -139,6 +139,27 @@ TEST 87 With a shortcut, SHIFT+C, copy the contents of the copy buffer into diff
         The following text should go into "Accopanying text".
         All the last lines that start with • or ° should be a choice in "Branching choices"
         If the last lines start with ° tick the Multiple choice box.
+Svårt att få överblick över det som händer. Man behöver inte alla kapitel tillgängliga utan endast det som är aktuellt för stunden.
+    Dölj alla som inte behövs just nu.
+    Tydligt markera var man är nu. Man kanske ska kunna visa delarna man ska ta sig igenom utan att kunna accessa dem?
+Gör map tydligare: Zooma in på aktuella noder.
+Dölj andra rubriker om man är "inne" i en grupp.
+När man är "inne" i något kan man ta bort mycket runtomkring - med en knapp: återvänd.
+Visa "Select node to enter"  och när man väljer är man "inne" i det.
+Man kanske inte ska möblera om listan över kort när man lyssnat färdigt. Det kanske är tydligare att bara låta listan vara kvar och dimma det som varit, highlighta det som kan väljas och dimma lite, det som kommer (om man nu ens ska kunna se det).
+    En nod kan vara olika typer: narration, info, errata
+    En nod kan vara i olika tillstånd:   HEARD, UNLOCKED, LOCKED.
+    Tillstånden kan visas på olika sätt: dim50% highlight dim30%
+                                         green  yellow    red?
+                                         !visible visible !visible
+                                         visible visible  !visible
+                                         visible visible  visible
+Hide progression (mayby activate/deactivate) progression from node — för att göra det tillgängligt när det behövs en progression.
+Autoplay unheard node.
+
+> Interlude-I
+> Scenario II    (icon)      (i) (!)                        // i-info !-errata
+> Scenario II
 
 When everything has been copied, add the narration.
 Man ser om det är en playknapp för narration, men kollas om den verkligen finns?
@@ -297,4 +318,468 @@ QUIT
  Touch/tablet support. The drag-and-drop reordering (narrations and groups) uses the HTML5 drag API, which doesn't work on touchscreens — worth a fallback (up/down buttons, or a touch-drag polyfill) if you'd ever use this on a tablet at the table.
 
  If you want, I can pick one and actually build it — the search box or the advanced-fields collapse would probably give you the most day-to-day relief for the least effort.
+=============================================================
+High Priority Improvements
+1. Split the file into modules
 
+The biggest issue is maintainability.
+
+The HTML contains:
+
+CSS
+Storage layer
+Business logic
+Rendering logic
+Audio system
+Map rendering
+Settings UI
+Management UI
+Reader UI
+
+All in a single file of nearly 4,000 lines.
+
+Suggested structure:
+
+Plain Text
+1
+src/
+2
+├── storage.js
+3
+├── state.js
+4
+├── progress.js
+5
+├── audio.js
+6
+├── renderer/
+7
+│ ├── library.js
+8
+│ ├── game.js
+9
+│ ├── reader.js
+10
+│ └── map.js
+11
+├── ui/
+12
+│ ├── settings.js
+13
+│ └── manage.js
+14
+└── app.js
+
+
+This would dramatically improve debugging and onboarding.
+
+2. Avoid excessive full re-renders
+
+Many actions call:
+
+JavaScript
+1
+render();
+
+
+repeatedly throughout the application.
+
+For example:
+
+JavaScript
+1
+toast('Narration updated.');
+2
+render();
+
+
+While acceptable for small datasets, this will become sluggish with:
+
+hundreds of narrations
+large maps
+many groups
+
+Consider:
+
+JavaScript
+1
+renderLibrary();
+2
+renderReader();
+3
+updateProgressBar();
+
+
+or a lightweight state-diff approach.
+
+3. Potential XSS vulnerability
+
+You intentionally allow raw HTML:
+
+and:
+
+JavaScript
+1
+renderMarkdown()
+
+
+passes HTML through unchanged.
+
+This is fine for a personal tool, but imported JSON files are effectively external input.
+
+Someone could create:
+
+HTML
+1
+<script>alert('hello')</script>
+
+
+inside a structure file.
+
+Recommendation:
+
+before rendering imported content.
+
+4. Excessive global mutable state
+
+There are many globals:
+
+JavaScript
+1
+let games = [];
+2
+let nodesByGame = {};
+3
+let progress = {};
+4
+let settings = {};
+5
+let readerNode = null;
+6
+...
+
+
+Consider:
+
+JavaScript
+1
+const state = {
+2
+games: [],
+3
+nodesByGame: {},
+4
+progress: {},
+5
+settings: {}
+6
+};
+
+
+Benefits:
+
+easier debugging
+easier serialization
+future undo/redo support
+Bugs / Logic Issues
+5. Shift+A checked prerequisite selector bug
+
+Here:
+
+JavaScript
+1
+document.querySelectorAll('.prereqCk[checked]')
+2
+`
+
+
+The checked HTML attribute is not updated when users interact with checkboxes.
+
+You likely want:
+
+JavaScript
+1
+document.querySelectorAll('.prereqCk:checked')
+
+
+Current code will miss user-selected checkboxes.
+
+6. Undefined variable risk
+
+In readFontFile():
+
+JavaScript
+1
+if(file.size > MAX_FONT_BYTES)
+
+
+MAX_FONT_BYTES is referenced before its declaration in the file order.
+
+It works because the function executes later, but it makes maintenance riskier.
+
+Move constants to the top of the file.
+
+7. Race conditions during saves
+
+Several areas do:
+
+JavaScript
+1
+await sSet(...)
+2
+games.push(...)
+3
+render()
+
+
+A quick double-click could create duplicate actions.
+
+Use:
+
+JavaScript
+1
+if(saveInProgress) return;
+
+
+or disable buttons immediately.
+
+Performance Improvements
+8. findNodeById() is O(n)
+
+Current code:
+
+JavaScript
+1
+for(const gid in nodesByGame){
+2
+const found =
+3
+nodesByGame[gid].find(...)
+4
+}
+
+
+Called frequently inside:
+
+prerequisite checks
+completion checks
+map rendering
+
+Maintain an index:
+
+JavaScript
+1
+const nodeLookup = new Map();
+
+
+Then:
+
+JavaScript
+1
+nodeLookup.get(id);
+2
+ 
+
+
+becomes O(1).
+
+This may be your largest performance win.
+
+9. Availability calculation repetition
+
+Functions repeatedly call:
+
+JavaScript
+1
+isAvailable()
+2
+isCompleted()
+3
+prerequisitesSatisfiedFor()
+
+
+inside filters, maps and rendering loops.
+
+For large graphs:
+
+during rendering would help significantly.
+
+10. Repeated sorting
+
+Examples:
+
+JavaScript
+1
+.sort((a,b)=>...)
+
+
+occur in multiple render paths.
+
+Consider storing ordered arrays once rather than re-sorting repeatedly.
+
+CSS Improvements
+11. Massive stylesheet
+
+The embedded CSS is over 1,000 lines.
+
+Break into:
+
+CSS
+1
+base.css
+2
+layout.css
+3
+reader.css
+4
+manage.css
+5
+map.css
+6
+mobile.css
+
+12. Replace zoom
+
+Current:
+
+CSS
+1
+body.large-font {
+2
+zoom: 118%;
+3
+}
+
+
+zoom is not a standards-based property.
+
+Prefer:
+
+CSS
+1
+html {
+2
+font-size: 118%;
+3
+}
+
+
+or
+
+depending on intent.
+
+Code Quality Improvements
+13. Create reusable modal helper
+
+You create many overlays with repeated code:
+
+Introduce:
+
+JavaScript
+1
+function createModal(content, options) {
+2
+...
+3
+}
+4
+ 
+
+
+This could remove hundreds of repeated lines.
+
+14. Replace magic numbers
+
+Examples:
+
+Move into constants:
+
+JavaScript
+1
+const TOAST_DURATION_MS = 3200;
+2
+const MAX_IMAGE_DIM = 1280;
+
+
+Many already are. Extend that habit consistently.
+
+15. Use event delegation
+
+Many sections generate hundreds of handlers:
+
+JavaScript
+1
+button.onclick = ...
+
+
+inside loops.
+
+Instead:
+
+JavaScript
+1
+container.addEventListener('click', ...)
+
+
+This reduces memory usage and improves scalability.
+
+Nice-to-Have Enhancements
+Add structured logging
+
+instead of scattered comments.
+
+Add graph validation
+
+Detect:
+
+prerequisite cycles
+orphan nodes
+impossible unlock paths
+
+before saving.
+
+Add autosave batching
+
+Instead of:
+
+JavaScript
+1
+await sSet(...)
+2
+await sSet(...)
+3
+await sSet(...)
+
+
+batch changes.
+
+Add unit tests
+
+The best candidates:
+
+JavaScript
+1
+isAvailable()
+2
+isCompleted()
+3
+prereqSatisfied()
+4
+resolveJunctions()
+5
+markCompletedAndFindNext()
+
+
+These contain most of the game's business logic.
+
+Top 5 recommendations
+
+If I were prioritizing work, I'd do these first:
+
+Add a node lookup map (id → node)
+Fix the :checked prerequisite bug
+Split the project into modules
+Sanitize imported HTML/content
+Reduce full-page re-renders
+
+These would provide the biggest gains in performance, correctness, and long-term maintainability.

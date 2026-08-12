@@ -52,7 +52,7 @@
     --bg-glow:#fffaf0;
     --shadow: 0 8px 20px rgba(60,45,20,.18);
   }
-  body.large-font{ zoom: 118%; }
+  body.large-font{ font-size: 118%; }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -499,7 +499,10 @@
       return raw ? JSON.parse(raw) : null;
     }catch(e){ return null; }
   }
+  let saveInProgress = false
   async function sSet(key, val){
+      if(saveInProgress) return;
+      saveInProgress = true
     try{
       if(hasPlatformStorage()){
         const r = await window.storage.set(key, JSON.stringify(val));
@@ -508,6 +511,9 @@
       localStorage.setItem(LS_PREFIX+key, JSON.stringify(val));
       return true;
     }catch(e){ console.error("storage set failed", key, e); return false; }
+      finally{
+        saveInProgress = false
+    }
   }
   async function sDel(key){
     try{
@@ -545,6 +551,7 @@
     groupCompleteSoundEnabled:true,
     countGroupsCompleted: true,
     hideUnavailableGroups: false,
+    placeCompletedLast: false,
   };
 
   // ---------------- State ----------------
@@ -821,6 +828,10 @@
     return !!(group && group.autoAdvanceGroup);
   }
   function openReaderFor(node, autoplay){
+      if (autoplay === undefined) {
+          console.log('AUTOPLAY is undefined',settings.autoAdvance,!isCompleted(node.id))
+          autoplay = settings.autoAdvance && !isCompleted(node.id)
+      }
     const resolved = resolveJunctions(node);
     const skipped = resolved !== node;
     // if we're already viewing something and moving on to a different node, remember
@@ -1077,6 +1088,8 @@
   };
   const ICON_PLAY_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>';
   const ICON_PAUSE_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
+  const MAX_FONT_BYTES = 2.5 * 1024 * 1024; // raw file, before base64 inflation
+
   function buildAudioMarkup(src){
     if(!src) return '';
     const style = settings.audioPlayerStyle || 'native';
@@ -1107,7 +1120,6 @@
     special_elite: {label:'Special Elite (typewriter)', css:"'Special Elite', monospace"},
     system: {label:'System sans-serif', css:"-apple-system, 'Segoe UI', Arial, sans-serif"}
   };
-  const MAX_FONT_BYTES = 2.5 * 1024 * 1024; // raw file, before base64 inflation
   function customFontFamily(gameId, slot){ return `gf-${slot}-${gameId}`; }
   function guessFontFormat(src){
     const s = (src||'').split('?')[0].toLowerCase();
@@ -1355,6 +1367,9 @@
             </label>
             <div class="hint">With this on, choice buttons stay hidden until the audio finishes (or right away if there's no audio), so you're not tempted to pick before hearing everything.</div>
             <label class="setting-toggle" style="margin-top:10px;">
+              <input type="checkbox" id="placeCompletedLastCk" ${settings.placeCompletedLast?'checked':''}> Put completed narrations last on sheft and in list.
+            </label>
+            <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="tickSoundCk" ${settings.tickSoundEnabled?'checked':''}> Play a tick sound when a narration window opens
             </label>
             <label class="setting-toggle" style="margin-top:10px;">
@@ -1437,6 +1452,9 @@
     };
     overlay.querySelector('#revealChoicesCk').onchange = async (e)=>{
       settings.revealChoicesWhenDone = e.target.checked; await saveSettings();
+    };
+    overlay.querySelector('#placeCompletedLastCk').onchange = async (e)=>{
+      settings.placeCompletedLast = e.target.checked; await saveSettings(); render();
     };
     overlay.querySelector('#tickSoundCk').onchange = async (e)=>{
       settings.tickSoundEnabled = e.target.checked; await saveSettings();
@@ -2267,8 +2285,10 @@
     function buildGrid(list){
       const grid = document.createElement('div');
       grid.className='node-grid';
-      list
-        .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
+        (settings.placeCompletedLast
+            ? list
+                .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
+            : list)
         .forEach(n=>{
           const done = isCompleted(n.id);
           const playing = inlinePlayingId === n.id;
@@ -2286,7 +2306,7 @@
             <div class="node-card-text">${renderMarkdown(n.text||'')}</div>
             ${n.audio? `<button class="mini-play ${playing?'playing':''}" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
           `;
-          card.onclick = ()=>{ openReaderFor(n, false); };
+          card.onclick = ()=>{ openReaderFor(n); };
           const playBtn = card.querySelector('.mini-play');
           if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
           grid.appendChild(card);
@@ -2405,9 +2425,11 @@
     function buildRows(list){
       const rows = document.createElement('div');
       rows.className='node-list';
-      list
+(settings.placeCompletedLast
+    ? list
         .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
-        .forEach(n=>{
+    : list)
+    .forEach(n=>{
           const done = isCompleted(n.id);
           const playing = inlinePlayingId === n.id;
           const wasSeen = seenAvailableIds.has(n.id);
@@ -2423,7 +2445,7 @@
             ${manageMode && n.completedByDefault? `<span class="tag" style="background:rgba(111,138,83,.18);color:var(--moss);">Auto</span>`:''}
             ${n.audio? `<button class="mini-play static" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
           `;
-          row.onclick = ()=>{ openReaderFor(n, false); };
+          row.onclick = ()=>{ openReaderFor(n); };
           const playBtn = row.querySelector('.mini-play');
           if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
           rows.appendChild(row);
@@ -2838,7 +2860,7 @@
       if(manageMode){
         g.addEventListener('click', ()=>{ editingNodeId = id; render(); scrollToManagePanel(); });
       } else if(isAvailable(n)){
-        g.addEventListener('click', ()=>{ openReaderFor(n, false); });
+        g.addEventListener('click', ()=>{ openReaderFor(n); });
       }
     });
     wrap.appendChild(mapBox);
@@ -4073,7 +4095,7 @@
         // let checkedPrerequisites = document.querySelectorAll('.prereqChoice:not([disabled])');
 
         setTimeout(()=>{
-            let checkedPrerequisites = document.querySelectorAll('.prereqCk[checked]');
+            let checkedPrerequisites = document.querySelectorAll('.prereqCk:checked');
             checkedPrerequisites?.length && checkedPrerequisites?.[prereqPos || 0]?.scrollIntoView({
                 behavior: "smooth",
                 block: "center",
