@@ -235,15 +235,19 @@
     background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);
     cursor:pointer;transition:border-color .15s,transform .1s,box-shadow .15s,opacity .15s;
   }
-  .node-list-item:hover{border-color:var(--brass-dim);transform:translateX(2px);}
+  .node-list-item:hover{border-color:var(--brass-dim);transform:translateX(2px);margin-left:4px;}
   .node-list-item.available{
     border-color:var(--brass-dim);
     background:linear-gradient(160deg,var(--bg-panel-raised),var(--bg-panel));
     box-shadow:0 0 0 1px rgba(201,162,75,.14);
+      margin-left: 8px;
   }
   .node-list-item.available:hover{border-color:var(--brass);box-shadow:0 0 0 1px rgba(201,162,75,.28);}
   .node-list-item.available .node-list-title{color:var(--brass-bright);}
-  .node-list-item.completed{border-color:var(--moss-dim);opacity:.75;}
+  .node-list-item.completed{border-color:var(--moss-dim);opacity:.75;
+      margin-left: 8px;
+      padding: 0px 8px;
+  }
   .node-list-item.completed:hover{opacity:1;}
   .node-list-item .node-list-icon{flex:none;color:var(--brass-dim);display:flex;}
   .node-list-item.available .node-list-icon{color:var(--brass-bright);}
@@ -489,7 +493,24 @@
     function hasPlatformStorage(){
         return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
     }
-  async function sGet(key){
+
+    async function fetchJSONData(file) {
+        let res = {}
+        console.log(file)
+        await fetch(file)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                res = response.json()
+                return res;
+            })
+            .catch(error => console.error('Failed to fetch data:', error));
+        return res
+    }
+
+
+    async function sGet(key){
     try{
       if(hasPlatformStorage()){
         const r = await window.storage.get(key);
@@ -576,6 +597,9 @@
   let hoveredMapNodeId = null; // node currently under the pointer on the campaign map, for the Shift+N shape-cycling fast key
   let seenCompleteGroupIds = new Set(); // group ids already known complete — collapsing only fires on the transition into completeness
     let alreadyTried = false;
+    let pendingPasteImport = ''
+    let icons
+    fetchJSONData('./project.json').then(r=>console.log(r))
 
     // inline (card / map) audio preview
   const inlineAudio = new Audio();
@@ -1062,6 +1086,15 @@
   const ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg>';
   const ICON_EYE_OFF = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l18 18M10.6 10.6a2 2 0 1 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c6 0 10 7 10 7a15 15 0 0 1-4 4.6M6.2 6.2C3.6 8 2 12 2 12s4 7 10 7c1.3 0 2.5-.3 3.6-.8"/></svg>';
   const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+  // const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 1000 1000" fill="currentColor" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M906.686 300.207c0 0-56.574-30.305-55.42-45.348 0-0.133 0.044-1.021 0.044-1.154 0.044-0.71 0.089-1.731 0.311-3.594 3.283-26.223-1.552-43.395-14.332-50.982-8.298-4.925-16.373-3.416-21.698-2.44-4.304 0.799-6.701 1.154-9.94 0-2.484-0.888-3.372-1.774-6.433-5.146-2.752-3.061-6.522-7.232-12.602-11.492-9.23-6.479-18.193-8.518-26.889-10.471-3.195-0.71-6.522-1.465-9.983-2.484-19.568-5.945-52.891-12.957-137.684-14.997-109.197-2.662-186.846 3.683-234.856 19.168-11.581-5.857-24.715-7.809-35.541-2.397-22.851 11.448-25.912 41.532-26.933 51.426-0.311 2.928-0.444 5.812-0.488 8.564-0.666 4.393-0.666 9.095 0.399 13.976 0.133 0.666 0.399 1.287 0.577 1.953 1.331 10.116 3.816 17.971 5.192 22.318l0.399 1.154c6.877 21.83 2.129 40.334-7.365 77.251-2.397 9.407-5.103 19.878-7.942 31.814-0.62 2.53-14.864 62.785-24.049 129.031-5.723 41.353-7.454 74.543-8.83 101.256-1.287 24.316-2.884 54.576-8.342 56.574-2.175 0.799-9.407 0.533-30.394-19.479-73.478-69.84-84.705-208.988-84.837-286.149 2.706-33.544-13.8-62.785-38.604-68.11-18.547-3.993-36.25 7.499-41.266 11.137-9.672 7.010-16.373 15.53-19.967 25.292-7.321 20.056 0.888 39.224 4.038 46.634 5.103 11.936 8.608 24.582 12.335 37.981 4.393 15.885 8.962 32.347 16.462 47.964 26.578 55.242 51.87 165.46 46.501 247.28l-0.089 1.331c-1.021 14.775-3.372 49.473 19.834 70.55 11.094 10.073 26.134 15.352 44.638 15.574h0.178c4.127 0 8.031-1.774 10.693-4.925 9.496-11.137 19.168-17.261 28.797-18.147 6.389-0.533 11.004 0.843 16.373 2.484 6.3 1.953 14.154 4.393 23.384 1.953 22.718-6.034 36.030-36.163 39.49-89.585l-13.976-1.11 13.976 0.932c5.68-87.145 13.445-206.504 55.153-298.218 1.197-2.619 22.807-50.672 34.877-103.341 49.562 29.063 112.526 113.945 150.019 192.837 25.514 53.69 26.978 80.49 24.005 84.837-0.843 0.577-3.816 1.552-5.769 2.175-7.721 2.484-19.346 6.3-25.69 19.079-8.164 16.462-0.222 34.078 2.706 40.555 7.145 15.885 7.765 46.456-51.913 145.049-27.066 44.771-66.601 103.252-122.376 167.723l127.788-109.641 24.98-25.779-0.533-0.533c9.894-9.894 32.080-40.289 100.102-133.468 5.103-6.923 20.587-28.131 19.967-56.041-0.266-12.468-3.416-22.94-6.034-28.131-7.499-14.821-8.874-22.762-10.782-33.81-3.727-21.565-8.874-51.16-59.946-143.585-29.552-53.557-56.618-97.172-81.243-131.117 60.255 26.223 137.639 83.196 223.542 166.126 2.351 2.308 8.697 8.431 8.564 13.667-0.044 1.82-0.843 3.15-3.993 7.365-2.974 3.993-6.701 8.919-9.23 16.062-7.543 21.432 2.619 41.575 8.12 52.403l1.065 2.085c7.809 29.463 14.466 66.29 15.043 108.799 1.331 93.8-27.421 167.324-48.010 209.166 84.661-93.713 100.278-150.241 97.35-185.161-0.399-5.014-0.843-18.946-2.619-39.579-3.283-37.715-7.321-84.661 8.12-104.227 4.482-5.547 18.103-22.496 12.247-40.511-2.974-9.052-9.274-13.044-13.001-15.441-2.351-1.509-3.15-2.042-3.949-3.372-1.419-2.44-1.11-5.103 0.133-11.448 1.552-8.164 3.683-19.346-3.283-31.37-3.505-6.034-7.676-8.518-10.693-10.383-2.129-1.243-4.304-2.573-7.987-6.389-3.905-4.038-6.923-8.031-10.427-12.602-13.266-17.437-31.459-41.31-119.403-99.834-55.331-36.784-102.409-64.426-141.943-83.374 25.292-6.389 54.489-10.471 86.213-11.803 73.7-3.106 131.604 10.383 142.964 24.582l1.154 1.552c4.127 5.501 12.646 16.95 28.265 23.694 9.23 4.038 17.261 4.791 23.117 5.325 2.397 0.222 5.769 0.444 6.3 0.488 0.089 0.488 0.133 2.085 0.178 3.239 0.089 4.215 0.222 10.517 3.328 18.325 7.365 18.68 24.049 27.643 31.193 31.415l0.975 0.577c25.912 17.926 67.222 51.692 99.791 106.979 48.675 82.442 48.498 162.754 46.545 195.722 14.821-38.514 19.035-71.393 20.322-92.957 3.328-56.883-5.723-178.504-70.461-213.292z"/></svg>';
+  // const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 1000 1000" fill="currentColor" stroke="currentColor" stroke-width="1.8">' +
+  //     '<path d="M491.765 453.143c3.367 8.13 6.302 16.212 8.852 24.198 34.829 11.979 60.423 20.205 85.39 28.239 5.052 1.588 10.102 3.224 15.25 4.907 72.738-44.98 88.036-59.508 192.427-121.325 2.694-20.59 5.918-68.12-18.569-119.353-36.513-76.345-107.231-103.718-122.817-109.347-127.003 68.648-122.144 67.254-249.145 135.902l-20.012 20.301c39.062 28.768 82.070 72.449 108.625 136.479z"/>' +
+  //     '<path d="M962.674 135.228c-26.122-39.111-96.551-31.846-135.085-27.902-45.942 4.763-81.397 19.099-102.324 29.201 15.827 6.399 76.826 33.29 109.587 101.698 22.37 46.712 20.638 89.864 18.569 109.587 18.906-13.181 37.764-26.315 56.67-39.496 14.384-13.662 40.458-42.238 52.869-86.304 7.168-25.449 17.126-60.711-0.289-86.785z"/>' +
+  //     '<path d="M331.801 460.306c12.845 2.309 25.689 4.618 38.581 6.927l16.309-10.247 22.225 8.034c10.487 3.752 20.205 7.265 29.441 10.536-28.96-67.927-78.607-110.165-117.862-134.604l-12.315-4.714-33.146 16.549c-7.457 19.387 6.446 63.501 19.435 97.080z"/>' +
+  //     '<path d="M233.008 761.538c-19.484-3.367-110.502-21.119-155.289-99.63-6.735-11.834-43.633-76.538-15.875-123.634 14.192-24.053 39.881-34.397 67.686-45.557 36.225-14.577 68.793-17.174 89.671-17.174l103.622 29.056c-18.233 12.027-56.141 40.794-80.146 92.558-35.166 75.768-15.298 146.438-9.67 164.381z"/>' +
+  //     '<path d="M665.547 726.515c19.003-35.791 42.382-64.511 66.003-87.362l-25.256-21.744c-152.884-55.227-160.966-51.667-313.85-106.942-19.339 12.171-62.010 42.719-88.42 99.485-39.303 84.524-13.037 163.804-6.88 180.978 147.351 59.845 149.901 60.904 297.253 120.748l31.173 2.79c-2.935-53.35 4.186-120.556 39.977-187.954z"/>' +
+  //     '<path d="M815.314 652.258l-15.731 9.525c-26.988 22.514-55.371 53.35-77.26 94.578-38.87 73.17-40.025 146.149-33.146 197.238l4.571 13.758 37.283 16.549c37.331-12.411 92.558-129.841 92.558-129.841 63.549-150.575 27.662-189.252 27.662-189.252z"/>' +
+  //     '</svg>';
   const CREST = '<img src="book-bubble.png" width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.6"><path d="M24 4l16 6v10c0 12-7 19-16 24C15 39 8 32 8 20V10l16-6z"/><path d="M24 14v16M17 21h14" stroke-width="1.3"/></img>';
 
   // Whether every non-hidden narration currently belonging to a group (or, for groupId
@@ -1341,6 +1374,7 @@
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="largeFontCk" ${settings.largeFont?'checked':''}> Large font
             </label>
+            <div class="hint">Scales up all text, buttons and spacing together — useful for reading narrations from across the table.</div>
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="countGroupsCompleted" ${settings.countGroupsCompleted?'checked':''}> Count completed groups (otherwise count completed narrations).
             </label>
@@ -3192,6 +3226,7 @@
   function renderManagePanel(game){
     const nodes = nodesByGame[game.id]||[];
     const editingNode = editingNodeId ? nodes.find(n=>n.id===editingNodeId) : null;
+    const pending = (!editingNode && pendingPasteImport) ? pendingPasteImport : null;
     const panel = document.createElement('div');
     panel.className='manage-panel';
 
@@ -3211,7 +3246,7 @@
         </span>
       </h3>
       <div class="field-row">
-        <div class="field"><label>Title</label><input type="text" id="nTitle" placeholder="e.g. The Sunken Shrine" value="${editingNode? escapeHtml(editingNode.title):''}"></div>
+        <div class="field"><label>Title</label><input type="text" id="nTitle" placeholder="e.g. The Sunken Shrine" value="${editingNode? escapeHtml(editingNode.title) : (pending? escapeHtml(pending.title) : '')}"></div>
         <div class="field">
           <label>Group</label>
           <select id="nGroup" style="background:var(--bg);border:1px solid var(--line);color:var(--parchment);padding:10px 12px;border-radius:var(--radius);font-family:'Spectral',serif;font-size:14px;width:100%;">
@@ -3265,7 +3300,7 @@
         </div>
       </div>
       <div class="hint" style="margin-bottom:14px;">Controls how this narration appears on the campaign map. "Play icon if it has audio, else a small dot" shows a play button for narrations with audio, and shrinks to a plain dot for ones without. "Box" fits its label and status word inside a bigger shape rather than beneath a small one. Hovering any node always shows a tooltip with its title and status — set "Map tooltip" to also include its full accompanying text there.</div>
-      <div class="field"><label>Accompanying text</label><textarea id="nText" placeholder="Text shown alongside the narration">${editingNode? escapeHtml(editingNode.text||'') : ''}</textarea><div class="hint">Supports basic Markdown: **bold**, *italic*, inline code with backticks, [links](url), "- " bullet lists — and raw HTML, which is rendered directly.</div></div>
+      <div class="field"><label>Accompanying text</label><textarea id="nText" placeholder="Text shown alongside the narration">${editingNode? escapeHtml(editingNode.text||'') : (pending? escapeHtml(pending.text||'') : '')}</textarea><div class="hint">Supports basic Markdown: **bold**, *italic*, inline code with backticks, [links](url), "- " bullet lists — and raw HTML, which is rendered directly.</div></div>
 
       <div class="field-row">
         <div class="field">
