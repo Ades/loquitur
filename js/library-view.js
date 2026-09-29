@@ -40,7 +40,7 @@ function renderLibrary(){
         <div class="stat-row"><span>${total} NARRATION${total===1?'':'S'}</span><span>${completedCount}/${total} HEARD</span></div>
       </div>
     `;
-    card.onclick = ()=>{ route = {view:'game', gameId:g.id}; gameSubView='shelf'; editingNodeId=null; render(); };
+    card.onclick = ()=>{ route = {view:'game', gameId:g.id}; gameSubView='list'; editingNodeId=null; render(); };
     if(manageMode){
       const delBtn = card.querySelector('[data-delgame]');
       delBtn.onclick = async (e)=>{

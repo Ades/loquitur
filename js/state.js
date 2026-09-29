@@ -44,7 +44,7 @@ let readerAutoPlay = false; // consumed once by renderReader to autoplay audio
 let readerHistory = []; // node ids visited earlier in the current chain of reader navigations, for the Back button
 let readerForward = []; // node ids to redo forward to, populated by the Back button, for the Forward button
 let editingNodeId = null; // node currently being edited in manage panel, or null = "add new"
-let gameSubView = 'shelf';
+let gameSubView = 'list';
 let undoStack = []; // [{nodeId, previous}] for progress changes, most recent last
 let lastEditedNodeId = null; // most recently saved narration, for the Shift+↓ quick-chain fast key
 let seenAvailableIds = new Set(); // node ids already shown as available — anything new here gets the unlock animation once
