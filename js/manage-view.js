@@ -466,7 +466,7 @@ function renderManagePanel(game){
         <span>${escapeHtml(n.title)}</span>
         ${n.hidden? `<span class="pid" style="color:#d99;">hidden</span>`:''}
         ${n.completedByDefault? `<span class="pid" style="color:var(--moss);">auto</span>`:''}
-        ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${LOG_MODE_BADGES[n.logMode]||n.logMode}</span>`:''}
+        ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${escapeHtml(LOG_MODE_BADGES[n.logMode]||n.logMode)}</span>`:''}
         ${n.choices&&n.choices.length? `<span class="pid">${n.choices.length} choice${n.choices.length===1?'':'s'}</span>`:''}
         <span class="pid">${prereqBadge}</span>
         ${!n.image? `<span class="pid" style="color:#d99;">no image</span>` : `<span class="pid media-status" data-check="image">checking image…</span>`}

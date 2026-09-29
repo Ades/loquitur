@@ -70,8 +70,8 @@ function renderReader(){
   const isRow = n.image && (pos==='left' || pos==='right');
   const artHtml = n.image
     ? (isRow
-        ? `<div class="art" style="background-image:url('${n.image}');width:100%;height:100%;min-height:220px;"></div>`
-        : `<div class="art" style="background-image:url('${n.image}')"></div>`)
+        ? `<div class="art" style="${bgImageStyle(n.image)}width:100%;height:100%;min-height:220px;"></div>`
+        : `<div class="art" style="${bgImageStyle(n.image)}"></div>`)
     : '';
   const contentHtml = `
     <div class="content">

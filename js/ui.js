@@ -64,27 +64,68 @@ async function readAudioFile(file){
 }
 // Tries to actually load an image/audio src (URL or local file path) to see whether it
 // resolves — used in Manage Codex to flag references that can't currently be found.
+// Resolves true (found), false (not found) or null (timed out / no src).
 // Uploaded data: URLs are already known-good and resolve instantly without a real load.
+// Manage Codex re-renders on every edit, so answers are remembered: "found" for the rest
+// of the visit, anything else for a minute (so a file added on disk is picked up again).
+// At most a few checks run at once, so a big game doesn't fire hundreds of requests together.
+const MEDIA_CHECK_RETRY_MS = 60*1000;
+const MEDIA_CHECK_PARALLEL = 6;
+const mediaCheckCache = new Map(); // "type|src" -> {promise, result, at}
+const mediaCheckWaiting = [];      // probes queued until a slot frees up
+let mediaChecksRunning = 0;
+
 function checkMediaReachable(src, type){
+  if(!src) return Promise.resolve(null);
+  if(src.startsWith('data:')) return Promise.resolve(true);
+  const key = type+'|'+src;
+  const cached = mediaCheckCache.get(key);
+  if(cached && (cached.result===undefined || cached.result===true || Date.now()-cached.at < MEDIA_CHECK_RETRY_MS)){
+    return cached.promise;
+  }
+  const entry = {result: undefined, at: 0};
+  entry.promise = new Promise(resolve=>{
+    mediaCheckWaiting.push(()=> probeMedia(src, type).then(ok=>{
+      entry.result = ok; entry.at = Date.now();
+      resolve(ok);
+    }));
+    runQueuedMediaChecks();
+  });
+  mediaCheckCache.set(key, entry);
+  return entry.promise;
+}
+function runQueuedMediaChecks(){
+  while(mediaChecksRunning < MEDIA_CHECK_PARALLEL && mediaCheckWaiting.length){
+    mediaChecksRunning++;
+    mediaCheckWaiting.shift()().finally(()=>{ mediaChecksRunning--; runQueuedMediaChecks(); });
+  }
+}
+function probeMedia(src, type){
   return new Promise(resolve=>{
-    if(!src){ resolve(null); return; }
-    if(src.startsWith('data:')){ resolve(true); return; }
     let settled = false;
-    const done = (ok)=>{ if(settled) return; settled = true; resolve(ok); };
+    let el;
+    const done = (ok)=>{
+      if(settled) return;
+      settled = true;
+      clearTimeout(timer);
+      // stop any download still in progress — only the answer was needed
+      if(el){ el.onload = el.onerror = el.onloadedmetadata = el.oncanplay = null; el.removeAttribute('src'); if(el.load) el.load(); }
+      resolve(ok);
+    };
     const timer = setTimeout(()=>done(null), 6000);
     if(type==='image'){
-      const img = new Image();
-      img.onload = ()=>{ clearTimeout(timer); done(true); };
-      img.onerror = ()=>{ clearTimeout(timer); done(false); };
-      img.src = src;
+      el = new Image();
+      el.onload = ()=>done(true);
+      el.onerror = ()=>done(false);
+      el.src = src;
     } else {
-      const a = new Audio();
-      a.preload = 'metadata';
-      a.onloadedmetadata = ()=>{ clearTimeout(timer); done(true); };
-      a.oncanplay = ()=>{ clearTimeout(timer); done(true); };
-      a.onerror = ()=>{ clearTimeout(timer); done(false); };
-      a.src = src;
-      a.load();
+      el = new Audio();
+      el.preload = 'metadata';
+      el.onloadedmetadata = ()=>done(true);
+      el.oncanplay = ()=>done(true);
+      el.onerror = ()=>done(false);
+      el.src = src;
+      el.load();
     }
   });
 }
@@ -121,7 +162,7 @@ function buildAudioMarkup(src){
   if(!src) return '';
   const style = settings.audioPlayerStyle || 'native';
   if(style==='native'){
-    return `<audio controls src="${src}"></audio>`;
+    return `<audio controls src="${escapeHtml(src)}"></audio>`;
   }
   return `
     <div class="custom-audio-player style-${style}" id="customAudioPlayer">
@@ -129,7 +170,7 @@ function buildAudioMarkup(src){
       <div class="cap-progress-track"><div class="cap-progress-fill"></div></div>
       <span class="cap-time">0:00 / 0:00</span>
     </div>
-    <audio src="${src}" style="display:none;"></audio>
+    <audio src="${escapeHtml(src)}" style="display:none;"></audio>
   `;
 }
 
@@ -169,7 +210,7 @@ function ensureCustomFontFaces(game){
     }
     if(!styleEl){ styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
     const format = guessFontFormat(cf.source);
-    styleEl.textContent = `@font-face{font-family:'${cf.family}';src:url('${cf.source}')${format?` format('${format}')`:''};font-display:swap;}`;
+    styleEl.textContent = `@font-face{font-family:'${cf.family}';src:${cssUrl(cf.source)}${format?` format('${format}')`:''};font-display:swap;}`;
   });
 }
 const GAME_STYLES = {
@@ -227,6 +268,36 @@ function gameFontStyle(game){
 function escapeHtml(s){
   return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+// A CSS url() for an image or font source, safe to put inside a style attribute or a
+// <style> element — quotes, backslashes and line breaks in the source can't break out.
+function cssUrl(src){
+  return 'url("' + String(src||'').replace(/["\\\n\r]/g, c=>'\\'+c.charCodeAt(0).toString(16)+' ') + '")';
+}
+function bgImageStyle(src){
+  return src ? escapeHtml('background-image:'+cssUrl(src)+';') : '';
+}
+
+// Author text may contain HTML (see renderMarkdown). It is run through DOMPurify so
+// formatting, links and images survive, but scripts, event handlers and javascript:
+// links from a loaded structure file can't run. Results are cached, since the same
+// texts are re-rendered on every redraw.
+const sanitizedCache = new Map();
+if(window.DOMPurify){
+  // keep target="_blank" links, but always with rel="noopener"
+  DOMPurify.addHook('afterSanitizeAttributes', node=>{
+    if(node.tagName==='A' && node.getAttribute('target')) node.setAttribute('rel', 'noopener noreferrer');
+  });
+}
+function sanitizeHtml(html){
+  if(!window.DOMPurify) return escapeHtml(html); // purify.min.js failed to load — show the text, never run it
+  let clean = sanitizedCache.get(html);
+  if(clean===undefined){
+    clean = DOMPurify.sanitize(html, {ADD_ATTR:['target']});
+    if(sanitizedCache.size > 2000) sanitizedCache.clear();
+    sanitizedCache.set(html, clean);
+  }
+  return clean;
+}
 
 // Inline-only Markdown transforms (bold/italic/code/links), reused by both the full block
 // renderer below and the single-line title renderer. Raw HTML passes through untouched.
@@ -241,12 +312,11 @@ function inlineMarkdown(t){
 // Markdown shortcuts and raw HTML support as the full renderer.
 function renderTitle(src){
   if(!src) return '';
-  return inlineMarkdown(src);
+  return sanitizeHtml(inlineMarkdown(src));
 }
 
-// Small, dependency-free Markdown -> HTML renderer for accompanying text / choice results.
-// Raw HTML typed by the author is passed through as-is (not escaped) so it renders directly —
-// this is a single-user authoring tool, so HTML in these fields is trusted content.
+// Small Markdown -> HTML renderer for accompanying text / choice results. Raw HTML typed
+// by the author renders directly, after sanitizing (see sanitizeHtml).
 function renderMarkdown(src){
   if(!src) return '';
   const lines = src.replace(/\r\n/g,'\n').split('\n');
@@ -265,5 +335,5 @@ function renderMarkdown(src){
     html += `<p>${inlineMd(line)}</p>`;
   });
   if(inList) html += '</ul>';
-  return html;
+  return sanitizeHtml(html);
 }

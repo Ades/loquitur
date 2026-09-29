@@ -35,7 +35,7 @@ function renderGame(){
   const gh = document.createElement('div');
   gh.className='game-header';
   gh.innerHTML = `
-    <div class="art" style="${game.image?`background-image:url('${game.image}')`:''}"></div>
+    <div class="art" style="${bgImageStyle(game.image)}"></div>
     <div class="meta">
       <h2>${renderTitle(game.name)}</h2>
       <div class="desc">${renderMarkdown(game.description||'')}</div>

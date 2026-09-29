@@ -3,7 +3,9 @@
 "use strict";
 
 // ---------------- Limits ----------------
-const MAX_AUDIO_BYTES = 3.2 * 1024 * 1024;   // raw file, before base64 inflation
+// raw file, before base64 inflation; IndexedDB has room for much bigger clips than the
+// Claude.ai storage or localStorage
+const MAX_AUDIO_BYTES = (hasPlatformStorage() || !window.indexedDB ? 3.2 : 25) * 1024 * 1024;
 const MAX_FONT_BYTES = 2.5 * 1024 * 1024;    // raw file, before base64 inflation
 const MAX_IMAGE_DIM = 1280;                   // px, longest side after compression
 const IMAGE_QUALITY = 0.82;

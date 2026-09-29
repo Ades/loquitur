@@ -3,17 +3,17 @@
 "use strict";
 
 // ---------------- Load ----------------
+// Reads are issued in parallel rather than one at a time — with hundreds of narrations
+// that makes startup much faster.
 async function loadAll(){
+  requestPersistentStorage();
   const gameIndex = await sGet('game-index') || [];
-  games = [];
-  for(const id of gameIndex){ const g = await sGet('game:'+id); if(g) games.push(g); }
+  games = (await Promise.all(gameIndex.map(id=>sGet('game:'+id)))).filter(Boolean);
   nodesByGame = {};
-  for(const g of games){
+  await Promise.all(games.map(async g=>{
     const nodeIndex = await sGet('node-index:'+g.id) || [];
-    const list = [];
-    for(const nid of nodeIndex){ const n = await sGet('node:'+nid); if(n) list.push(n); }
-    nodesByGame[g.id] = list;
-  }
+    nodesByGame[g.id] = (await Promise.all(nodeIndex.map(nid=>sGet('node:'+nid)))).filter(Boolean);
+  }));
   progress = await sGet('progress') || {completed:{}};
   settings = Object.assign({}, DEFAULT_SETTINGS, await sGet('settings') || {});
   applyTheme();

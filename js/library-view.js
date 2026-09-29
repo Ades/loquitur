@@ -10,11 +10,15 @@ function renderLibrary(){
   head.innerHTML = `<div><div class="eyebrow">The shelf</div><h2 style="font-size:22px;margin-top:4px;">Your games</h2></div>`;
   wrap.appendChild(head);
 
+  // with an empty shelf, point new visitors at the ready-made games offered below
   if(games.length===0 && !manageMode){
     const empty = document.createElement('div');
     empty.className='empty';
-    empty.innerHTML = `<h3>No games on the shelf yet</h3><p>Switch to "Manage codex" to add your first game and its narrations.</p>`;
+    empty.innerHTML = importCandidates && importCandidates.length
+      ? `<h3>No games on the shelf yet</h3><p>Add one of the games below to start playing, or switch to "Manage codex" to create your own.</p>`
+      : `<h3>No games on the shelf yet</h3><p>Switch to "Manage codex" to add your first game and its narrations, or load a structure file below.</p>`;
     wrap.appendChild(empty);
+    wrap.appendChild(renderAvailableStructures());
     return wrap;
   }
 
@@ -28,7 +32,7 @@ function renderLibrary(){
     card.className='game-card';
     card.setAttribute('style', gameAccentVars(g));
     card.innerHTML = `
-      <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':ICON_PICTURE}</div>
+      <div class="art" style="${bgImageStyle(g.image)}">${g.image?'':ICON_PICTURE}</div>
       ${manageMode? `<button class="game-card-delete" data-delgame="${g.id}" title="Remove this game">&times;</button>` : ''}
       <div class="body">
         <h3>${renderTitle(g.name)}</h3>
@@ -118,7 +122,7 @@ function renderAvailableStructures(){
     card.className='game-card';
     card.style.cursor='default';
     card.innerHTML = `
-      <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':ICON_PICTURE}</div>
+      <div class="art" style="${bgImageStyle(g.image)}">${g.image?'':ICON_PICTURE}</div>
       <div class="body">
         <h3>${renderTitle(g.name)}</h3>
         <div class="node-card-text">${renderMarkdown(g.description||'')}</div>

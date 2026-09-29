@@ -11,10 +11,11 @@ The scripts share one global scope and are loaded in order by `loquitur.html`:
 
 | File | Contents |
 |---|---|
-| `storage.js` | Persistent storage and small utilities |
+| `vendor/purify.min.js` | [DOMPurify](https://github.com/cure53/DOMPurify) 3.4.16, sanitizes author HTML (license in `vendor/purify.LICENSE`) |
+| `storage.js` | Persistent storage (IndexedDB) and small utilities |
 | `state.js` | Limits, default settings, shared application state |
 | `progress.js` | Unlock logic, completion records, undo, progress import/export |
-| `library-data.js` | Structure import/export, default codex, deleting and copying |
+| `library-data.js` | Structure import/export and cleaning, default codex, deleting and copying |
 | `audio.js` | Synthesized UI sounds, inline narration preview |
 | `ui.js` | Toasts, media helpers, icons, theming and fonts, Markdown |
 | `shell.js` | Root render, header, Settings window |

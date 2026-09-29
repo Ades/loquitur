@@ -23,12 +23,90 @@ function importLibraryFromFile(file){
           reject(new Error('That file doesn\'t look like a Campaign Codex structure export.'));
           return;
         }
-        resolve({games: parsed.games, nodesByGame: parsed.nodesByGame, settings: (parsed.settings && typeof parsed.settings==='object') ? parsed.settings : null});
+        resolve(cleanLibrary(parsed));
       }catch(e){ reject(new Error('That file is not valid JSON.')); }
     };
     r.readAsText(file);
   });
 }
+// ---------------- Cleaning loaded data ----------------
+// Structure files can come from anyone. Ids, colors and option values end up inside HTML
+// attributes and CSS, so anything that could break out of those is dropped here, before
+// the data is used or stored. (Free text — titles, descriptions — is sanitized when
+// rendered instead; see sanitizeHtml.)
+const SAFE_ID = /^[A-Za-z0-9_-]{1,64}$/;
+const SAFE_WORD = /^[A-Za-z0-9_-]{0,40}$/;
+const SAFE_COLOR = /^#[0-9a-fA-F]{3,8}$/;
+const NODE_OPTION_FIELDS = ['logMode','mapShape','mapLabel','mapTooltip','imagePosition','prerequisiteMode'];
+const GAME_OPTION_FIELDS = ['stylePreset','titleFont','textFont'];
+
+const safeId = (v)=> (typeof v==='string' && SAFE_ID.test(v)) ? v : null;
+const safeText = (v)=> typeof v==='string' ? v : '';
+function keepSafeWords(obj, fields){
+  fields.forEach(f=>{ if(f in obj && !(typeof obj[f]==='string' && SAFE_WORD.test(obj[f]))) delete obj[f]; });
+}
+
+function cleanGame(raw){
+  if(!raw || typeof raw!=='object' || !safeId(raw.id)) return null;
+  const g = {...raw, name: safeText(raw.name), description: safeText(raw.description), image: safeText(raw.image)};
+  keepSafeWords(g, GAME_OPTION_FIELDS);
+  g.groups = (Array.isArray(raw.groups) ? raw.groups : [])
+    .filter(gr=> gr && typeof gr==='object' && safeId(gr.id))
+    .map(gr=> ({...gr, name: safeText(gr.name)}));
+  const colors = {};
+  ['dark','light'].forEach(mode=>{
+    const src = raw.customColors && raw.customColors[mode];
+    if(!src || typeof src!=='object') return;
+    const kept = {};
+    COLOR_ROLES.forEach(role=>{ if(typeof src[role]==='string' && SAFE_COLOR.test(src[role])) kept[role] = src[role]; });
+    if(Object.keys(kept).length) colors[mode] = kept;
+  });
+  g.customColors = colors;
+  // custom font family names are always generated from the game id, never taken from the file
+  [['customTitleFont','title'],['customTextFont','text']].forEach(([key, slot])=>{
+    const cf = raw[key];
+    g[key] = (cf && typeof cf.source==='string' && cf.source) ? {family: customFontFamily(g.id, slot), source: cf.source} : null;
+  });
+  return g;
+}
+function cleanNode(raw, gameId){
+  if(!raw || typeof raw!=='object' || !safeId(raw.id)) return null;
+  const n = {...raw, gameId, title: safeText(raw.title), text: safeText(raw.text), audio: safeText(raw.audio), image: safeText(raw.image)};
+  n.groupId = safeId(raw.groupId);
+  n.order = Number(raw.order) || 0;
+  keepSafeWords(n, NODE_OPTION_FIELDS);
+  n.choices = (Array.isArray(raw.choices) ? raw.choices : [])
+    .filter(c=> c && typeof c==='object' && safeId(c.id))
+    .map(c=> ({id: c.id, label: safeText(c.label), resultText: safeText(c.resultText)}));
+  n.prerequisites = (Array.isArray(raw.prerequisites) ? raw.prerequisites : [])
+    .filter(p=> p && typeof p==='object' && safeId(p.nodeId))
+    .map(p=> ({nodeId: p.nodeId, choiceId: safeId(p.choiceId), ...(p.group ? {group: p.group==='any' ? 'any' : 'all'} : {})}));
+  return n;
+}
+// Only known settings, each of the same type as its default; string settings must be plain words.
+function cleanSettings(raw){
+  if(!raw || typeof raw!=='object') return null;
+  const s = {};
+  Object.keys(DEFAULT_SETTINGS).forEach(k=>{
+    const v = raw[k];
+    if(typeof v!==typeof DEFAULT_SETTINGS[k]) return;
+    if(typeof v==='string' && !SAFE_WORD.test(v)) return;
+    s[k] = v;
+  });
+  return s;
+}
+// Returns a cleaned copy of a loaded library: games, narrations, choices, groups and
+// prerequisites with unusable ids are left out.
+function cleanLibrary(loaded){
+  const gamesOut = (Array.isArray(loaded.games) ? loaded.games : []).map(cleanGame).filter(Boolean);
+  const nodesOut = {};
+  gamesOut.forEach(g=>{
+    const list = loaded.nodesByGame && Array.isArray(loaded.nodesByGame[g.id]) ? loaded.nodesByGame[g.id] : [];
+    nodesOut[g.id] = list.map(n=>cleanNode(n, g.id)).filter(Boolean);
+  });
+  return {games: gamesOut, nodesByGame: nodesOut, settings: cleanSettings(loaded.settings)};
+}
+
 async function applyImportedLibrary(loaded){
   // wipe existing games/nodes from storage
   const oldIndex = await sGet('game-index') || [];
@@ -64,7 +142,7 @@ async function loadDefaultCodex(){
   try{
     const response = await fetch('./default_codex.json');
     if(!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const loaded = await response.json();
+    const loaded = cleanLibrary(await response.json());
     const existingIds = new Set(games.map(g=>g.id));
     importCandidates = loaded.games
       .filter(g=>!existingIds.has(g.id))
