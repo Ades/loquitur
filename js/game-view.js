@@ -252,6 +252,10 @@ function renderNodeCollection(nodes, game, buildItems){
     const ungroupedList = groupMembers(null, nodes, visible, validGroupIds);
     const sections = [];
     if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
+    // the first time a game is shown, its visible groups are simply recorded as seen, so
+    // only groups that become available while playing get the entrance animation
+    const recordSilently = !seenGroupsGameIds.has(game.id);
+    if(!manageMode) seenGroupsGameIds.add(game.id);
     groups.forEach(g=>{
       const list = groupMembers(g, nodes, visible, validGroupIds);
       const complete = isGroupComplete(list, validGroupIds, g.id);
@@ -266,6 +270,14 @@ function renderNodeCollection(nodes, game, buildItems){
         }
       }
       if(list.length){
+        const isNewSection = !manageMode && !recordSilently && !seenGroupIds.has(g.id);
+        if(!manageMode) seenGroupIds.add(g.id);
+        if(isNewSection && settings.animationsEnabled){
+          // a group that just became available: its header slides in folded, then it opens
+          sections.push({id:g.id, name:g.name, collapsed:true, entering:true, list});
+          openSectionAfterEntrance(game, g);
+          return;
+        }
         // ...and re-opens itself when something new unlocks inside it
         if(g.collapsed && !manageMode && !complete && list.some(n=> !isCompleted(n.id) && !seenAvailableIds.has(n.id))){
           g.collapsed = false;
@@ -276,7 +288,7 @@ function renderNodeCollection(nodes, game, buildItems){
     });
     sections.forEach(sec=>{
       const header = document.createElement('div');
-      header.className='group-header';
+      header.className='group-header' + (sec.entering ? ' group-enter' : '');
       header.style.cursor = sec.id===null ? 'default' : 'pointer';
       const badge = isGroupComplete(sec.list, validGroupIds, sec.id) ? groupCompleteBadge() : '';
       const count = `<span class="pid" style="margin-left:8px;">${sec.list.length}</span>`;
@@ -301,4 +313,25 @@ function renderNodeCollection(nodes, game, buildItems){
     box.appendChild(note);
   }
   return box;
+}
+
+// Opens a newly available group once its header's entrance animation (.group-enter,
+// 0.55 s) has played; its narrations then pulse in with the usual unlock animation.
+// Groups unlocking together are opened together, in a single redraw — a second redraw
+// would rebuild the narrations without their unlock pulse.
+const SECTION_ENTRANCE_MS = 600;
+let sectionsToOpen = []; // [{game, g}] waiting for their entrance animation to finish
+function openSectionAfterEntrance(game, g){
+  sectionsToOpen.push({game, g});
+  if(sectionsToOpen.length > 1) return; // a timer is already pending
+  setTimeout(async ()=>{
+    const batch = sectionsToOpen;
+    sectionsToOpen = [];
+    const changedGames = new Set();
+    batch.forEach(({game, g})=>{
+      if((game.groups||[]).includes(g) && g.collapsed){ g.collapsed = false; changedGames.add(game); }
+    });
+    for(const gm of changedGames){ await sSet('game:'+gm.id, gm); }
+    if(route.view==='game' && !manageMode && batch.some(({game})=>game.id===route.gameId)) render();
+  }, SECTION_ENTRANCE_MS);
 }

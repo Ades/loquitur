@@ -264,7 +264,14 @@ header.top .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(-
   55%{ opacity:1; box-shadow:0 0 0 9px rgba(201,162,75,0); }
   100%{ opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(201,162,75,0); }
 }
-.node-card.newly-unlocked{ animation:unlockPulse .9s ease-out; }
+.node-card.newly-unlocked, .node-list-item.newly-unlocked{ animation:unlockPulse .9s ease-out; }
+/* a group (section) that just became available slides in with a glow, then opens */
+@keyframes groupEnter{
+  0%{ opacity:0; transform:translateY(-10px) scaleY(.6); box-shadow:0 0 0 0 rgba(201,162,75,.6); }
+  60%{ opacity:1; transform:translateY(0) scaleY(1); box-shadow:0 0 0 7px rgba(201,162,75,0); }
+  100%{ opacity:1; transform:none; box-shadow:0 0 0 0 rgba(201,162,75,0); }
+}
+.group-header.group-enter{ animation:groupEnter .55s cubic-bezier(.2,.8,.3,1); transform-origin:top center; }
 @keyframes unlockPulseSvg{
   0%{ opacity:.2; transform:scale(.55); }
   55%{ opacity:1; transform:scale(1.25); }

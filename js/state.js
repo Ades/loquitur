@@ -51,6 +51,8 @@ let seenAvailableIds = new Set(); // node ids already shown as available — any
 let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
 let hoveredMapNodeId = null; // node currently under the pointer on the campaign map, for the Shift+N shape-cycling fast key
 let seenCompleteGroupIds = new Set(); // group ids already known complete — collapsing only fires on the transition into completeness
+let seenGroupIds = new Set(); // group ids already shown on the Shelf / List — a group appearing for the first time gets an entrance animation, then opens
+let seenGroupsGameIds = new Set(); // games whose visible groups have been recorded in seenGroupIds (done silently the first time a game is shown)
 let defaultCodexRequested = false; // default_codex.json is offered on the Shelf once per page load
 let pendingPasteImport = null; // {title, text} to prefill the "Add a narration" form with, or null
 
