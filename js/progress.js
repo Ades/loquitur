@@ -92,10 +92,26 @@ function availabilitySnapshot(gameId, excludeId){
   (nodesByGame[gameId]||[]).forEach(n=>{ if(n.id!==excludeId) map[n.id] = isAvailable(n); });
   return map;
 }
+// Whether every narration unlocked so far in this node's group has been heard — the same
+// rule as the group's "Complete" badge. Narrations still locked don't count; ungrouped
+// narrations never form a section.
+function isSectionComplete(node){
+  if(!node.groupId) return false;
+  const game = games.find(g=>g.id===node.gameId);
+  const group = game && (game.groups||[]).find(g=>g.id===node.groupId);
+  if(!group) return false;
+  const members = (nodesByGame[node.gameId]||[]).filter(n=>
+    n.groupId===group.id && (group.showHiddenNodes || !n.hidden) && isAvailable(n));
+  return members.length>0 && members.every(n=>isCompleted(n.id));
+}
 // Marks a node complete and, if exactly one other narration newly unlocked as a result, returns it.
+// Returns null when this completes the node's section, so the reader closes there instead of
+// moving on — finishing a section always returns the player to the list.
 async function markCompletedAndFindNext(node, choiceId){
+  const sectionWasComplete = isSectionComplete(node);
   const before = availabilitySnapshot(node.gameId, node.id);
   await markCompleted(node, choiceId);
+  if(!sectionWasComplete && isSectionComplete(node)) return null;
   const after = availabilitySnapshot(node.gameId, node.id);
   const newlyUnlocked = Object.keys(after).filter(id=> after[id] && !before[id]);
   if(newlyUnlocked.length===1){
