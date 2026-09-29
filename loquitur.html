@@ -4,14 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Loquitur</title>
+<title>Loquitur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<!--    <link rel="manifest" href="/site.webmanifest" />-->
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <style>
   :root{
     --font-title:'Cinzel',serif;
@@ -64,21 +63,6 @@
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
     transition:background-color .2s, color .2s;
-  }
-  h1 { font-family: "Kimberley", sans-serif }
-  @font-face {
-      font-family: "Arkhamslim";
-       src: url("public/fonts/arkhamslim.woff2") format("woff2"),
-            url("public/fonts/arkhamslim.woff") format("woff"),
-            url("public/fonts/arkhamslim.ttf") format("truetype");
-       font-display: swap;
-  }
-  .arkhamslim{
-      color:var(--parchment);
-      font-family:'Arkhamslim';
-      min-height:100vh;
-      -webkit-font-smoothing:antialiased;
-      transition:background-color .2s, color .2s;
   }
   ::selection{background:var(--brass-dim);color:#000;}
   .eyebrow{
@@ -240,14 +224,11 @@
     border-color:var(--brass-dim);
     background:linear-gradient(160deg,var(--bg-panel-raised),var(--bg-panel));
     box-shadow:0 0 0 1px rgba(201,162,75,.14);
-      margin-left: 8px;
+    margin-left:8px;
   }
   .node-list-item.available:hover{border-color:var(--brass);box-shadow:0 0 0 1px rgba(201,162,75,.28);}
   .node-list-item.available .node-list-title{color:var(--brass-bright);}
-  .node-list-item.completed{border-color:var(--moss-dim);opacity:.75;
-      margin-left: 8px;
-      padding: 0px 8px;
-  }
+  .node-list-item.completed{border-color:var(--moss-dim);opacity:.75;margin-left:8px;padding:0 8px;}
   .node-list-item.completed:hover{opacity:1;}
   .node-list-item .node-list-icon{flex:none;color:var(--brass-dim);display:flex;}
   .node-list-item.available .node-list-icon{color:var(--brass-bright);}
@@ -316,8 +297,8 @@
   .reader .nav-btn-group{position:absolute;top:14px;left:14px;display:flex;gap:6px;}
   .reader .nav-btn-group button{
     background:rgba(0,0,0,.4);border:1px solid var(--line);
-      color:var(--parchment-dim);padding:0 12px;height:30px;border-radius:15px;font-size:12.5px;
-      display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Spectral',serif;transition:border-color .15s,color .15s;
+    color:var(--parchment-dim);padding:0 12px;height:30px;border-radius:15px;font-size:12.5px;
+    display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Spectral',serif;transition:border-color .15s,color .15s;
   }
   .reader .nav-btn-group button:hover{border-color:var(--brass-dim);color:var(--parchment);}
   .reader-relative{position:relative;}
@@ -485,32 +466,16 @@
   "use strict";
 
   // ---------------- Storage helpers ----------------
-    // Prefers the platform's persistent artifact storage (window.storage) when available.
-    // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
-    // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
-    // page refresh returns to the same state either way.
-    const LS_PREFIX = 'campaign-codex:';
-    function hasPlatformStorage(){
-        return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
-    }
+  // Prefers the platform's persistent artifact storage (window.storage) when available.
+  // Falls back to this browser's localStorage otherwise, e.g. when this file is opened
+  // directly (double-clicked, or via file://) rather than viewed inside Claude.ai — so a
+  // page refresh returns to the same state either way.
+  const LS_PREFIX = 'campaign-codex:';
+  function hasPlatformStorage(){
+    return typeof window!=='undefined' && !!window.storage && typeof window.storage.get==='function';
+  }
 
-    async function fetchJSONData(file) {
-        let res = {}
-        console.log(file)
-        await fetch(file)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                res = response.json()
-                return res;
-            })
-            .catch(error => console.error('Failed to fetch data:', error));
-        return res
-    }
-
-
-    async function sGet(key){
+  async function sGet(key){
     try{
       if(hasPlatformStorage()){
         const r = await window.storage.get(key);
@@ -520,21 +485,22 @@
       return raw ? JSON.parse(raw) : null;
     }catch(e){ return null; }
   }
-  let saveInProgress = false
-  async function sSet(key, val){
-      if(saveInProgress) return;
-      saveInProgress = true
-    try{
-      if(hasPlatformStorage()){
-        const r = await window.storage.set(key, JSON.stringify(val));
-        return !!r;
-      }
-      localStorage.setItem(LS_PREFIX+key, JSON.stringify(val));
-      return true;
-    }catch(e){ console.error("storage set failed", key, e); return false; }
-      finally{
-        saveInProgress = false
-    }
+  // Writes are queued so they run one at a time, in order — overlapping saves never
+  // interleave, and none are dropped.
+  let saveQueue = Promise.resolve();
+  function sSet(key, val){
+    const write = saveQueue.then(async ()=>{
+      try{
+        if(hasPlatformStorage()){
+          const r = await window.storage.set(key, JSON.stringify(val));
+          return !!r;
+        }
+        localStorage.setItem(LS_PREFIX+key, JSON.stringify(val));
+        return true;
+      }catch(e){ console.error("storage set failed", key, e); return false; }
+    });
+    saveQueue = write;
+    return write;
   }
   async function sDel(key){
     try{
@@ -552,6 +518,7 @@
 
   // ---------------- Limits ----------------
   const MAX_AUDIO_BYTES = 3.2 * 1024 * 1024;   // raw file, before base64 inflation
+  const MAX_FONT_BYTES = 2.5 * 1024 * 1024;    // raw file, before base64 inflation
   const MAX_IMAGE_DIM = 1280;                   // px, longest side after compression
   const IMAGE_QUALITY = 0.82;
 
@@ -570,9 +537,9 @@
     animationsEnabled:true,
     largeFont:false,
     groupCompleteSoundEnabled:true,
-    countGroupsCompleted: true,
-    hideUnavailableGroups: false,
-    placeCompletedLast: false,
+    countGroupsCompleted:true,
+    hideUnavailableGroups:false,
+    placeCompletedLast:false,
   };
 
   // ---------------- State ----------------
@@ -596,12 +563,10 @@
   let importCandidates = null; // [{game, nodes}] loaded from a structure file, not yet in "Your Games" — shown on the Shelf
   let hoveredMapNodeId = null; // node currently under the pointer on the campaign map, for the Shift+N shape-cycling fast key
   let seenCompleteGroupIds = new Set(); // group ids already known complete — collapsing only fires on the transition into completeness
-    let alreadyTried = false;
-    let pendingPasteImport = ''
-    let icons
-    fetchJSONData('./project.json').then(r=>console.log(r))
+  let defaultCodexRequested = false; // default_codex.json is offered on the Shelf once per page load
+  let pendingPasteImport = null; // {title, text} to prefill the "Add a narration" form with, or null
 
-    // inline (card / map) audio preview
+  // inline (card / map) audio preview
   const inlineAudio = new Audio();
   let inlinePlayingId = null;
   let inlineAutoComplete = false; // true only for map "graph" plays with no choices to pick
@@ -762,35 +727,39 @@
     }
     return current;
   }
-  // A short synthesized "tick" — no audio file needed, so it works fully offline.
-  let tickAudioCtx = null;
+  // All UI sounds are synthesized on one shared AudioContext — no audio files needed,
+  // so they work fully offline.
+  let sfxAudioCtx = null;
+  function getAudioCtx(){
+    if(!sfxAudioCtx) sfxAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(sfxAudioCtx.state === 'suspended') sfxAudioCtx.resume();
+    return sfxAudioCtx;
+  }
+  // A short "tick", played when a narration window opens.
   function playTickSound(){
     if(!settings.tickSoundEnabled) return;
     try{
-      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
-      const now = tickAudioCtx.currentTime;
-      const osc = tickAudioCtx.createOscillator();
-      const gain = tickAudioCtx.createGain();
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(1500, now);
       osc.frequency.exponentialRampToValueAtTime(850, now + 0.06);
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(0.16, now + 0.006);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-      osc.connect(gain).connect(tickAudioCtx.destination);
+      osc.connect(gain).connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.1);
     }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
   }
-  // A short synthesized "pencil scratch" — filtered noise with a few uneven strokes,
+  // A short "pencil scratch" — filtered noise with a few uneven strokes,
   // played when a narration is written into the log.
   function playScratchSound(){
     if(!settings.scratchSoundEnabled) return;
     try{
-      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
-      const ctx = tickAudioCtx;
+      const ctx = getAudioCtx();
       const now = ctx.currentTime;
       const duration = 0.22;
       const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
@@ -821,11 +790,9 @@
   function playGroupCompleteSound(){
     if(!settings.groupCompleteSoundEnabled) return;
     try{
-      if(!tickAudioCtx) tickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if(tickAudioCtx.state === 'suspended') tickAudioCtx.resume();
-      const ctx = tickAudioCtx;
+      const ctx = getAudioCtx();
       const now = ctx.currentTime;
-      const notes = [523.25/2, 659.25/2, 783.99/2]; // C5, E5, G5 — a small, bright major triad
+      const notes = [523.25/2, 659.25/2, 783.99/2]; // C4, E4, G4 — a small, bright major triad
       notes.forEach((freq, i)=>{
         const t0 = now + i*0.09;
         const osc = ctx.createOscillator();
@@ -852,10 +819,8 @@
     return !!(group && group.autoAdvanceGroup);
   }
   function openReaderFor(node, autoplay){
-      if (autoplay === undefined) {
-          console.log('AUTOPLAY is undefined',settings.autoAdvance,!isCompleted(node.id))
-          autoplay = settings.autoAdvance && !isCompleted(node.id)
-      }
+    // clicking an unheard narration plays it right away when auto-advance is on
+    if(autoplay === undefined) autoplay = settings.autoAdvance && !isCompleted(node.id);
     const resolved = resolveJunctions(node);
     const skipped = resolved !== node;
     // if we're already viewing something and moving on to a different node, remember
@@ -984,7 +949,58 @@
       settings = Object.assign({}, DEFAULT_SETTINGS, loaded.settings);
       await sSet('settings', settings);
       applyTheme();
+      applyLargeFont();
     }
+  }
+
+  // Offers the games in default_codex.json (next to this page) on the Shelf, once per
+  // page load. Silently does nothing if the file isn't there, e.g. when opened via file://.
+  async function loadDefaultCodex(){
+    try{
+      const response = await fetch('./default_codex.json');
+      if(!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const loaded = await response.json();
+      const existingIds = new Set(games.map(g=>g.id));
+      importCandidates = loaded.games
+        .filter(g=>!existingIds.has(g.id))
+        .map(g=>({game:g, nodes: loaded.nodesByGame[g.id]||[]}));
+      if(importCandidates.length===0){
+        toast('Every game in that file is already in Your Games.');
+        importCandidates = null;
+      }
+      render();
+    }catch(error){ console.error('Failed to fetch default codex:', error); }
+  }
+
+  async function deleteGame(game){
+    for(const n of (nodesByGame[game.id]||[])){ await sDel('node:'+n.id); }
+    await sDel('node-index:'+game.id);
+    await sDel('game:'+game.id);
+    const idx = await sGet('game-index') || [];
+    await sSet('game-index', idx.filter(x=>x!==game.id));
+    games = games.filter(g=>g.id!==game.id);
+    delete nodesByGame[game.id];
+  }
+
+  // Saves a copy of a narration (fresh ids, placed last in its group) and returns it,
+  // or null if it couldn't be stored. prerequisites defaults to a copy of the original's.
+  async function duplicateNode(original, prerequisites){
+    const siblings = (nodesByGame[original.gameId]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
+    const copy = {
+      ...original,
+      id: uid(),
+      title: original.title + ' (copy)',
+      choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
+      prerequisites: prerequisites || (original.prerequisites||[]).map(p=> ({...p})),
+      order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
+      createdAt: Date.now()
+    };
+    if(!await sSet('node:'+copy.id, copy)) return null;
+    const nodeIndex = await sGet('node-index:'+original.gameId) || [];
+    nodeIndex.push(copy.id);
+    await sSet('node-index:'+original.gameId, nodeIndex);
+    nodesByGame[original.gameId].push(copy);
+    return copy;
   }
 
   // ---------------- Toast ----------------
@@ -1086,27 +1102,38 @@
   const ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg>';
   const ICON_EYE_OFF = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l18 18M10.6 10.6a2 2 0 1 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c6 0 10 7 10 7a15 15 0 0 1-4 4.6M6.2 6.2C3.6 8 2 12 2 12s4 7 10 7c1.3 0 2.5-.3 3.6-.8"/></svg>';
   const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>';
-  // const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 1000 1000" fill="currentColor" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M906.686 300.207c0 0-56.574-30.305-55.42-45.348 0-0.133 0.044-1.021 0.044-1.154 0.044-0.71 0.089-1.731 0.311-3.594 3.283-26.223-1.552-43.395-14.332-50.982-8.298-4.925-16.373-3.416-21.698-2.44-4.304 0.799-6.701 1.154-9.94 0-2.484-0.888-3.372-1.774-6.433-5.146-2.752-3.061-6.522-7.232-12.602-11.492-9.23-6.479-18.193-8.518-26.889-10.471-3.195-0.71-6.522-1.465-9.983-2.484-19.568-5.945-52.891-12.957-137.684-14.997-109.197-2.662-186.846 3.683-234.856 19.168-11.581-5.857-24.715-7.809-35.541-2.397-22.851 11.448-25.912 41.532-26.933 51.426-0.311 2.928-0.444 5.812-0.488 8.564-0.666 4.393-0.666 9.095 0.399 13.976 0.133 0.666 0.399 1.287 0.577 1.953 1.331 10.116 3.816 17.971 5.192 22.318l0.399 1.154c6.877 21.83 2.129 40.334-7.365 77.251-2.397 9.407-5.103 19.878-7.942 31.814-0.62 2.53-14.864 62.785-24.049 129.031-5.723 41.353-7.454 74.543-8.83 101.256-1.287 24.316-2.884 54.576-8.342 56.574-2.175 0.799-9.407 0.533-30.394-19.479-73.478-69.84-84.705-208.988-84.837-286.149 2.706-33.544-13.8-62.785-38.604-68.11-18.547-3.993-36.25 7.499-41.266 11.137-9.672 7.010-16.373 15.53-19.967 25.292-7.321 20.056 0.888 39.224 4.038 46.634 5.103 11.936 8.608 24.582 12.335 37.981 4.393 15.885 8.962 32.347 16.462 47.964 26.578 55.242 51.87 165.46 46.501 247.28l-0.089 1.331c-1.021 14.775-3.372 49.473 19.834 70.55 11.094 10.073 26.134 15.352 44.638 15.574h0.178c4.127 0 8.031-1.774 10.693-4.925 9.496-11.137 19.168-17.261 28.797-18.147 6.389-0.533 11.004 0.843 16.373 2.484 6.3 1.953 14.154 4.393 23.384 1.953 22.718-6.034 36.030-36.163 39.49-89.585l-13.976-1.11 13.976 0.932c5.68-87.145 13.445-206.504 55.153-298.218 1.197-2.619 22.807-50.672 34.877-103.341 49.562 29.063 112.526 113.945 150.019 192.837 25.514 53.69 26.978 80.49 24.005 84.837-0.843 0.577-3.816 1.552-5.769 2.175-7.721 2.484-19.346 6.3-25.69 19.079-8.164 16.462-0.222 34.078 2.706 40.555 7.145 15.885 7.765 46.456-51.913 145.049-27.066 44.771-66.601 103.252-122.376 167.723l127.788-109.641 24.98-25.779-0.533-0.533c9.894-9.894 32.080-40.289 100.102-133.468 5.103-6.923 20.587-28.131 19.967-56.041-0.266-12.468-3.416-22.94-6.034-28.131-7.499-14.821-8.874-22.762-10.782-33.81-3.727-21.565-8.874-51.16-59.946-143.585-29.552-53.557-56.618-97.172-81.243-131.117 60.255 26.223 137.639 83.196 223.542 166.126 2.351 2.308 8.697 8.431 8.564 13.667-0.044 1.82-0.843 3.15-3.993 7.365-2.974 3.993-6.701 8.919-9.23 16.062-7.543 21.432 2.619 41.575 8.12 52.403l1.065 2.085c7.809 29.463 14.466 66.29 15.043 108.799 1.331 93.8-27.421 167.324-48.010 209.166 84.661-93.713 100.278-150.241 97.35-185.161-0.399-5.014-0.843-18.946-2.619-39.579-3.283-37.715-7.321-84.661 8.12-104.227 4.482-5.547 18.103-22.496 12.247-40.511-2.974-9.052-9.274-13.044-13.001-15.441-2.351-1.509-3.15-2.042-3.949-3.372-1.419-2.44-1.11-5.103 0.133-11.448 1.552-8.164 3.683-19.346-3.283-31.37-3.505-6.034-7.676-8.518-10.693-10.383-2.129-1.243-4.304-2.573-7.987-6.389-3.905-4.038-6.923-8.031-10.427-12.602-13.266-17.437-31.459-41.31-119.403-99.834-55.331-36.784-102.409-64.426-141.943-83.374 25.292-6.389 54.489-10.471 86.213-11.803 73.7-3.106 131.604 10.383 142.964 24.582l1.154 1.552c4.127 5.501 12.646 16.95 28.265 23.694 9.23 4.038 17.261 4.791 23.117 5.325 2.397 0.222 5.769 0.444 6.3 0.488 0.089 0.488 0.133 2.085 0.178 3.239 0.089 4.215 0.222 10.517 3.328 18.325 7.365 18.68 24.049 27.643 31.193 31.415l0.975 0.577c25.912 17.926 67.222 51.692 99.791 106.979 48.675 82.442 48.498 162.754 46.545 195.722 14.821-38.514 19.035-71.393 20.322-92.957 3.328-56.883-5.723-178.504-70.461-213.292z"/></svg>';
-  // const ICON_GEAR = '<svg width="15" height="15" viewBox="0 0 1000 1000" fill="currentColor" stroke="currentColor" stroke-width="1.8">' +
-  //     '<path d="M491.765 453.143c3.367 8.13 6.302 16.212 8.852 24.198 34.829 11.979 60.423 20.205 85.39 28.239 5.052 1.588 10.102 3.224 15.25 4.907 72.738-44.98 88.036-59.508 192.427-121.325 2.694-20.59 5.918-68.12-18.569-119.353-36.513-76.345-107.231-103.718-122.817-109.347-127.003 68.648-122.144 67.254-249.145 135.902l-20.012 20.301c39.062 28.768 82.070 72.449 108.625 136.479z"/>' +
-  //     '<path d="M962.674 135.228c-26.122-39.111-96.551-31.846-135.085-27.902-45.942 4.763-81.397 19.099-102.324 29.201 15.827 6.399 76.826 33.29 109.587 101.698 22.37 46.712 20.638 89.864 18.569 109.587 18.906-13.181 37.764-26.315 56.67-39.496 14.384-13.662 40.458-42.238 52.869-86.304 7.168-25.449 17.126-60.711-0.289-86.785z"/>' +
-  //     '<path d="M331.801 460.306c12.845 2.309 25.689 4.618 38.581 6.927l16.309-10.247 22.225 8.034c10.487 3.752 20.205 7.265 29.441 10.536-28.96-67.927-78.607-110.165-117.862-134.604l-12.315-4.714-33.146 16.549c-7.457 19.387 6.446 63.501 19.435 97.080z"/>' +
-  //     '<path d="M233.008 761.538c-19.484-3.367-110.502-21.119-155.289-99.63-6.735-11.834-43.633-76.538-15.875-123.634 14.192-24.053 39.881-34.397 67.686-45.557 36.225-14.577 68.793-17.174 89.671-17.174l103.622 29.056c-18.233 12.027-56.141 40.794-80.146 92.558-35.166 75.768-15.298 146.438-9.67 164.381z"/>' +
-  //     '<path d="M665.547 726.515c19.003-35.791 42.382-64.511 66.003-87.362l-25.256-21.744c-152.884-55.227-160.966-51.667-313.85-106.942-19.339 12.171-62.010 42.719-88.42 99.485-39.303 84.524-13.037 163.804-6.88 180.978 147.351 59.845 149.901 60.904 297.253 120.748l31.173 2.79c-2.935-53.35 4.186-120.556 39.977-187.954z"/>' +
-  //     '<path d="M815.314 652.258l-15.731 9.525c-26.988 22.514-55.371 53.35-77.26 94.578-38.87 73.17-40.025 146.149-33.146 197.238l4.571 13.758 37.283 16.549c37.331-12.411 92.558-129.841 92.558-129.841 63.549-150.575 27.662-189.252 27.662-189.252z"/>' +
-  //     '</svg>';
-  const CREST = '<img src="book-bubble.png" width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.6"><path d="M24 4l16 6v10c0 12-7 19-16 24C15 39 8 32 8 20V10l16-6z"/><path d="M24 14v16M17 21h14" stroke-width="1.3"/></img>';
+  const CREST = '<img src="book-bubble.png" width="34" height="34" alt="">';
+  const ICON_PICTURE = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>';
 
-  // Whether every non-hidden narration currently belonging to a group (or, for groupId
+  // Whether every narration in the given list that belongs to a group (or, for groupId
   // null, the Ungrouped bucket) has been heard — used to badge folders as complete on the
-  // shelf and list views, independent of any "hide completed" filtering applied to display.
+  // shelf and list views.
   function isGroupComplete(visibleNodes, validGroupIds, groupId){
-      if (!visibleNodes) return false
     const members = groupId===null
       ? visibleNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
       : visibleNodes.filter(n=> n.groupId===groupId);
-      // console.log('MEMBERS',members,members.map(n=>isCompleted(n.id)))
     return members.length>0 && members.every(n=>isCompleted(n.id));
+  }
+  // The narrations a group (or, for g null, the Ungrouped bucket) currently shows to the
+  // player, after hidden / locked / heard filtering and the group's own display settings.
+  function groupMembers(g, nodes, visible, validGroupIds){
+    let members = g===null
+      ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
+      : nodes.filter(n=> n.groupId===g.id);
+    if(!manageMode && !(g && g.showHiddenNodes)) members = members.filter(n=>!n.hidden);
+    members = members.filter(isAvailable);
+    if(settings.hideCompleted || (g && g.hideHeard)) members = members.filter(n=>!isCompleted(n.id));
+    if(g && g.showFirstOnly && members.length>0){
+      const minOrder = Math.min(...members.map(n=>n.order||0));
+      members = members.filter(n=>(n.order||0)===minOrder);
+    }
+    return members;
+  }
+  // Applies the "put completed narrations last" setting to a list about to be displayed.
+  function displayOrder(list){
+    if(!settings.placeCompletedLast) return list;
+    return list.slice().sort((a,b)=>
+      (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)));
   }
   function groupCompleteBadge(){
     return `<span style="display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px;background:rgba(111,138,83,.18);color:var(--moss);margin-left:8px;">${ICON_CHECK} Complete</span>`;
@@ -1119,9 +1146,7 @@
     minimal: {label:'Minimal bar'},
     brass: {label:'Brass player'}
   };
-  const ICON_PLAY_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>';
-  const ICON_PAUSE_LARGE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
-  const MAX_FONT_BYTES = 2.5 * 1024 * 1024; // raw file, before base64 inflation
+  const ICON_PAUSE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>';
 
   function buildAudioMarkup(src){
     if(!src) return '';
@@ -1131,7 +1156,7 @@
     }
     return `
       <div class="custom-audio-player style-${style}" id="customAudioPlayer">
-        <button class="cap-play" type="button" aria-label="Play">${ICON_PLAY_LARGE}</button>
+        <button class="cap-play" type="button" aria-label="Play">${ICON_PLAY}</button>
         <div class="cap-progress-track"><div class="cap-progress-fill"></div></div>
         <span class="cap-time">0:00 / 0:00</span>
       </div>
@@ -1401,7 +1426,7 @@
             </label>
             <div class="hint">With this on, choice buttons stay hidden until the audio finishes (or right away if there's no audio), so you're not tempted to pick before hearing everything.</div>
             <label class="setting-toggle" style="margin-top:10px;">
-              <input type="checkbox" id="placeCompletedLastCk" ${settings.placeCompletedLast?'checked':''}> Put completed narrations last on sheft and in list.
+              <input type="checkbox" id="placeCompletedLastCk" ${settings.placeCompletedLast?'checked':''}> Put completed narrations last on the shelf and in the list
             </label>
             <label class="setting-toggle" style="margin-top:10px;">
               <input type="checkbox" id="tickSoundCk" ${settings.tickSoundEnabled?'checked':''}> Play a tick sound when a narration window opens
@@ -1460,74 +1485,45 @@
     overlay.querySelector('#doneSettings').onclick = close;
     overlay.onclick = (e)=>{ if(e.target===overlay) close(); };
 
-    overlay.querySelector('#hideCompletedCk').onchange = async (e)=>{
-      settings.hideCompleted = e.target.checked; await saveSettings(); render();
+    // checkbox id -> [settings key, what to do after saving]
+    const toggles = {
+      hideCompletedCk:       ['hideCompleted', render],
+      hideLockedCk:          ['hideLockedInMap', render],
+      hideUnavailableGroups: ['hideUnavailableGroups', render],
+      animationsCk:          ['animationsEnabled'],
+      largeFontCk:           ['largeFont', applyLargeFont],
+      countGroupsCompleted:  ['countGroupsCompleted', render],
+      autoCloseCk:           ['autoCloseOnAudioEnd'],
+      autoAdvanceCk:         ['autoAdvance'],
+      revealChoicesCk:       ['revealChoicesWhenDone'],
+      placeCompletedLastCk:  ['placeCompletedLast', render],
+      tickSoundCk:           ['tickSoundEnabled', ()=>{ if(settings.tickSoundEnabled) playTickSound(); }],
+      scratchSoundCk:        ['scratchSoundEnabled', ()=>{ if(settings.scratchSoundEnabled) playScratchSound(); }],
+      chimeSoundCk:          ['groupCompleteSoundEnabled', ()=>{ if(settings.groupCompleteSoundEnabled) playGroupCompleteSound(); }],
     };
-    overlay.querySelector('#hideLockedCk').onchange = async (e)=>{
-      settings.hideLockedInMap = e.target.checked; await saveSettings(); render();
-    };
-    overlay.querySelector('#hideUnavailableGroups').onchange = async (e)=>{
-      settings.hideUnavailableGroups = e.target.checked; await saveSettings(); render();
-    };
-    overlay.querySelector('#animationsCk').onchange = async (e)=>{
-      settings.animationsEnabled = e.target.checked; await saveSettings();
-    };
-    overlay.querySelector('#largeFontCk').onchange = async (e)=>{
-      settings.largeFont = e.target.checked; await saveSettings(); applyLargeFont();
-    };
-    overlay.querySelector('#countGroupsCompleted').onchange = async (e)=>{
-      settings.countGroupsCompleted = e.target.checked; await saveSettings(); render();
-    };
-    overlay.querySelector('#autoCloseCk').onchange = async (e)=>{
-      settings.autoCloseOnAudioEnd = e.target.checked; await saveSettings();
-    };
-    overlay.querySelector('#autoAdvanceCk').onchange = async (e)=>{
-      settings.autoAdvance = e.target.checked; await saveSettings();
-    };
-    overlay.querySelector('#revealChoicesCk').onchange = async (e)=>{
-      settings.revealChoicesWhenDone = e.target.checked; await saveSettings();
-    };
-    overlay.querySelector('#placeCompletedLastCk').onchange = async (e)=>{
-      settings.placeCompletedLast = e.target.checked; await saveSettings(); render();
-    };
-    overlay.querySelector('#tickSoundCk').onchange = async (e)=>{
-      settings.tickSoundEnabled = e.target.checked; await saveSettings();
-      if(settings.tickSoundEnabled) playTickSound();
-    };
-    overlay.querySelector('#scratchSoundCk').onchange = async (e)=>{
-      settings.scratchSoundEnabled = e.target.checked; await saveSettings();
-      if(settings.scratchSoundEnabled) playScratchSound();
-    };
-    overlay.querySelector('#chimeSoundCk').onchange = async (e)=>{
-      settings.groupCompleteSoundEnabled = e.target.checked; await saveSettings();
-      if(settings.groupCompleteSoundEnabled) playGroupCompleteSound();
-    };
-    overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
-      overlay.querySelector('#audioStyleToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      settings.audioPlayerStyle = b.dataset.style;
-      await saveSettings();
+    Object.entries(toggles).forEach(([id, [key, after]])=>{
+      overlay.querySelector('#'+id).onchange = async (e)=>{
+        settings[key] = e.target.checked;
+        await saveSettings();
+        if(after) after();
+      };
     });
-    overlay.querySelector('#themeToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
-      overlay.querySelector('#themeToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      settings.theme = b.dataset.theme;
-      await saveSettings();
-      applyTheme();
-    });
-    overlay.querySelector('#orientationToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
-      overlay.querySelector('#orientationToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      settings.mapOrientation = b.dataset.orient;
-      await saveSettings();
-      render();
-    });
-    overlay.querySelector('#logOrderToggle').querySelectorAll('button').forEach(b=>b.onclick = async ()=>{
-      overlay.querySelector('#logOrderToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      settings.logOrder = b.dataset.order;
-      await saveSettings();
-      render();
+    // segmented button group id -> [data attribute, settings key, what to do after saving]
+    const segmented = {
+      audioStyleToggle:  ['style', 'audioPlayerStyle'],
+      themeToggle:       ['theme', 'theme', applyTheme],
+      orientationToggle: ['orient', 'mapOrientation', render],
+      logOrderToggle:    ['order', 'logOrder', render],
+    };
+    Object.entries(segmented).forEach(([id, [attr, key, after]])=>{
+      const btns = overlay.querySelector('#'+id).querySelectorAll('button');
+      btns.forEach(b=>b.onclick = async ()=>{
+        btns.forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        settings[key] = b.dataset[attr];
+        await saveSettings();
+        if(after) after();
+      });
     });
     overlay.querySelector('#undoBtn').onclick = async ()=>{
       await undoLast();
@@ -1613,7 +1609,7 @@
       card.className='game-card';
       card.setAttribute('style', gameAccentVars(g));
       card.innerHTML = `
-        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>'}</div>
+        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':ICON_PICTURE}</div>
         ${manageMode? `<button class="game-card-delete" data-delgame="${g.id}" title="Remove this game">&times;</button>` : ''}
         <div class="body">
           <h3>${renderTitle(g.name)}</h3>
@@ -1627,15 +1623,7 @@
         delBtn.onclick = async (e)=>{
           e.stopPropagation();
           if(!confirm(`Remove "${g.name}" and all its narrations? This cannot be undone.`)) return;
-          const gameNodes = nodesByGame[g.id]||[];
-          for(const n of gameNodes){ await sDel('node:'+n.id); }
-          await sDel('node-index:'+g.id);
-          await sDel('game:'+g.id);
-          let idx = await sGet('game-index') || [];
-          idx = idx.filter(x=>x!==g.id);
-          await sSet('game-index', idx);
-          games = games.filter(x=>x.id!==g.id);
-          delete nodesByGame[g.id];
+          await deleteGame(g);
           toast('Game removed.');
           render();
         };
@@ -1670,7 +1658,7 @@
     fileInp.type='file'; fileInp.accept='application/json'; fileInp.style.display='none';
     loadBtn.onclick = ()=> fileInp.click();
     fileInp.onchange = async ()=>{
-      const f = fileInp?.files[0];
+      const f = fileInp.files[0];
       fileInp.value='';
       if(!f) return;
       try{
@@ -1686,33 +1674,10 @@
         render();
       }catch(e){ toast(e.message); }
     };
-
-      function fetchJSONData() {
-          fetch('./default_codex.json')
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  const existingIds = new Set(games.map(g => g.id));
-                  const loaded = data
-                  importCandidates = loaded.games
-                      .filter(g => !existingIds?.has(g.id))
-                      .map(g => ({game: g, nodes: loaded.nodesByGame[g.id] || []}));
-                  if (importCandidates.length === 0) {
-                      toast('Every game in that file is already in Your Games.');
-                      importCandidates = null;
-                  }
-                  render();
-              })
-              .catch(error => console.error('Failed to fetch data:', error));
-      }
-      if (importCandidates===null && !alreadyTried) {
-          alreadyTried = true
-          fetchJSONData()
-      }
+    if(importCandidates===null && !defaultCodexRequested){
+      defaultCodexRequested = true;
+      loadDefaultCodex();
+    }
 
     head.appendChild(loadBtn);
     head.appendChild(fileInp);
@@ -1734,7 +1699,7 @@
       card.className='game-card';
       card.style.cursor='default';
       card.innerHTML = `
-        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>'}</div>
+        <div class="art" style="${g.image?`background-image:url('${g.image}')`:''}">${g.image?'':ICON_PICTURE}</div>
         <div class="body">
           <h3>${renderTitle(g.name)}</h3>
           <div class="node-card-text">${renderMarkdown(g.description||'')}</div>
@@ -1870,9 +1835,9 @@
               <div id="ngTextCustomWrap" style="display:${existingGame && existingGame.textFont==='custom'?'block':'none'};margin-top:8px;">
                 <div class="media-toggle" id="ngTextCustomToggle">
                   ${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? `<button type="button" class="active" data-m="keep">Keep current</button>`:''}
-                  <button type="button" data-m="file" >Upload</button>
+                  <button type="button" data-m="file">Upload</button>
                   <button type="button" data-m="url">Web URL</button>
-                  <button type="button" data-m="path"class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Local file path</button>
+                  <button type="button" data-m="path" class="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? '':'active'}">Local file path</button>
                 </div>
                 <input type="file" id="ngTextFontFile" accept=".woff,.woff2,.ttf,.otf,font/*" style="${existingGame && existingGame.customTextFont && existingGame.customTextFont.source? 'display:none;':''}">
                 <input type="url" id="ngTextFontUrl" placeholder="https://…/font.woff2" style="display:none;">
@@ -1929,8 +1894,8 @@
       if(f){ ngImgLastPicked = f.name; pathInp.value = joinSubdirPath(ngImgSubdirInp.value, ngImgLastPicked); }
     };
     ngImgSubdirInp.oninput = ()=>{ if(ngImgLastPicked) pathInp.value = joinSubdirPath(ngImgSubdirInp.value, ngImgLastPicked); };
-    if(existingGame && existingGame.image){ /* default 'keep' mode already hides both file/url/path */ }
-    else { showOnly('file'); }
+    // with an existing image, the default 'keep' mode already hides file/url/path
+    if(!(existingGame && existingGame.image)) showOnly('file');
 
     // custom font panels: select toggles visibility, media-toggle groups behave like other file/url/path pickers
     function wireFontPanel(prefix){
@@ -2114,50 +2079,21 @@
     crumb.querySelector('#backLib').onclick = ()=>{ route={view:'library',gameId:null}; render(); };
     wrap.appendChild(crumb);
 
-    let total = settings?.hideUnavailableGroups ? game.groups.map(g=>g?.list?.length > 0).length : game?.groups?.length || 0;
-    let completedCount = 0 // nodes.filter(n=>isCompleted(n.id)).length;
-    if (settings?.countGroupsCompleted /* setting about how to count completion*/) {
-        // completed groups
-        function computeGroupList(g){
-            const groupId = g ? g.id : null;
-            let members = groupId===null
-                ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
-                : nodes.filter(n=> n.groupId===groupId);
-            if(!manageMode){
-                const allowHidden = g && g.showHiddenNodes;
-                if(!allowHidden) members = members.filter(n=>!n.hidden);
-            }
-            members = members.filter(isAvailable);
-            if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
-            if(g && g.showFirstOnly && members.length>0){
-                const minOrder = Math.min(...members.map(n=>n.order||0));
-                members = members.filter(n=>(n.order||0)===minOrder);
-            }
-            return members;
-        }
-        total = 0
-        const validGroupIds = game.groups.map(g=>g.id);
-        game.groups.forEach(g=> {
-            const list = computeGroupList(g);
-
-            const visibleNodes = list.filter(n=>{
-                if(n.hidden && !settings?.hideUnavailableGroups/* !allowHidden */) return false;
-                //if(hideHeardHere && isCompleted(n.id)) return false;
-                //if(settings.hideLockedInMap && !isAvailable(n)){ hiddenLockedCount++; return false; }
-                return true;
-            });
-            // console.log('VISIBLENODES',visibleNodes)
-            if (list.length === 0 && settings?.hideUnavailableGroups) {} else {
-                total++
-            }
-
-            const complete = isGroupComplete(visibleNodes, validGroupIds, g.id);
-            if (complete) completedCount++
-        })
+    // progress counts either completed groups or heard narrations, per settings
+    let total = 0, completedCount = 0;
+    if(settings.countGroupsCompleted){
+      const groups = game.groups || [];
+      const validGroupIds = groups.map(g=>g.id);
+      groups.forEach(g=>{
+        const list = groupMembers(g, nodes, nodes, validGroupIds);
+        // with "hideUnavailableGroups", groups with nothing unlocked yet don't count
+        if(list.length>0 || !settings.hideUnavailableGroups) total++;
+        const counted = settings.hideUnavailableGroups ? list : list.filter(n=>!n.hidden);
+        if(isGroupComplete(counted, validGroupIds, g.id)) completedCount++;
+      });
     } else {
-        // completed narrations
-        total = nodes?.length || 0
-        completedCount = nodes.filter(n=>isCompleted(n.id)).length;
+      total = nodes.length;
+      completedCount = nodes.filter(n=>isCompleted(n.id)).length;
     }
     const gh = document.createElement('div');
     gh.className='game-header';
@@ -2166,8 +2102,8 @@
       <div class="meta">
         <h2>${renderTitle(game.name)}</h2>
         <div class="desc">${renderMarkdown(game.description||'')}</div>
-        ${total>0?`<div class="progress-bar"><div class="fill" style="width:${total? (completedCount/total*100):0}%"></div></div>
-        <div class="progress-label">${completedCount} OF ${total} ${settings?.countGroupsCompleted?'GROUPS COMPLETED':'NARRATIONS HEARD'}</div>`:'xxx'}
+        ${total>0?`<div class="progress-bar"><div class="fill" style="width:${completedCount/total*100}%"></div></div>
+        <div class="progress-label">${completedCount} OF ${total} ${settings.countGroupsCompleted?'GROUPS COMPLETED':'NARRATIONS HEARD'}</div>`:''}
       </div>
     `;
     wrap.appendChild(gh);
@@ -2248,40 +2184,31 @@
 
       let choiceLine = '';
       let resultLine = '';
-      let choicesLength = 0;
+      let chosen = [];
       if(Array.isArray(record.choiceIds) && record.choiceIds.length){
-        const chosen = (node.choices||[]).filter(c=>record.choiceIds.includes(c.id));
-        choicesLength = chosen.length
-        if(chosen.length){
-          choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
-          const texts = chosen.filter(c=>c.resultText).map(c=>renderMarkdown(c.resultText));
-          if(texts.length) resultLine = `<div class="log-result">${texts.join('')}</div>`;
-        }
+        chosen = (node.choices||[]).filter(c=>record.choiceIds.includes(c.id));
       } else if(record.choiceId){
-        const c = (node.choices||[]).find(c=>c.id===record.choiceId);
-        if(c){
-            choicesLength = 1
-          choiceLine = `<div class="log-choice"><i>“${escapeHtml(c.label)}”</i></div>`;
-          if(c.resultText) resultLine = `<div class="log-result">${renderMarkdown(c.resultText)}</div>`;
-        }
+        chosen = (node.choices||[]).filter(c=>c.id===record.choiceId);
       }
-      if(mode==='choicesOnly') {
-          if(choicesLength > 0 || manageMode) {
-            item.innerHTML = `
+      if(chosen.length){
+        choiceLine = `<div class="log-choice"><i>${chosen.map(c=>`“${escapeHtml(c.label)}”`).join('</i><br/><i> ')}</i></div>`;
+        const texts = chosen.filter(c=>c.resultText).map(c=>renderMarkdown(c.resultText));
+        if(texts.length) resultLine = `<div class="log-result">${texts.join('')}</div>`;
+      }
+      if(mode==='choicesOnly'){
+        if(chosen.length===0 && !manageMode) return; // nothing was chosen, so nothing to log
+        item.innerHTML = `
           <div class="log-top" style="align-items:flex-start;">
             ${choiceLine}
             <span class="log-time">${escapeHtml(when)}</span>
           </div>
           ${skippedNote}
         `;
-            list.appendChild(item);
-            return;
-        } else {
-          return
-        }
+        list.appendChild(item);
+        return;
       }
 
-        item.innerHTML = `
+      item.innerHTML = `
         <div class="log-top">
           <span class="log-title">${renderTitle(node.title)}</span>
           <span class="log-time">${escapeHtml(when)}</span>
@@ -2296,147 +2223,71 @@
     return box;
   }
 
-  function renderNodeShelf(nodes, game){
-    const box = document.createElement('div');
-    const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
-    let available = visible.filter(isAvailable);
-    const lockedCount = visible.length - available.length;
-    if(settings.hideCompleted){ available = available.filter(n=>!isCompleted(n.id)); }
+  // ---------------- Shelf (card grid) and List (compact rows) ----------------
+  // Both views show the same narrations, filtered and grouped the same way; only the
+  // per-narration markup differs.
+  function renderNodeShelf(nodes, game){ return renderNodeCollection(nodes, game, buildShelfGrid); }
+  function renderNodeList(nodes, game){ return renderNodeCollection(nodes, game, buildListRows); }
 
-    if(visible.length===0){
-      box.className='empty';
-      box.innerHTML = `<h3>No narrations yet</h3><p>Use "Manage codex" above to add the first one.</p>`;
-      return box;
-    }
-    if(available.length===0){
-      box.className='empty';
-      box.innerHTML = settings.hideCompleted
-        ? `<h3>All caught up</h3><p>You've heard everything currently available. Uncheck "Hide narrations you've already heard" to browse them again.</p>`
-        : `<h3>Nothing available yet</h3><p>${lockedCount} narration${lockedCount===1?'':'s'} will unlock as the campaign continues.</p>`;
-      return box;
-    }
-
-    function buildGrid(list){
-      const grid = document.createElement('div');
-      grid.className='node-grid';
-        (settings.placeCompletedLast
-            ? list
-                .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
-            : list)
-        .forEach(n=>{
-          const done = isCompleted(n.id);
-          const playing = inlinePlayingId === n.id;
-          const wasSeen = seenAvailableIds.has(n.id);
-          if(!wasSeen) seenAvailableIds.add(n.id);
-          const isNew = settings.animationsEnabled && !manageMode && !done && !wasSeen;
-          const card = document.createElement('div');
-          card.className = 'node-card ' + (done?'completed':'available') + (isNew?' newly-unlocked':'');
-          card.innerHTML = `
-            <span class="icon-row">${done?ICON_CHECK:ICON_PLAY}</span>
-            <span class="tag">${done?'Heard':'Available'}</span>
-            ${manageMode && n.hidden? `<span class="tag" style="background:rgba(138,58,58,.18);color:#d99;margin-left:6px;">Hidden</span>`:''}
-            ${manageMode && n.completedByDefault? `<span class="tag" style="background:rgba(111,138,83,.18);color:var(--moss);margin-left:6px;">Auto</span>`:''}
-            <h3>${renderTitle(n.title)}</h3>
-            <div class="node-card-text">${renderMarkdown(n.text||'')}</div>
-            ${n.audio? `<button class="mini-play ${playing?'playing':''}" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
-          `;
-          card.onclick = ()=>{ openReaderFor(n); };
-          const playBtn = card.querySelector('.mini-play');
-          if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
-          grid.appendChild(card);
-        });
-      return grid;
-    }
-
-    const groups = game.groups || [];
-    // console.log('GROUPS',groups)
-    if(groups.length===0){
-      box.appendChild(buildGrid(available));
-    } else {
-      const validGroupIds = groups.map(g=>g.id);
-
-      function computeGroupList(g){
-        const groupId = g ? g.id : null;
-        let members = groupId===null
-          ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
-          : nodes.filter(n=> n.groupId===groupId);
-        if(!manageMode){
-          const allowHidden = g && g.showHiddenNodes;
-          if(!allowHidden) members = members.filter(n=>!n.hidden);
-        }
-        members = members.filter(isAvailable);
-        if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
-        if(g && g.showFirstOnly && members.length>0){
-          const minOrder = Math.min(...members.map(n=>n.order||0));
-          members = members.filter(n=>(n.order||0)===minOrder);
-        }
-        return members;
-      }
-
-      const ungroupedList = computeGroupList(null);
-      const sections = [];
-      if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
-      // console.log("==========")
-      //   console.log('GROUPSX',groups.length)
-
-        groups.forEach(g=>{
-        const list = computeGroupList(g);
-        const complete = isGroupComplete(list, validGroupIds, g.id);
-        // console.log('LIST.length',list.length,complete)
-        if(!manageMode){
-          if(complete && !seenCompleteGroupIds.has(g.id)){
-            seenCompleteGroupIds.add(g.id);
-            playGroupCompleteSound();
-            if(!g.collapsed){ g.collapsed = true; sSet('game:'+game.id, game); }
-          } else if(!complete && seenCompleteGroupIds.has(g.id)){
-            seenCompleteGroupIds.delete(g.id);
-          }
-        }
-        if(list.length){
-          if(g.collapsed && !manageMode && !complete && list.some(n=> !isCompleted(n.id) && !seenAvailableIds.has(n.id))){
-            g.collapsed = false;
-            sSet('game:'+game.id, game);
-          }
-          sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
-        }
-      });
-      // console.log('SECTIONS.LENGTH',sections.length)
-        let countCompletedGroups = 0
-      sections.forEach(sec=>{
-        const header = document.createElement('div');
-        header.className='group-header';
-        header.style.cursor = sec.id===null ? 'default' : 'pointer';
-        const complete = isGroupComplete(sec.list, validGroupIds, sec.id);
-        if (complete) countCompletedGroups++
-        header.innerHTML = sec.id===null
-          ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`
-          : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
-        box.appendChild(header);
-        if(!sec.collapsed) box.appendChild(buildGrid(sec.list));
-        if(sec.id!==null){
-          const openHeader = ()=>{
-            header.querySelector('.group-toggle').onclick = async ()=>{
-              const g = groups.find(x=>x.id===sec.id);
-              if(g){ g.collapsed = !g.collapsed; await sSet('game:'+game.id, game); render(); }
-            };
-          };
-          openHeader();
-        }
-      });
-      // console.log('COUNTCOMPLETEDGROUPS',countCompletedGroups)
-    }
-
-    if(lockedCount>0){
-      const note = document.createElement('div');
-      note.className='locked-note';
-      note.innerHTML = `${ICON_LOCK} ${lockedCount} more narration${lockedCount===1?'':'s'} will unlock as the campaign continues.`;
-      box.appendChild(note);
-    }
-    return box;
+  // Marks a narration as seen-available, returning whether it should get the unlock animation.
+  function takeNewlyUnlocked(n, done){
+    const wasSeen = seenAvailableIds.has(n.id);
+    if(!wasSeen) seenAvailableIds.add(n.id);
+    return settings.animationsEnabled && !manageMode && !done && !wasSeen;
+  }
+  function manageTags(n, spacing){
+    return (manageMode && n.hidden? `<span class="tag" style="background:rgba(138,58,58,.18);color:#d99;${spacing}">Hidden</span>`:'')
+      + (manageMode && n.completedByDefault? `<span class="tag" style="background:rgba(111,138,83,.18);color:var(--moss);${spacing}">Auto</span>`:'');
+  }
+  function buildShelfGrid(list){
+    const grid = document.createElement('div');
+    grid.className='node-grid';
+    displayOrder(list).forEach(n=>{
+      const done = isCompleted(n.id);
+      const playing = inlinePlayingId === n.id;
+      const isNew = takeNewlyUnlocked(n, done);
+      const card = document.createElement('div');
+      card.className = 'node-card ' + (done?'completed':'available') + (isNew?' newly-unlocked':'');
+      card.innerHTML = `
+        <span class="icon-row">${done?ICON_CHECK:ICON_PLAY}</span>
+        <span class="tag">${done?'Heard':'Available'}</span>
+        ${manageTags(n, 'margin-left:6px;')}
+        <h3>${renderTitle(n.title)}</h3>
+        <div class="node-card-text">${renderMarkdown(n.text||'')}</div>
+        ${n.audio? `<button class="mini-play ${playing?'playing':''}" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
+      `;
+      card.onclick = ()=>{ openReaderFor(n); };
+      const playBtn = card.querySelector('.mini-play');
+      if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
+      grid.appendChild(card);
+    });
+    return grid;
+  }
+  function buildListRows(list){
+    const rows = document.createElement('div');
+    rows.className='node-list';
+    displayOrder(list).forEach(n=>{
+      const done = isCompleted(n.id);
+      const playing = inlinePlayingId === n.id;
+      const isNew = takeNewlyUnlocked(n, done);
+      const row = document.createElement('div');
+      row.className = 'node-list-item ' + (done?'completed':'available') + (isNew?' newly-unlocked':'');
+      row.innerHTML = `
+        <span class="node-list-icon">${done?ICON_CHECK:ICON_PLAY}</span>
+        <span class="node-list-title">${renderTitle(n.title)}</span>
+        <span class="tag">${done?'Heard':'Available'}</span>
+        ${manageTags(n, '')}
+        ${n.audio? `<button class="mini-play static" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
+      `;
+      row.onclick = ()=>{ openReaderFor(n); };
+      const playBtn = row.querySelector('.mini-play');
+      if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
+      rows.appendChild(row);
+    });
+    return rows;
   }
 
-  // ---------------- List (compact alternative to the shelf's card grid) ----------------
-  function renderNodeList(nodes, game){
+  function renderNodeCollection(nodes, game, buildItems){
     const box = document.createElement('div');
     const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
     let available = visible.filter(isAvailable);
@@ -2456,67 +2307,18 @@
       return box;
     }
 
-    function buildRows(list){
-      const rows = document.createElement('div');
-      rows.className='node-list';
-(settings.placeCompletedLast
-    ? list
-        .sort((a,b)=> (isCompleted(a.id)===isCompleted(b.id) ? 0 : (isCompleted(a.id)?1:-1)) || ((a.order||0)-(b.order||0)))
-    : list)
-    .forEach(n=>{
-          const done = isCompleted(n.id);
-          const playing = inlinePlayingId === n.id;
-          const wasSeen = seenAvailableIds.has(n.id);
-          if(!wasSeen) seenAvailableIds.add(n.id);
-          const isNew = settings.animationsEnabled && !manageMode && !done && !wasSeen;
-          const row = document.createElement('div');
-          row.className = 'node-list-item ' + (done?'completed':'available') + (isNew?' newly-unlocked':'');
-          row.innerHTML = `
-            <span class="node-list-icon">${done?ICON_CHECK:ICON_PLAY}</span>
-            <span class="node-list-title">${renderTitle(n.title)}</span>
-            <span class="tag">${done?'Heard':'Available'}</span>
-            ${manageMode && n.hidden? `<span class="tag" style="background:rgba(138,58,58,.18);color:#d99;">Hidden</span>`:''}
-            ${manageMode && n.completedByDefault? `<span class="tag" style="background:rgba(111,138,83,.18);color:var(--moss);">Auto</span>`:''}
-            ${n.audio? `<button class="mini-play static" title="${playing?'Pause preview':'Play narration'}">${playing?ICON_MINI_PAUSE:ICON_MINI_PLAY}</button>` : ''}
-          `;
-          row.onclick = ()=>{ openReaderFor(n); };
-          const playBtn = row.querySelector('.mini-play');
-          if(playBtn){ playBtn.onclick = (e)=> toggleInlinePlay(n, e, true); }
-          rows.appendChild(row);
-        });
-      return rows;
-    }
-
     const groups = game.groups || [];
     if(groups.length===0){
-      box.appendChild(buildRows(available));
+      box.appendChild(buildItems(available));
     } else {
       const validGroupIds = groups.map(g=>g.id);
-
-      function computeGroupList(g){
-        const groupId = g ? g.id : null;
-        let members = groupId===null
-          ? visible.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId))
-          : nodes.filter(n=> n.groupId===groupId);
-        if(!manageMode){
-          const allowHidden = g && g.showHiddenNodes;
-          if(!allowHidden) members = members.filter(n=>!n.hidden);
-        }
-        members = members.filter(isAvailable);
-        if(settings.hideCompleted || (g && g.hideHeard)){ members = members.filter(n=>!isCompleted(n.id)); }
-        if(g && g.showFirstOnly && members.length>0){
-          const minOrder = Math.min(...members.map(n=>n.order||0));
-          members = members.filter(n=>(n.order||0)===minOrder);
-        }
-        return members;
-      }
-
-      const ungroupedList = computeGroupList(null);
+      const ungroupedList = groupMembers(null, nodes, visible, validGroupIds);
       const sections = [];
       if(ungroupedList.length) sections.push({id:null, name:'Ungrouped', collapsed:false, list:ungroupedList});
       groups.forEach(g=>{
-        const list = computeGroupList(g);
+        const list = groupMembers(g, nodes, visible, validGroupIds);
         const complete = isGroupComplete(list, validGroupIds, g.id);
+        // a group chimes and collapses itself the moment it becomes complete...
         if(!manageMode){
           if(complete && !seenCompleteGroupIds.has(g.id)){
             seenCompleteGroupIds.add(g.id);
@@ -2527,6 +2329,7 @@
           }
         }
         if(list.length){
+          // ...and re-opens itself when something new unlocks inside it
           if(g.collapsed && !manageMode && !complete && list.some(n=> !isCompleted(n.id) && !seenAvailableIds.has(n.id))){
             g.collapsed = false;
             sSet('game:'+game.id, game);
@@ -2538,12 +2341,13 @@
         const header = document.createElement('div');
         header.className='group-header';
         header.style.cursor = sec.id===null ? 'default' : 'pointer';
-        const complete = isGroupComplete(sec.list, validGroupIds, sec.id);
+        const badge = isGroupComplete(sec.list, validGroupIds, sec.id) ? groupCompleteBadge() : '';
+        const count = `<span class="pid" style="margin-left:8px;">${sec.list.length}</span>`;
         header.innerHTML = sec.id===null
-          ? `<span class="group-name">Ungrouped</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`
-          : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span><span class="pid" style="margin-left:8px;">${sec.list.length}</span>${complete?groupCompleteBadge():''}`;
+          ? `<span class="group-name">Ungrouped</span>${count}${badge}`
+          : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span>${count}${badge}`;
         box.appendChild(header);
-        if(!sec.collapsed) box.appendChild(buildRows(sec.list));
+        if(!sec.collapsed) box.appendChild(buildItems(sec.list));
         if(sec.id!==null){
           header.querySelector('.group-toggle').onclick = async ()=>{
             const g = groups.find(x=>x.id===sec.id);
@@ -2573,14 +2377,13 @@
     const base = mode==='light'
       ? { doneFill:'rgba(75,107,52,.14)', doneStroke:'#4b6b34', availFill:'rgba(138,97,20,.10)', availStroke:'#8a6114',
           lockedFill:'rgba(168,152,114,.20)', lockedStroke:'#a89872', textAvail:'#2b2013', textLocked:'#8a7c5c',
-          connDone:'#a9812c', connLocked:'#c9b57e', orLabel:'#8a6114' }
+          connDone:'#a9812c', connLocked:'#c9b57e' }
       : { doneFill:'rgba(111,138,83,.16)', doneStroke:'#6f8a53', availFill:'rgba(201,162,75,.12)', availStroke:'#c9a24b',
           lockedFill:'rgba(74,64,56,.25)', lockedStroke:'#4a4038', textAvail:'#ece1c4', textLocked:'#7a7160',
-          connDone:'#8c7431', connLocked:'#3a3128', orLabel:'#8c7431' };
+          connDone:'#8c7431', connLocked:'#3a3128' };
     const c = effectiveGameColors(game, mode);
     base.availStroke = c.brass;
     base.connDone = c.brassDim;
-    base.orLabel = c.brass;
     base.availFill = hexToRgba(c.brass, mode==='light'?0.10:0.12);
     return base;
   }
@@ -2749,7 +2552,7 @@
           d = `M${from.x+circleR},${from.y} C${midx},${from.y} ${midx},${to.y} ${to.x-circleR},${to.y}`;
           labelX = midx; labelY = (from.y+to.y)/2 - 6;
         }
-        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" ${p.group==='any'&&false?'stroke-dasharray="4 3"':''}/>`;
+        lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
         if(label){
           lines += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="9" class="map-node-label" fill="${pal.connDone}" style="font-style:italic;">${escapeHtml(label)}</text>`;
         }
@@ -2766,13 +2569,8 @@
       const p = pos[n.id];
       const done = isCompleted(n.id);
       const avail = isAvailable(n);
-      const normPrereqs = normalizedPrereqs(n);
-      const anyCount = normPrereqs.filter(p=>p.group==='any').length;
-      const allCount = normPrereqs.length - anyCount;
-      const isOr = false // anyCount>0;
-      const orLabelText = '' // (allCount>0 && anyCount>0) ? `all ${allCount} + any 1 of ${anyCount}` : (anyCount>1 ? 'any one of' : '');
       let fill = done ? pal.doneFill : (avail ? pal.availFill : pal.lockedFill);
-      if (fill && n?.mapShape === 'boxErrata') fill = fill.replace(/\d+/,'255')
+      if(n.mapShape==='boxErrata') fill = fill.replace(/\d+/,'255'); // errata boxes get a red tint
       const stroke = done ? pal.doneStroke : (avail ? pal.availStroke : pal.lockedStroke);
       const textColor = avail ? pal.textAvail : pal.textLocked;
       const showPlay = !manageMode && n.audio && avail;
@@ -2783,7 +2581,8 @@
       else if(n.mapTooltip==='full' && n.text) tooltipBody = `${n.title} — ${statusWord}\n\n${plainPreview(n.text)}`;
       else tooltipBody = `${n.title} — ${statusWord}`;
       const tooltip = `<title>${escapeHtml(tooltipBody)}</title>`;
-      const shapeMode = n.mapShape==='playIcon' ? 'playIcon' : (n.mapShape==='box' ? 'box' : (n.mapShape==='boxRule'||n.mapShape==='boxErrata' ?'boxRule': (n.mapShape==='labelOnly' ? 'labelOnly' : 'circle')))
+      // boxErrata draws like boxRule (square, dashed), only its fill differs
+      const shapeMode = {playIcon:'playIcon', box:'box', boxRule:'boxRule', boxErrata:'boxRule', labelOnly:'labelOnly'}[n.mapShape] || 'circle';
       const labelMode = n.mapLabel || 'title';
       const asPlayIcon = shapeMode==='playIcon' && !!n.audio;
       const iconColor = (done||avail) ? '#161109' : pal.textLocked;
@@ -2794,7 +2593,7 @@
       else if(labelMode==='text') labelSrc = plainPreview(n.text);
       else if(labelMode==='choices') labelSrc = (n.choices||[]).map(c=>c.label).join(' / ');
 
-      let shapeSvg, labelSvg, orSvg;
+      let shapeSvg, labelSvg;
 
       if(shapeMode==='labelOnly'){
         // no shape at all — just the wrapped label text, color-coded by status since there's no fill to rely on
@@ -2811,13 +2610,12 @@
         labelSvg = lines.map((line,i)=>
           `<text x="${p.x}" y="${blockY + i*14}" text-anchor="middle" font-size="12" class="map-node-label" fill="${stroke}">${escapeHtml(line)}</text>`
         ).join('');
-        orSvg = orLabelText? `<text x="${p.x}" y="${blockY-34}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
-      } else if(shapeMode==='box'||shapeMode==='boxRule'||shapeMode==='boxErrata'){
+      } else if(shapeMode==='box'||shapeMode==='boxRule'){
         const bw = 132, bh = 60;
         const lines = labelMode==='none' ? [] : wrapLines(labelSrc, 17, 2);
         const titleBlockY = lines.length<=1 ? p.y - 2 : p.y - 11;
-        const dashArray = shapeMode==='boxRule' ? '6 3' : '0' // isOr&&false?'4 3':'0'
-        const rx = shapeMode==='boxRule' ? '0' : '6'
+        const dashArray = shapeMode==='boxRule' ? '6 3' : '0';
+        const rx = shapeMode==='boxRule' ? '0' : '6';
         shapeSvg = `<rect x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${dashArray}"/>`;
         labelSvg = lines.map((line,i)=>
           `<text x="${p.x}" y="${titleBlockY + i*14}" text-anchor="middle" font-size="11" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
@@ -2831,12 +2629,11 @@
                 : `<path d="M${p.x+bw/2-15.5},${p.y-bh/2+7} l9,5 l-9,5 z" fill="#161109"/>`}
             </g>`;
         }
-        orSvg = orLabelText? `<text x="${p.x}" y="${p.y-bh/2-8}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
       } else {
         // the circle (or play-icon, or its no-audio dot fallback), centered at p.x,p.y
         const isDotFallback = shapeMode==='playIcon' && !n.audio;
         const r = isDotFallback ? 9 : circleR;
-        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-dasharray="${isOr&&false?'3 3':'0'}"/>`;
+        shapeSvg = `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6"/>`;
         if(asPlayIcon){
           shapeSvg += `
             <g class="${showPlay?'map-mini-play':''}" data-id="${n.id}" style="cursor:${showPlay?'pointer':'inherit'};">
@@ -2863,7 +2660,6 @@
           `<text x="${p.x}" y="${labelTop + i*13}" text-anchor="middle" font-size="10.5" class="map-node-label" fill="${textColor}">${escapeHtml(line)}</text>`
         ).join('');
 
-        orSvg = orLabelText? `<text x="${p.x}" y="${p.y-circleR-9}" text-anchor="middle" font-size="8.5" class="map-node-label" fill="${pal.orLabel}" style="letter-spacing:.06em;font-style:italic;">${escapeHtml(orLabelText)}</text>`:'';
       }
 
       const mapWasSeen = seenAvailableIds.has(n.id);
@@ -2875,7 +2671,7 @@
         const isCollapsed = nodeGroup && nodeGroup.collapsed;
         manageStyle = isCollapsed ? 'opacity:.3;' : '';
       }
-      boxes += `<g class="map-node${isNewMapNode?' newly-unlocked':''}" data-id="${n.id}" style="cursor:${(avail||manageMode)?'pointer':'default'};${manageStyle}">${tooltip}${orSvg}${shapeSvg}${labelSvg}</g>`;
+      boxes += `<g class="map-node${isNewMapNode?' newly-unlocked':''}" data-id="${n.id}" style="cursor:${(avail||manageMode)?'pointer':'default'};${manageStyle}">${tooltip}${shapeSvg}${labelSvg}</g>`;
     });
 
     mapBox.innerHTML = `<svg viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}" style="${isVertical? 'display:block;margin:0 auto;':''}">${lines}${boxes}</svg>`;
@@ -2924,20 +2720,10 @@
       if(list.length) sections.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
     });
 
-      const visible = manageMode ? nodes : nodes.filter(n=>!n.hidden);
-      let available = visible.filter(isAvailable);
-      const sectionsWithAvailable = []
-      groups.forEach(g=>{
-          const list = available.filter(n=>n.groupId===g.id);
-          if(list.length) sectionsWithAvailable.push({id:g.id, name:g.name, collapsed:!!g.collapsed, list});
-      });
-
     sections.forEach(sec=>{
-        const sectionWithAvailable = sectionsWithAvailable.find(g=>sec.id === g.id) || []
       const header = document.createElement('div');
       header.className='group-header';
       header.style.cursor = sec.id===null ? 'default' : 'pointer';
-      const complete = isGroupComplete(sectionWithAvailable.list, validGroupIds, sec.id);
       header.innerHTML = sec.id===null
         ? `<span class="group-name">Ungrouped</span>`
         : `<button class="group-toggle" type="button">${sec.collapsed?'▸':'▾'}</button><span class="group-name">${escapeHtml(sec.name)}</span>`;
@@ -3031,7 +2817,7 @@
       const updateUI = ()=>{
         fill.style.width = (audioEl.duration? (audioEl.currentTime/audioEl.duration*100):0)+'%';
         timeLabel.textContent = fmtTime(audioEl.currentTime)+' / '+fmtTime(audioEl.duration);
-        playBtn.innerHTML = (!audioEl.paused && !audioEl.ended) ? ICON_PAUSE_LARGE : ICON_PLAY_LARGE;
+        playBtn.innerHTML = (!audioEl.paused && !audioEl.ended) ? ICON_PAUSE : ICON_PLAY;
       };
       playBtn.onclick = ()=>{ if(audioEl.paused) audioEl.play().catch(()=>{}); else audioEl.pause(); };
       track.addEventListener('click', (e)=>{
@@ -3529,7 +3315,7 @@
         } else if(audioMode==='url'){
           audio = panel.querySelector('#nAudioUrl').value.trim();
         } else if(audioMode==='path'){
-            audio = panel.querySelector('#nAudioPath').value.trim();
+          audio = panel.querySelector('#nAudioPath').value.trim();
         } else if(audioMode==='file' && !panel.querySelector('#nAudioFile').files[0] && !editingNode){
           audio = '';
         }
@@ -3539,7 +3325,7 @@
         } else if(imageMode==='url'){
           image = panel.querySelector('#nImageUrl').value.trim();
         } else if(imageMode==='path'){
-            image = panel.querySelector('#nImagePath').value.trim();
+          image = panel.querySelector('#nImagePath').value.trim();
         } else if(imageMode==='file' && !panel.querySelector('#nImageFile').files[0] && !editingNode){
           image = '';
         }
@@ -3665,6 +3451,7 @@
       ids.forEach((id,i)=>{ const nd = nodesByGame[game.id].find(x=>x.id===id); if(nd) nd.order = i; });
       return ids;
     }
+    const LOG_MODE_BADGES = {none:'off', titleOnly:'title only', textOnly:'text only', choicesOnly:'choices only'};
     function buildNodeRow(n){
       const row = document.createElement('div');
       row.className = 'node-manage-item';
@@ -3685,7 +3472,7 @@
           <span>${escapeHtml(n.title)}</span>
           ${n.hidden? `<span class="pid" style="color:#d99;">hidden</span>`:''}
           ${n.completedByDefault? `<span class="pid" style="color:var(--moss);">auto</span>`:''}
-          ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${n.logMode==='none'?'off':(n.logMode==='titleOnly'?'title only':'text only')}</span>`:''}
+          ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${LOG_MODE_BADGES[n.logMode]||n.logMode}</span>`:''}
           ${n.choices&&n.choices.length? `<span class="pid">${n.choices.length} choice${n.choices.length===1?'':'s'}</span>`:''}
           <span class="pid">${prereqBadge}</span>
           ${!n.image? `<span class="pid" style="color:#d99;">no image</span>` : `<span class="pid media-status" data-check="image">checking image…</span>`}
@@ -3715,22 +3502,8 @@
       const testPlayBtn = row.querySelector('[data-testplay]');
       if(testPlayBtn){ testPlayBtn.onclick = (e)=>{ e.stopPropagation(); toggleInlinePlay(n, e); }; }
       row.querySelector('[data-copy]').onclick = async ()=>{
-        const siblings = nodesByGame[game.id].filter(x=> (x.groupId||null) === (n.groupId||null));
-        const copy = {
-          ...n,
-          id: uid(),
-          title: n.title + ' (copy)',
-          choices: (n.choices||[]).map(c=> ({...c, id: uid()})),
-          prerequisites: (n.prerequisites||[]).map(p=> ({...p})),
-          order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
-          createdAt: Date.now()
-        };
-        const ok = await sSet('node:'+copy.id, copy);
-        if(!ok){ toast('Could not copy this narration — please try again.'); return; }
-        const nodeIndex = await sGet('node-index:'+game.id) || [];
-        nodeIndex.push(copy.id);
-        await sSet('node-index:'+game.id, nodeIndex);
-        nodesByGame[game.id].push(copy);
+        const copy = await duplicateNode(n);
+        if(!copy){ toast('Could not copy this narration — please try again.'); return; }
         editingNodeId = copy.id;
         lastEditedNodeId = copy.id;
         toast('Narration copied.');
@@ -3883,14 +3656,7 @@
     // delete game
     panel.querySelector('#deleteGameBtn').onclick = async ()=>{
       if(!confirm(`Remove "${game.name}" and all its narrations? This cannot be undone.`)) return;
-      for(const n of nodes){ await sDel('node:'+n.id); }
-      await sDel('node-index:'+game.id);
-      await sDel('game:'+game.id);
-      let idx = await sGet('game-index') || [];
-      idx = idx.filter(x=>x!==game.id);
-      await sSet('game-index', idx);
-      games = games.filter(g=>g.id!==game.id);
-      delete nodesByGame[game.id];
+      await deleteGame(game);
       route = {view:'library', gameId:null};
       toast('Game removed.');
       render();
@@ -3947,11 +3713,8 @@
     if(pathBtn) pathBtn.click();
     field.focus();
     try{
-        // const subdir = (field?.parentNode?.parentNode?.querySelector('[id*="Subdir"]')?.value || '').trim()
-        // console.log('SBDIR',subdir, field)
-      // const text = joinSubdirPath(subdir,await navigator.clipboard.readText());
-        const text = await navigator.clipboard.readText();
-        if(text){
+      const text = await navigator.clipboard.readText();
+      if(text){
         field.value = text;
         field.dispatchEvent(new Event('input', {bubbles:true}));
         toast('Pasted from clipboard.');
@@ -3978,66 +3741,21 @@
     }
     return null;
   }
-  // Duplicates the most recently saved narration, points the copy's prerequisite at that
-  // original (so it continues on from it), and focuses the title field to rename it.
-  async function quickChainFromLastEdited(){
+  // Duplicates the most recently saved narration and opens the copy for editing, with its
+  // title field focused so it can be renamed right away.
+  async function duplicateLastEdited(chain){
     const original = findNodeById(lastEditedNodeId);
-    if(!original){ toast('Save a narration first, then Shift+↓ adds the next one after it.'); return; }
-    const game = games.find(g=>g.id===original.gameId);
-    if(!game){ toast('Could not find the game for that narration.'); return; }
-    const siblings = (nodesByGame[game.id]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
-    const copy = {
-      ...original,
-      id: uid(),
-      title: original.title + ' (copy)',
-      choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
-      prerequisites: [{nodeId: original.id, choiceId: null, group:'all'}],
-      order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
-      createdAt: Date.now()
-    };
-    const ok = await sSet('node:'+copy.id, copy);
-    if(!ok){ toast('Could not create the next narration — please try again.'); return; }
-    const nodeIndex = await sGet('node-index:'+game.id) || [];
-    nodeIndex.push(copy.id);
-    await sSet('node-index:'+game.id, nodeIndex);
-    nodesByGame[game.id].push(copy);
-    route = {view:'game', gameId: game.id};
+    if(!original){
+      toast(chain ? 'Save a narration first, then Shift+↓ adds the next one after it.' : 'Save a narration first, then Shift+↑ copies it.');
+      return;
+    }
+    // chain: the copy requires the original, so it continues on from it
+    const copy = await duplicateNode(original, chain ? [{nodeId: original.id, choiceId: null, group:'all'}] : undefined);
+    if(!copy){ toast(chain ? 'Could not create the next narration — please try again.' : 'Could not copy this narration — please try again.'); return; }
+    route = {view:'game', gameId: original.gameId};
     editingNodeId = copy.id;
     lastEditedNodeId = copy.id;
-    toast('Added the next narration — requires "'+original.title+'".');
-    render();
-    setTimeout(()=>{
-      const titleInput = document.querySelector('.manage-panel #nTitle');
-      if(titleInput){ titleInput.focus(); titleInput.select(); }
-    }, 30);
-  }
-  // Duplicates the most recently saved narration as-is (same prerequisites as the
-  // original, not chained after it) — the keyboard equivalent of the row's Copy button.
-  async function copyLastEdited(){
-    const original = findNodeById(lastEditedNodeId);
-    if(!original){ toast('Save a narration first, then Shift+↑ copies it.'); return; }
-    const game = games.find(g=>g.id===original.gameId);
-    if(!game){ toast('Could not find the game for that narration.'); return; }
-    const siblings = (nodesByGame[game.id]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
-    const copy = {
-      ...original,
-      id: uid(),
-      title: original.title + ' (copy)',
-      choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
-      prerequisites: (original.prerequisites||[]).map(p=> ({...p})),
-      order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
-      createdAt: Date.now()
-    };
-    const ok = await sSet('node:'+copy.id, copy);
-    if(!ok){ toast('Could not copy this narration — please try again.'); return; }
-    const nodeIndex = await sGet('node-index:'+game.id) || [];
-    nodeIndex.push(copy.id);
-    await sSet('node-index:'+game.id, nodeIndex);
-    nodesByGame[game.id].push(copy);
-    route = {view:'game', gameId: game.id};
-    editingNodeId = copy.id;
-    lastEditedNodeId = copy.id;
-    toast('Narration copied.');
+    toast(chain ? 'Added the next narration — requires "'+original.title+'".' : 'Narration copied.');
     render();
     setTimeout(()=>{
       const titleInput = document.querySelector('.manage-panel #nTitle');
@@ -4064,8 +3782,9 @@
     }, 30);
   }
   // Cycles the map shape of whatever node is currently hovered on the campaign map,
-  // through circle -> play icon -> box -> label only -> back to circle.
+  // through the shapes below, then back to the first.
   const MAP_SHAPE_CYCLE = ['circle','playIcon','box','boxRule','boxErrata','labelOnly'];
+  const MAP_SHAPE_NAMES = {circle:'Small circle', playIcon:'Play icon', box:'Box', boxRule:'Box, rule', boxErrata:'Box, errata', labelOnly:'Label only'};
   async function cycleHoveredNodeShape(){
     if(!hoveredMapNodeId){ toast('Hover a node on the campaign map, then press Shift+N.'); return; }
     const n = findNodeById(hoveredMapNodeId);
@@ -4074,11 +3793,11 @@
     n.mapShape = MAP_SHAPE_CYCLE[(curIdx + 1) % MAP_SHAPE_CYCLE.length];
     const ok = await sSet('node:'+n.id, n);
     if(!ok){ toast('Could not save the shape change — please try again.'); return; }
-    toast(`Map shape: ${n.mapShape==='playIcon'?'Play icon':n.mapShape==='labelOnly'?'Label only':n.mapShape==='box'?'Box':n.mapShape==='boxRule'?'Box, rule':n.mapShape==='boxErrata'?'Box, errata':'Small circle'}`);
+    toast(`Map shape: ${MAP_SHAPE_NAMES[n.mapShape]}`);
     render();
   }
-    let prereqPos = 0
-    document.addEventListener('keydown', (e)=>{
+  let prereqPos = 0; // Shift+A cycles through the checked prerequisites
+  document.addEventListener('keydown', (e)=>{
     if(!manageMode) return;
     const active = document.activeElement;
     const tag = active && active.tagName;
@@ -4104,12 +3823,12 @@
     }
     if(e.shiftKey && e.key==='ArrowDown' && !isTextEditing){
       e.preventDefault();
-      quickChainFromLastEdited();
+      duplicateLastEdited(true);
       return;
     }
     if(e.shiftKey && e.key==='ArrowUp' && !isTextEditing){
       e.preventDefault();
-      copyLastEdited();
+      duplicateLastEdited(false);
       return;
     }
     if(e.shiftKey && (e.key==='N'||e.key==='n') && !isTextEditing){
@@ -4126,22 +3845,14 @@
       cycleManageNode(-1);
     }
     if(e.key==='A' && !isTextEditing && e.shiftKey){
-        // e.preventDefault();
-        // let checkedPrerequisites = document.querySelectorAll('.prereqChoice:not([disabled])');
-
-        setTimeout(()=>{
-            let checkedPrerequisites = document.querySelectorAll('.prereqCk:checked');
-            checkedPrerequisites?.length && checkedPrerequisites?.[prereqPos || 0]?.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-                inline: "start",
-            })
-            prereqPos = ((prereqPos+1) % checkedPrerequisites?.length) || 0
-            /* if(titleField) titleField.scrollIntoView({behavior:'smooth', block:'center'}); */
-        }, 30);
-        // console.log('POS',pos)
+      setTimeout(()=>{
+        const checked = document.querySelectorAll('.prereqCk:checked');
+        if(checked.length===0) return;
+        prereqPos = prereqPos % checked.length;
+        checked[prereqPos].scrollIntoView({behavior:'smooth', block:'center', inline:'start'});
+        prereqPos = (prereqPos+1) % checked.length;
+      }, 30);
     }
-
   });
 
   loadAll();
