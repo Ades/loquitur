@@ -25,6 +25,7 @@ const DEFAULT_SETTINGS = {
   animationsEnabled:true,
   largeFont:false,
   groupCompleteSoundEnabled:true,
+  groupCompleteSound:'chime',
   countGroupsCompleted:true,
   hideUnavailableGroups:false,
   placeCompletedLast:false,

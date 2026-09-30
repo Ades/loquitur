@@ -115,8 +115,12 @@ function openSettingsModal(){
             <input type="checkbox" id="scratchSoundCk" ${settings.scratchSoundEnabled?'checked':''}> Play a pencil-scratch sound when a new log entry is recorded
           </label>
           <label class="setting-toggle" style="margin-top:10px;">
-            <input type="checkbox" id="chimeSoundCk" ${settings.groupCompleteSoundEnabled?'checked':''}> Play a chime when a group becomes completed.
+            <input type="checkbox" id="chimeSoundCk" ${settings.groupCompleteSoundEnabled?'checked':''}> Play a sound when a group becomes completed
           </label>
+          <div class="media-toggle" id="completeSoundToggle" style="margin-top:6px;">
+            ${Object.keys(COMPLETE_SOUNDS).map(k=>`<button type="button" data-sound="${k}" class="${(COMPLETE_SOUNDS[settings.groupCompleteSound]?settings.groupCompleteSound:'chime')===k?'active':''}">${COMPLETE_SOUNDS[k].label}</button>`).join('')}
+          </div>
+          <div class="hint">Picking a sound plays it once, so you can hear it.</div>
           <label style="display:block;margin-top:12px;">Audio player style</label>
           <div class="media-toggle" id="audioStyleToggle" style="margin-top:4px;">
             ${Object.keys(AUDIO_PLAYER_STYLES).map(k=>`<button type="button" data-style="${k}" class="${(settings.audioPlayerStyle||'native')===k?'active':''}">${AUDIO_PLAYER_STYLES[k].label}</button>`).join('')}
@@ -191,6 +195,7 @@ function openSettingsModal(){
   // segmented button group id -> [data attribute, settings key, what to do after saving]
   const segmented = {
     audioStyleToggle:  ['style', 'audioPlayerStyle'],
+    completeSoundToggle: ['sound', 'groupCompleteSound', ()=>{ COMPLETE_SOUNDS[settings.groupCompleteSound].play(); }],
     themeToggle:       ['theme', 'theme', applyTheme],
     orientationToggle: ['orient', 'mapOrientation', render],
     logOrderToggle:    ['order', 'logOrder', render],

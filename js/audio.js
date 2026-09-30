@@ -61,9 +61,73 @@ function playScratchSound(){
     noise.stop(now + duration + 0.02);
   }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
 }
-// A short ascending three-note chime, played once when a group's narrations are all heard.
+// Played once when a group's narrations are all heard: the chime or the gong, per settings.
+const COMPLETE_SOUNDS = {
+  chime: {label:'Chime', play: playChimeSound},
+  gong:  {label:'Gong',  play: playGongSound},
+};
 function playGroupCompleteSound(){
   if(!settings.groupCompleteSoundEnabled) return;
+  (COMPLETE_SOUNDS[settings.groupCompleteSound] || COMPLETE_SOUNDS.chime).play();
+}
+// A deep gong struck once: a low fundamental with inharmonic overtones (as a metal plate
+// has), each fading at its own rate — the high ones first, so the tone darkens as it rings.
+// Two slightly detuned copies of the fundamental beat against each other for the gong's
+// slow shimmer, the pitch sags a little just after the strike, and a short burst of
+// filtered noise gives the mallet's thud. Rings for about eight seconds.
+function playGongSound(){
+  try{
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const out = ctx.createGain();
+    out.gain.value = 0.07;
+    const tone = ctx.createBiquadFilter();       // the brightness fades as the gong rings
+    tone.type = 'lowpass';
+    tone.frequency.setValueAtTime(4200, now);
+    tone.frequency.exponentialRampToValueAtTime(500, now + 6);
+    tone.connect(out).connect(ctx.destination);
+
+    const base = 88; // Hz — roughly F2
+    // [frequency ratio, loudness, seconds to fade out]
+    const partials = [
+      [1.000, 1.00, 8.0], [1.006, 0.70, 7.5],     // fundamental and its beating twin
+      [1.483, 0.55, 5.5], [2.012, 0.50, 4.5], [2.431, 0.36, 3.6],
+      [2.937, 0.28, 2.8], [3.618, 0.20, 2.1], [4.402, 0.14, 1.5], [5.283, 0.10, 1.0],
+    ];
+    partials.forEach(([ratio, level, decay], i)=>{
+      const freq = base * ratio;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * 1.015, now);
+      osc.frequency.exponentialRampToValueAtTime(freq, now + 0.35);
+      const attack = i < 2 ? 0.04 : 0.008;         // the low hum swells in just after the strike
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(level, now + attack);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+      osc.connect(gain).connect(tone);
+      osc.start(now);
+      osc.stop(now + decay + 0.05);
+    });
+
+    // the mallet: a short, dull thud of low-passed noise
+    const len = Math.floor(ctx.sampleRate * 0.12);
+    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0; i<len; i++){ data[i] = (Math.random()*2-1) * (1 - i/len); }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const thud = ctx.createBiquadFilter();
+    thud.type = 'lowpass';
+    thud.frequency.value = 900;
+    const thudGain = ctx.createGain();
+    thudGain.gain.value = 0.9;
+    noise.connect(thud).connect(thudGain).connect(tone);
+    noise.start(now);
+  }catch(e){ /* audio context may be blocked until a user gesture — safe to ignore */ }
+}
+// A short ascending three-note chime.
+function playChimeSound(){
   try{
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
