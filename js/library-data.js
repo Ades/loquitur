@@ -88,7 +88,8 @@ function cleanNode(raw, gameId){
   delete n.prerequisiteMode;
   return n;
 }
-// A condition tree with only and/or groups and conditions on valid ids; anything else is left
+// A condition tree with only and/or groups and conditions on valid ids, each optionally
+// negated (not:true); anything else is left
 // out. Nesting is capped so a hostile file can't make evaluation recurse without end.
 const MAX_REQUIRES_DEPTH = 12;
 function cleanRequires(item, depth){
@@ -96,10 +97,11 @@ function cleanRequires(item, depth){
   if(isReqGroup(item)){
     if(depth >= MAX_REQUIRES_DEPTH) return null;
     const items = (Array.isArray(item.items) ? item.items : []).map(i=>cleanRequires(i, depth+1)).filter(Boolean);
-    return {op: item.op, items};
+    return item.not===true ? {op: item.op, items, not: true} : {op: item.op, items};
   }
   const nodeId = safeId(item.nodeId);
-  return nodeId ? {nodeId, choiceId: safeId(item.choiceId)} : null;
+  if(!nodeId) return null;
+  return item.not===true ? {nodeId, choiceId: safeId(item.choiceId), not: true} : {nodeId, choiceId: safeId(item.choiceId)};
 }
 // Only known settings, each of the same type as its default; string settings must be plain words.
 function cleanSettings(raw){

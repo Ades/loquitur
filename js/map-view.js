@@ -174,17 +174,26 @@ function renderCampaignMapCore(nodes, game, groupOverride){
   let lines = '';
   visibleNodes.forEach(n=>{
     // one connector per prerequisite narration, labelled with every choice the conditions
-    // ask for (a narration can appear in several conditions, with different choices)
+    // ask for (a narration can appear in several conditions, with different choices);
+    // NOT conditions are drawn dashed and labelled "not"
     const byPrereq = new Map();
     prereqRefs(n).forEach(p=>{
-      if(!byPrereq.has(p.nodeId)) byPrereq.set(p.nodeId, new Set());
-      if(p.choiceId) byPrereq.get(p.nodeId).add(p.choiceId);
+      if(!byPrereq.has(p.nodeId)) byPrereq.set(p.nodeId, []);
+      byPrereq.get(p.nodeId).push(p);
     });
-    byPrereq.forEach((choiceIds, prereqId)=>{
+    byPrereq.forEach((refs, prereqId)=>{
       const from = pos[prereqId], to = pos[n.id];
       if(!from||!to) return;
       const pn = idToNode[prereqId];
-      const label = [...choiceIds].map(cid=>{ const c = pn && (pn.choices||[]).find(c=>c.id===cid); return c ? c.label : ''; }).filter(Boolean).join(' / ');
+      const choiceLabel = (cid)=>{ const c = pn && (pn.choices||[]).find(c=>c.id===cid); return c ? c.label : ''; };
+      const parts = [];
+      refs.forEach(r=>{
+        const text = r.choiceId ? choiceLabel(r.choiceId) : '';
+        const part = r.negated ? (text ? `not ${text}` : 'not') : text;
+        if(part && !parts.includes(part)) parts.push(part);
+      });
+      const label = parts.join(' / ');
+      const dashed = refs.some(r=>r.negated);
       const stroke = isCompleted(prereqId) ? pal.connDone : pal.connLocked;
       let d, labelX, labelY;
       if(isVertical){
@@ -196,7 +205,7 @@ function renderCampaignMapCore(nodes, game, groupOverride){
         d = `M${from.x+circleR},${from.y} C${midx},${from.y} ${midx},${to.y} ${to.x-circleR},${to.y}`;
         labelX = midx; labelY = (from.y+to.y)/2 - 6;
       }
-      lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
+      lines += `<path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none"${dashed ? ' stroke-dasharray="5 4"' : ''}/>`;
       if(label){
         lines += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="9" class="map-node-label" fill="${pal.connDone}" style="font-style:italic;">${escapeHtml(label)}</text>`;
       }

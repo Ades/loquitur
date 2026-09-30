@@ -134,7 +134,7 @@ function renderManagePanel(game){
       ${otherNodes.length===0
         ? '<div class="hint">No other narrations yet — this will be available from the start.</div>'
         : '<div id="reqEditor"></div><div class="req-summary" id="reqSummary"></div>'}
-      <div class="hint">Build the rule from conditions — a narration heard, optionally with a specific choice made — and groups. "All of these" needs every item in it; "Any one of these" needs at least one. Groups can be nested, e.g. A AND (B OR C). With no conditions, the narration is available from the start.</div>
+      <div class="hint">Build the rule from conditions — a narration heard, optionally with a specific choice made — and groups. "All of these" needs every item in it; "Any one of these" needs at least one. Groups can be nested, e.g. A AND (B OR C). "NOT" in front of a condition or group inverts it, e.g. NOT B for "B not heard yet" — note that a narration requiring NOT B disappears again once B is heard, unless it has already been heard itself. With no conditions, the narration is available from the start.</div>
     </div>
 
     <div class="field">
@@ -255,16 +255,18 @@ function renderManagePanel(game){
   }
   function buildReqGroup(group, parent){
     const box = document.createElement('div');
-    box.className = 'req-group' + (parent ? ' req-nested' : '');
+    box.className = 'req-group' + (parent ? ' req-nested' : '') + (group.not ? ' req-negated' : '');
     const head = document.createElement('div');
     head.className = 'req-head';
     head.innerHTML = `
+      ${notToggleHtml(group, 'Invert this whole group: NOT (…)')}
       <select class="req-op" title="How the items in this group combine">
         <option value="and" ${group.op==='and'?'selected':''}>All of these (AND)</option>
         <option value="or" ${group.op==='or'?'selected':''}>Any one of these (OR)</option>
       </select>
       ${parent ? '<button type="button" class="small-x" title="Remove this group">×</button>' : ''}`;
     head.querySelector('.req-op').onchange = (e)=>{ group.op = e.target.value; renderReqEditor(); };
+    wireNotToggle(head, group);
     if(parent) head.querySelector('.small-x').onclick = ()=>{ parent.items.splice(parent.items.indexOf(group), 1); renderReqEditor(); };
     box.appendChild(head);
 
@@ -301,10 +303,11 @@ function renderManagePanel(game){
   }
   function buildReqCond(cond, parent){
     const row = document.createElement('div');
-    row.className = 'req-cond' + (cond===reqFocus ? ' req-focus' : '');
+    row.className = 'req-cond' + (cond===reqFocus ? ' req-focus' : '') + (cond.not ? ' req-negated' : '');
     const target = cond.nodeId ? nodeById[cond.nodeId] : null;
     const choices = target ? (target.choices||[]) : [];
     row.innerHTML = `
+      ${notToggleHtml(cond, 'Invert this condition: NOT heard / NOT that choice')}
       <select class="req-node">
         <option value="">Choose a narration…</option>
         ${cond.nodeId && !target ? `<option value="${escapeHtml(cond.nodeId)}">(removed narration)</option>` : ''}
@@ -323,13 +326,28 @@ function renderManagePanel(game){
     nodeSel.onchange = ()=>{ cond.nodeId = nodeSel.value || null; cond.choiceId = null; renderReqEditor(); };
     choiceSel.onchange = ()=>{ cond.choiceId = choiceSel.value || null; renderReqEditor(); };
     row.querySelector('.small-x').onclick = ()=>{ parent.items.splice(parent.items.indexOf(cond), 1); renderReqEditor(); };
+    wireNotToggle(row, cond);
     return row;
   }
-  // The tree as saved: conditions without a narration and groups left empty are dropped.
+  // NOT toggle shown in front of every condition and group
+  function notToggleHtml(item, title){
+    return `<button type="button" class="req-not${item.not ? ' active' : ''}" aria-pressed="${item.not ? 'true' : 'false'}" title="${title}">NOT</button>`;
+  }
+  function wireNotToggle(container, item){
+    container.querySelector('.req-not').onclick = ()=>{
+      if(item.not) delete item.not; else item.not = true;
+      renderReqEditor();
+    };
+  }
+  // The tree as saved: conditions without a narration and groups left empty are dropped
+  // (and NOT on an empty rule, which would make the narration unreachable).
   function pruneRequires(item){
-    if(!isReqGroup(item)) return item.nodeId ? {nodeId: item.nodeId, choiceId: item.choiceId || null} : null;
+    if(!isReqGroup(item)){
+      if(!item.nodeId) return null;
+      return item.not ? {nodeId: item.nodeId, choiceId: item.choiceId || null, not: true} : {nodeId: item.nodeId, choiceId: item.choiceId || null};
+    }
     const items = item.items.map(pruneRequires).filter(i=> i && (!isReqGroup(i) || i.items.length));
-    return {op: item.op, items};
+    return (item.not && items.length) ? {op: item.op, items, not: true} : {op: item.op, items};
   }
   renderReqEditor();
 
@@ -512,14 +530,18 @@ function renderManagePanel(game){
     row.className = 'node-manage-item';
     row.draggable = true;
     row.dataset.id = n.id;
-    // e.g. "3 prereqs (any)" for a plain OR, "(and/or)" once groups mix; hover shows the whole rule
+    // e.g. "3 prereqs (any)" for a plain OR, "(and/or)" once groups mix, "(not)" with a NOT; hover shows the whole rule
     const expr = prereqExpr(n);
     const refCount = prereqRefs(n).length;
     const hasOr = (function anyOr(item){ return isReqGroup(item) && ((item.op==='or' && item.items.length>1) || item.items.some(anyOr)); })(expr);
     const flatOr = expr.op==='or' && !expr.items.some(isReqGroup);
+    const hasNot = prereqRefs(n).some(r=>r.negated) || !!expr.not;
     let prereqBadge = 'start node';
     if(refCount){
-      prereqBadge = `${refCount} prereq${refCount===1?'':'s'}` + (!hasOr ? '' : flatOr ? ' (any)' : ' (and/or)');
+      const kinds = [];
+      if(hasOr) kinds.push(flatOr ? 'any' : 'and/or');
+      if(hasNot) kinds.push('not');
+      prereqBadge = `${refCount} prereq${refCount===1?'':'s'}` + (kinds.length ? ` (${kinds.join(', ')})` : '');
     }
     const titleOf = (id)=>{ const x = nodesByGame[game.id].find(m=>m.id===id); return x ? x.title : 'a removed narration'; };
     const choiceOf = (id, cid)=>{ const x = nodesByGame[game.id].find(m=>m.id===id); const c = x && (x.choices||[]).find(c=>c.id===cid); return c ? c.label : 'a removed choice'; };

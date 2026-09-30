@@ -15,7 +15,13 @@ function completionRecord(nodeId){ return progress.completed[nodeId]; }
 // A narration's prerequisites are a condition tree, stored in node.requires:
 //   group:     {op:'and'|'or', items:[...]}   — all of / any one of its items
 //   condition: {nodeId, choiceId}              — that narration heard (with that choice, if set)
-// Groups nest freely. An empty group (or no prerequisites at all) is always satisfied.
+// Any group or condition can also carry not:true, which inverts it: {nodeId:'X', not:true} is
+// "X not heard", {op:'or', items:[A,B], not:true} is "neither A nor B". Groups nest freely.
+// An empty group (or no prerequisites at all) is always satisfied.
+//
+// Without NOT, hearing a narration can only unlock others. With NOT it can also lock an
+// unheard narration again (D requiring NOT X disappears once X is heard); heard narrations
+// always stay available.
 //
 // Older data has a flat node.prerequisites list instead, each entry marked group 'all' or
 // 'any' (or, older still, one node.prerequisiteMode for the whole list), meaning: every
@@ -41,18 +47,26 @@ function prereqExpr(node){
   return expr;
 }
 function evalRequires(item){
-  if(!isReqGroup(item)) return prereqSatisfied(item);
-  const items = item.items || [];
-  if(items.length===0) return true;
-  return item.op==='or' ? items.some(evalRequires) : items.every(evalRequires);
+  let result;
+  if(!isReqGroup(item)){
+    result = prereqSatisfied(item);
+  } else {
+    const items = item.items || [];
+    result = items.length===0 ? true : item.op==='or' ? items.some(evalRequires) : items.every(evalRequires);
+  }
+  return item.not ? !result : result;
 }
 // Every condition in the tree, flattened — for map connectors, "what does this unlock", badges.
+// Each entry is {nodeId, choiceId, negated}; negated is true when an odd number of NOTs
+// (on the condition itself or on groups around it) apply to it.
 function prereqRefs(node){
   const out = [];
-  (function walk(item){
-    if(isReqGroup(item)) (item.items||[]).forEach(walk);
-    else if(item && item.nodeId) out.push(item);
-  })(prereqExpr(node));
+  (function walk(item, negated){
+    if(!item) return;
+    const neg = item.not ? !negated : negated;
+    if(isReqGroup(item)) (item.items||[]).forEach(i=>walk(i, neg));
+    else if(item.nodeId) out.push({nodeId: item.nodeId, choiceId: item.choiceId || null, negated: neg});
+  })(prereqExpr(node), false);
   return out;
 }
 // Readable form of a condition tree, e.g.  A AND (B OR C: “Flee”).  titleOf(nodeId) and
@@ -60,11 +74,13 @@ function prereqRefs(node){
 function describeRequires(expr, titleOf, choiceLabelOf, nested){
   if(!isReqGroup(expr)){
     const t = titleOf(expr.nodeId);
-    return expr.choiceId ? `${t}: “${choiceLabelOf(expr.nodeId, expr.choiceId)}”` : t;
+    const base = expr.choiceId ? `${t}: “${choiceLabelOf(expr.nodeId, expr.choiceId)}”` : t;
+    return expr.not ? `NOT ${base}` : base;
   }
   const items = (expr.items||[]).filter(i=> isReqGroup(i) ? (i.items||[]).length : i.nodeId);
-  if(items.length===0) return nested ? '' : 'available from the start';
+  if(items.length===0) return nested ? '' : (expr.not ? 'never' : 'available from the start');
   const text = items.map(i=>describeRequires(i, titleOf, choiceLabelOf, true)).filter(Boolean).join(expr.op==='or' ? ' OR ' : ' AND ');
+  if(expr.not) return items.length>1 ? `NOT (${text})` : `NOT ${text}`;
   return nested && items.length>1 ? `(${text})` : text;
 }
 // True once a node's own prerequisites are satisfied — independent of whether the
