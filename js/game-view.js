@@ -332,6 +332,9 @@ function openSectionAfterEntrance(game, g){
       if((game.groups||[]).includes(g) && g.collapsed){ g.collapsed = false; changedGames.add(game); }
     });
     for(const gm of changedGames){ await sSet('game:'+gm.id, gm); }
+    // a redraw would rebuild an open narration window (restarting its audio); the list is
+    // redrawn with the groups open when that window closes anyway
+    if(readerNode) return;
     if(route.view==='game' && !manageMode && batch.some(({game})=>game.id===route.gameId)) render();
   }, SECTION_ENTRANCE_MS);
 }
