@@ -110,7 +110,7 @@ function renderCampaignMapCore(nodes, game, groupOverride){
   while(relaxed && guardIter < maxIter){
     relaxed = false; guardIter++;
     nodes.forEach(n=>{
-      (n.prerequisites||[]).forEach(p=>{
+      prereqRefs(n).forEach(p=>{
         const pn = idToNode[p.nodeId];
         if(!pn || layerOf[pn.id]===undefined) return; // prerequisite outside this graph — nothing to enforce
         const need = layerOf[pn.id] + 1;
@@ -145,7 +145,7 @@ function renderCampaignMapCore(nodes, game, groupOverride){
   // eliminate every crossing (diamonds and OR-branches sometimes force one), but it
   // minimizes them for whatever the graph's actual shape allows.
   function barycenterOf(n){
-    const coords = normalizedPrereqs(n)
+    const coords = prereqRefs(n)
       .map(p=>pos[p.nodeId])
       .filter(Boolean)
       .map(pp=> isVertical ? pp.x : pp.y);
@@ -173,11 +173,19 @@ function renderCampaignMapCore(nodes, game, groupOverride){
   const pal = mapPalette(game);
   let lines = '';
   visibleNodes.forEach(n=>{
-    normalizedPrereqs(n).forEach(p=>{
-      const from = pos[p.nodeId], to = pos[n.id];
+    // one connector per prerequisite narration, labelled with every choice the conditions
+    // ask for (a narration can appear in several conditions, with different choices)
+    const byPrereq = new Map();
+    prereqRefs(n).forEach(p=>{
+      if(!byPrereq.has(p.nodeId)) byPrereq.set(p.nodeId, new Set());
+      if(p.choiceId) byPrereq.get(p.nodeId).add(p.choiceId);
+    });
+    byPrereq.forEach((choiceIds, prereqId)=>{
+      const from = pos[prereqId], to = pos[n.id];
       if(!from||!to) return;
-      const label = p.choiceId ? (()=>{ const pn=idToNode[p.nodeId]; const c=pn&&pn.choices&&pn.choices.find(c=>c.id===p.choiceId); return c?c.label:''; })() : '';
-      const stroke = isCompleted(p.nodeId) ? pal.connDone : pal.connLocked;
+      const pn = idToNode[prereqId];
+      const label = [...choiceIds].map(cid=>{ const c = pn && (pn.choices||[]).find(c=>c.id===cid); return c ? c.label : ''; }).filter(Boolean).join(' / ');
+      const stroke = isCompleted(prereqId) ? pal.connDone : pal.connLocked;
       let d, labelX, labelY;
       if(isVertical){
         const midy = (from.y+to.y)/2;

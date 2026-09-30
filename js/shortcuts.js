@@ -87,7 +87,7 @@ async function duplicateLastEdited(chain){
     return;
   }
   // chain: the copy requires the original, so it continues on from it
-  const copy = await duplicateNode(original, chain ? [{nodeId: original.id, choiceId: null, group:'all'}] : undefined);
+  const copy = await duplicateNode(original, chain ? {op:'and', items:[{nodeId: original.id, choiceId: null}]} : undefined);
   if(!copy){ toast(chain ? 'Could not create the next narration — please try again.' : 'Could not copy this narration — please try again.'); return; }
   route = {view:'game', gameId: original.gameId};
   editingNodeId = copy.id;
@@ -133,7 +133,7 @@ async function cycleHoveredNodeShape(){
   toast(`Map shape: ${MAP_SHAPE_NAMES[n.mapShape]}`);
   render();
 }
-let prereqPos = 0; // Shift+A cycles through the checked prerequisites
+let prereqPos = 0; // Shift+A cycles through the prerequisite conditions
 document.addEventListener('keydown', (e)=>{
   if(!manageMode) return;
   const active = document.activeElement;
@@ -183,11 +183,12 @@ document.addEventListener('keydown', (e)=>{
   }
   if(e.key==='A' && !isTextEditing && e.shiftKey){
     setTimeout(()=>{
-      const checked = document.querySelectorAll('.prereqCk:checked');
-      if(checked.length===0) return;
-      prereqPos = prereqPos % checked.length;
-      checked[prereqPos].scrollIntoView({behavior:'smooth', block:'center', inline:'start'});
-      prereqPos = (prereqPos+1) % checked.length;
+      const pickers = document.querySelectorAll('.manage-panel .req-cond .req-node');
+      if(pickers.length===0) return;
+      prereqPos = prereqPos % pickers.length;
+      pickers[prereqPos].scrollIntoView({behavior:'smooth', block:'center', inline:'start'});
+      pickers[prereqPos].focus({preventScroll:true});
+      prereqPos = (prereqPos+1) % pickers.length;
     }, 30);
   }
 });

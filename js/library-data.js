@@ -37,7 +37,7 @@ function importLibraryFromFile(file){
 const SAFE_ID = /^[A-Za-z0-9_-]{1,64}$/;
 const SAFE_WORD = /^[A-Za-z0-9_-]{0,40}$/;
 const SAFE_COLOR = /^#[0-9a-fA-F]{3,8}$/;
-const NODE_OPTION_FIELDS = ['logMode','mapShape','mapLabel','mapTooltip','imagePosition','prerequisiteMode'];
+const NODE_OPTION_FIELDS = ['logMode','mapShape','mapLabel','mapTooltip','imagePosition'];
 const GAME_OPTION_FIELDS = ['stylePreset','titleFont','textFont'];
 
 const safeId = (v)=> (typeof v==='string' && SAFE_ID.test(v)) ? v : null;
@@ -78,10 +78,28 @@ function cleanNode(raw, gameId){
   n.choices = (Array.isArray(raw.choices) ? raw.choices : [])
     .filter(c=> c && typeof c==='object' && safeId(c.id))
     .map(c=> ({id: c.id, label: safeText(c.label), resultText: safeText(c.resultText)}));
-  n.prerequisites = (Array.isArray(raw.prerequisites) ? raw.prerequisites : [])
-    .filter(p=> p && typeof p==='object' && safeId(p.nodeId))
-    .map(p=> ({nodeId: p.nodeId, choiceId: safeId(p.choiceId), ...(p.group ? {group: p.group==='any' ? 'any' : 'all'} : {})}));
+  // prerequisites are always stored as a condition tree; older files' flat lists are converted
+  const legacy = {
+    prerequisiteMode: raw.prerequisiteMode,
+    prerequisites: (Array.isArray(raw.prerequisites) ? raw.prerequisites : []).filter(p=> p && typeof p==='object'),
+  };
+  n.requires = cleanRequires(isReqGroup(raw.requires) ? raw.requires : legacyRequires(legacy), 0) || emptyRequires();
+  delete n.prerequisites;
+  delete n.prerequisiteMode;
   return n;
+}
+// A condition tree with only and/or groups and conditions on valid ids; anything else is left
+// out. Nesting is capped so a hostile file can't make evaluation recurse without end.
+const MAX_REQUIRES_DEPTH = 12;
+function cleanRequires(item, depth){
+  if(!item || typeof item!=='object') return null;
+  if(isReqGroup(item)){
+    if(depth >= MAX_REQUIRES_DEPTH) return null;
+    const items = (Array.isArray(item.items) ? item.items : []).map(i=>cleanRequires(i, depth+1)).filter(Boolean);
+    return {op: item.op, items};
+  }
+  const nodeId = safeId(item.nodeId);
+  return nodeId ? {nodeId, choiceId: safeId(item.choiceId)} : null;
 }
 // Only known settings, each of the same type as its default; string settings must be plain words.
 function cleanSettings(raw){
@@ -166,18 +184,20 @@ async function deleteGame(game){
 }
 
 // Saves a copy of a narration (fresh ids, placed last in its group) and returns it,
-// or null if it couldn't be stored. prerequisites defaults to a copy of the original's.
-async function duplicateNode(original, prerequisites){
+// or null if it couldn't be stored. requires (a condition tree) defaults to a copy of the original's.
+async function duplicateNode(original, requires){
   const siblings = (nodesByGame[original.gameId]||[]).filter(x=> (x.groupId||null) === (original.groupId||null));
   const copy = {
     ...original,
     id: uid(),
     title: original.title + ' (copy)',
     choices: (original.choices||[]).map(c=> ({...c, id: uid()})),
-    prerequisites: prerequisites || (original.prerequisites||[]).map(p=> ({...p})),
+    requires: requires || JSON.parse(JSON.stringify(prereqExpr(original))),
     order: siblings.length ? Math.max(...siblings.map(s=>s.order||0)) + 1 : 0,
     createdAt: Date.now()
   };
+  delete copy.prerequisites;
+  delete copy.prerequisiteMode;
   if(!await sSet('node:'+copy.id, copy)) return null;
   const nodeIndex = await sGet('node-index:'+original.gameId) || [];
   nodeIndex.push(copy.id);

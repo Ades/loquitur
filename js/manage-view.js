@@ -11,11 +11,6 @@ function renderManagePanel(game){
   panel.className='manage-panel';
 
   const otherNodes = nodes.filter(n=> !editingNode || n.id !== editingNode.id);
-  const normEditingPrereqs = editingNode ? normalizedPrereqs(editingNode) : [];
-  const existingPrereqIds = normEditingPrereqs.map(p=>p.nodeId);
-  const existingPrereqChoice = {};
-  const existingPrereqGroup = {};
-  normEditingPrereqs.forEach(p=>{ existingPrereqChoice[p.nodeId] = p.choiceId || ''; existingPrereqGroup[p.nodeId] = p.group || 'all'; });
 
   panel.innerHTML = `
     <h3>
@@ -136,48 +131,10 @@ function renderManagePanel(game){
 
     <div class="field">
       <label>Unlocked only after (prerequisites)</label>
-      <div class="prereq-box" id="prereqBox">
-        ${otherNodes.length===0? '<div class="hint">No other narrations yet — this will be available from the start.</div>' :
-          (()=>{
-            function prereqItem(n){
-            const checked = existingPrereqIds.includes(n.id);
-            const hasChoices = n.choices && n.choices.length;
-            const grp = existingPrereqGroup[n.id] || 'all';
-            return `
-            <div class="prereq-item">
-              <input type="checkbox" class="prereqCk" value="${n.id}" ${checked?'checked':''}>
-              <span style="flex:1;">${escapeHtml(n.title)}</span>
-              <select class="prereqGroup" data-for="${n.id}" ${checked?'':'disabled'}>
-                <option value="all" ${grp==='all'?'selected':''}>AND (required)</option>
-                <option value="any" ${grp==='any'?'selected':''}>OR (any one)</option>
-              </select>
-              <select class="prereqChoice" data-for="${n.id}" ${checked?'':'disabled'}>
-                <option value="">any completion</option>
-                ${hasChoices? n.choices.map(c=>`<option value="${c.id}" ${existingPrereqChoice[n.id]===c.id?'selected':''}>requires choice: ${escapeHtml(c.label)}</option>`).join(''):''}
-              </select>
-            </div>`;
-            }
-            const byOrder = (a,b)=>(a.order||0)-(b.order||0);
-            const gameGroups = game.groups || [];
-            if(gameGroups.length===0){
-              return otherNodes.slice().sort(byOrder).map(prereqItem).join('');
-            }
-            const validGroupIds = gameGroups.map(g=>g.id);
-            const ungrouped = otherNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId)).sort(byOrder);
-            let html = '';
-            if(ungrouped.length){
-              html += `<div class="prereq-group-label">Ungrouped</div>` + ungrouped.map(prereqItem).join('');
-            }
-            gameGroups.forEach(g=>{
-              const list = otherNodes.filter(n=>n.groupId===g.id).sort(byOrder);
-              if(list.length){
-                html += `<div class="prereq-group-label">${escapeHtml(g.name)}</div>` + list.map(prereqItem).join('');
-              }
-            });
-            return html;
-          })()}
-      </div>
-      <div class="hint">Leave all unchecked for a narration available from the start. Mark a checked prerequisite "AND" if it's always required, or "OR" if satisfying just one of the OR-marked prerequisites is enough — the narration unlocks once all AND prerequisites are met, and (if any are marked OR) at least one OR prerequisite too.</div>
+      ${otherNodes.length===0
+        ? '<div class="hint">No other narrations yet — this will be available from the start.</div>'
+        : '<div id="reqEditor"></div><div class="req-summary" id="reqSummary"></div>'}
+      <div class="hint">Build the rule from conditions — a narration heard, optionally with a specific choice made — and groups. "All of these" needs every item in it; "Any one of these" needs at least one. Groups can be nested, e.g. A AND (B OR C). With no conditions, the narration is available from the start.</div>
     </div>
 
     <div class="field">
@@ -189,7 +146,7 @@ function renderManagePanel(game){
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:8px;">
-      <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field, <strong>Shift+A</strong> go to next checked prerequisite.</span>
+      <span class="hint" style="margin:0;">Fast keys: <strong>Shift+Enter</strong> saves this form, <strong>Esc</strong> cancels editing, <strong>Shift+→</strong> switches the image to "Local file path", focuses it and pastes the clipboard, <strong>Shift+←</strong> does the same for the audio field, <strong>Shift+↓</strong> duplicates the last-saved narration as the next one in sequence, <strong>Shift+↑</strong> duplicates it as a plain copy with the same prerequisites, <strong>Shift+&gt;</strong> jumps to the next narration visible in an expanded group (<strong>Ctrl+&lt;</strong> for the previous one) without stealing focus from the title field, <strong>Shift+A</strong> goes to the next prerequisite condition.</span>
       <button class="btn primary" id="saveNode">${editingNode? 'Save changes' : 'Add narration'}</button>
     </div>
 
@@ -258,12 +215,123 @@ function renderManagePanel(game){
   };
   nImageSubdirInp.oninput = ()=>{ if(nImageLastPicked) panel.querySelector('#nImagePath').value = joinSubdirPath(nImageSubdirInp.value, nImageLastPicked); };
 
-  // prereq checkbox enabling group + choice dropdowns
-  panel.querySelectorAll('.prereqCk').forEach(ck=>{
-    const grpSel = panel.querySelector(`.prereqGroup[data-for="${ck.value}"]`);
-    const choiceSel = panel.querySelector(`.prereqChoice[data-for="${ck.value}"]`);
-    ck.onchange = ()=>{ grpSel.disabled = !ck.checked; choiceSel.disabled = !ck.checked; };
-  });
+  // ---- Prerequisite builder: a tree of "all of" / "any one of" groups and conditions ----
+  // Edits a working copy of the tree; conditions still missing a narration are allowed while
+  // editing and simply left out when saving (see pruneRequires).
+  const reqTree = JSON.parse(JSON.stringify(editingNode ? prereqExpr(editingNode) : emptyRequires()));
+  const reqEditor = panel.querySelector('#reqEditor');
+  const reqSummary = panel.querySelector('#reqSummary');
+  const nodeById = {}; nodes.forEach(n=>{ nodeById[n.id] = n; });
+  const reqTitleOf = (id)=> nodeById[id] ? (nodeById[id].title || 'Untitled') : 'a removed narration';
+  const reqChoiceLabelOf = (id, cid)=>{ const c = nodeById[id] && (nodeById[id].choices||[]).find(c=>c.id===cid); return c ? c.label : 'a removed choice'; };
+  // narration picker options, listed by group in their Manage Codex order
+  const reqNodeOptions = (()=>{
+    const byOrder = (a,b)=>(a.order||0)-(b.order||0);
+    const opt = (n)=>`<option value="${n.id}">${escapeHtml(n.title || 'Untitled')}</option>`;
+    const gameGroups = game.groups || [];
+    if(gameGroups.length===0) return otherNodes.slice().sort(byOrder).map(opt).join('');
+    const validGroupIds = gameGroups.map(g=>g.id);
+    const ungrouped = otherNodes.filter(n=> !n.groupId || !validGroupIds.includes(n.groupId)).sort(byOrder);
+    let html = ungrouped.length ? `<optgroup label="Ungrouped">${ungrouped.map(opt).join('')}</optgroup>` : '';
+    gameGroups.forEach(g=>{
+      const list = otherNodes.filter(n=>n.groupId===g.id).sort(byOrder);
+      if(list.length) html += `<optgroup label="${escapeHtml(g.name)}">${list.map(opt).join('')}</optgroup>`;
+    });
+    return html;
+  })();
+  let reqFocus = null; // condition whose narration picker gets focus after the next redraw
+
+  function renderReqEditor(){
+    if(!reqEditor) return;
+    reqEditor.innerHTML = '';
+    reqEditor.appendChild(buildReqGroup(reqTree, null));
+    const text = describeRequires(pruneRequires(reqTree), reqTitleOf, reqChoiceLabelOf);
+    reqSummary.innerHTML = `<strong>Unlocks when:</strong> ${escapeHtml(text)}`;
+    if(reqFocus){
+      const sel = reqEditor.querySelector('.req-cond.req-focus .req-node');
+      if(sel) sel.focus();
+      reqFocus = null;
+    }
+  }
+  function buildReqGroup(group, parent){
+    const box = document.createElement('div');
+    box.className = 'req-group' + (parent ? ' req-nested' : '');
+    const head = document.createElement('div');
+    head.className = 'req-head';
+    head.innerHTML = `
+      <select class="req-op" title="How the items in this group combine">
+        <option value="and" ${group.op==='and'?'selected':''}>All of these (AND)</option>
+        <option value="or" ${group.op==='or'?'selected':''}>Any one of these (OR)</option>
+      </select>
+      ${parent ? '<button type="button" class="small-x" title="Remove this group">×</button>' : ''}`;
+    head.querySelector('.req-op').onchange = (e)=>{ group.op = e.target.value; renderReqEditor(); };
+    if(parent) head.querySelector('.small-x').onclick = ()=>{ parent.items.splice(parent.items.indexOf(group), 1); renderReqEditor(); };
+    box.appendChild(head);
+
+    if(group.items.length===0){
+      const empty = document.createElement('div');
+      empty.className = 'hint req-empty';
+      empty.textContent = parent ? 'Empty group — always satisfied. Add a condition, or remove the group.' : 'No prerequisites — available from the start.';
+      box.appendChild(empty);
+    }
+    group.items.forEach((item, i)=>{
+      if(i>0){
+        const join = document.createElement('div');
+        join.className = 'req-join';
+        join.textContent = group.op==='or' ? 'or' : 'and';
+        box.appendChild(join);
+      }
+      box.appendChild(isReqGroup(item) ? buildReqGroup(item, group) : buildReqCond(item, group));
+    });
+
+    const foot = document.createElement('div');
+    foot.className = 'req-foot';
+    foot.innerHTML = `<button type="button" class="btn ghost small" data-req-add="cond">+ Condition</button><button type="button" class="btn ghost small" data-req-add="group">+ Group</button>`;
+    foot.querySelector('[data-req-add="cond"]').onclick = ()=>{
+      const cond = {nodeId:null, choiceId:null};
+      group.items.push(cond); reqFocus = cond; renderReqEditor();
+    };
+    foot.querySelector('[data-req-add="group"]').onclick = ()=>{
+      // a new group combines the other way round, which is what nesting is usually for
+      const cond = {nodeId:null, choiceId:null};
+      group.items.push({op: group.op==='and' ? 'or' : 'and', items:[cond]}); reqFocus = cond; renderReqEditor();
+    };
+    box.appendChild(foot);
+    return box;
+  }
+  function buildReqCond(cond, parent){
+    const row = document.createElement('div');
+    row.className = 'req-cond' + (cond===reqFocus ? ' req-focus' : '');
+    const target = cond.nodeId ? nodeById[cond.nodeId] : null;
+    const choices = target ? (target.choices||[]) : [];
+    row.innerHTML = `
+      <select class="req-node">
+        <option value="">Choose a narration…</option>
+        ${cond.nodeId && !target ? `<option value="${escapeHtml(cond.nodeId)}">(removed narration)</option>` : ''}
+        ${reqNodeOptions}
+      </select>
+      <select class="req-choice" ${choices.length ? '' : 'style="display:none;"'}>
+        <option value="">heard (any choice)</option>
+        ${choices.map(c=>`<option value="${c.id}">chose “${escapeHtml(c.label)}”</option>`).join('')}
+        ${cond.choiceId && !choices.some(c=>c.id===cond.choiceId) ? `<option value="${escapeHtml(cond.choiceId)}">(removed choice)</option>` : ''}
+      </select>
+      <button type="button" class="small-x" title="Remove this condition">×</button>`;
+    const nodeSel = row.querySelector('.req-node');
+    const choiceSel = row.querySelector('.req-choice');
+    nodeSel.value = cond.nodeId || '';
+    choiceSel.value = cond.choiceId || '';
+    nodeSel.onchange = ()=>{ cond.nodeId = nodeSel.value || null; cond.choiceId = null; renderReqEditor(); };
+    choiceSel.onchange = ()=>{ cond.choiceId = choiceSel.value || null; renderReqEditor(); };
+    row.querySelector('.small-x').onclick = ()=>{ parent.items.splice(parent.items.indexOf(cond), 1); renderReqEditor(); };
+    return row;
+  }
+  // The tree as saved: conditions without a narration and groups left empty are dropped.
+  function pruneRequires(item){
+    if(!isReqGroup(item)) return item.nodeId ? {nodeId: item.nodeId, choiceId: item.choiceId || null} : null;
+    const items = item.items.map(pruneRequires).filter(i=> i && (!isReqGroup(i) || i.items.length));
+    return {op: item.op, items};
+  }
+  renderReqEditor();
 
   // choice editor (label + result text shown when that choice is played)
   let choiceRows = editingNode && editingNode.choices ? editingNode.choices.map(c=>({id:c.id, label:c.label, resultText:c.resultText||''})) : [];
@@ -329,14 +397,7 @@ function renderManagePanel(game){
       return;
     }
 
-    const prerequisites = [];
-    panel.querySelectorAll('.prereqCk').forEach(ck=>{
-      if(ck.checked){
-        const grpSel = panel.querySelector(`.prereqGroup[data-for="${ck.value}"]`);
-        const choiceSel = panel.querySelector(`.prereqChoice[data-for="${ck.value}"]`);
-        prerequisites.push({nodeId: ck.value, choiceId: choiceSel.value || null, group: grpSel.value || 'all'});
-      }
-    });
+    const requires = pruneRequires(reqTree);
     const choices = choiceRows.filter(c=>c.label.trim()).map(c=>({id:c.id, label:c.label.trim(), resultText:(c.resultText||'').trim()}));
     const multiChoice = panel.querySelector('#nMultiChoice').checked;
     const imagePosition = panel.querySelector('#nImagePos').value;
@@ -357,7 +418,7 @@ function renderManagePanel(game){
     const node = {
       id, gameId: game.id, title,
       text: panel.querySelector('#nText').value.trim(),
-      audio, image, imagePosition, prerequisites, choices, multiChoice,
+      audio, image, imagePosition, requires, choices, multiChoice,
       hidden, completedByDefault, logMode, mapShape, mapLabel, mapTooltip, groupId, order,
       createdAt: editingNode ? editingNode.createdAt : Date.now()
     };
@@ -451,15 +512,18 @@ function renderManagePanel(game){
     row.className = 'node-manage-item';
     row.draggable = true;
     row.dataset.id = n.id;
-    const normPrereqs = normalizedPrereqs(n);
-    const anyCount = normPrereqs.filter(p=>p.group==='any').length;
-    const allCount = normPrereqs.length - anyCount;
+    // e.g. "3 prereqs (any)" for a plain OR, "(and/or)" once groups mix; hover shows the whole rule
+    const expr = prereqExpr(n);
+    const refCount = prereqRefs(n).length;
+    const hasOr = (function anyOr(item){ return isReqGroup(item) && ((item.op==='or' && item.items.length>1) || item.items.some(anyOr)); })(expr);
+    const flatOr = expr.op==='or' && !expr.items.some(isReqGroup);
     let prereqBadge = 'start node';
-    if(normPrereqs.length){
-      prereqBadge = `${normPrereqs.length} prereq${normPrereqs.length===1?'':'s'}`;
-      if(allCount>0 && anyCount>0) prereqBadge += ` (${allCount} and, ${anyCount} or)`;
-      else if(anyCount>1) prereqBadge += ' (any)';
+    if(refCount){
+      prereqBadge = `${refCount} prereq${refCount===1?'':'s'}` + (!hasOr ? '' : flatOr ? ' (any)' : ' (and/or)');
     }
+    const titleOf = (id)=>{ const x = nodesByGame[game.id].find(m=>m.id===id); return x ? x.title : 'a removed narration'; };
+    const choiceOf = (id, cid)=>{ const x = nodesByGame[game.id].find(m=>m.id===id); const c = x && (x.choices||[]).find(c=>c.id===cid); return c ? c.label : 'a removed choice'; };
+    const prereqRule = refCount ? describeRequires(expr, titleOf, choiceOf) : '';
     row.innerHTML = `
       <div class="left">
         <span class="drag-handle" title="Drag to reorder or move to a group">⠿</span>
@@ -468,7 +532,7 @@ function renderManagePanel(game){
         ${n.completedByDefault? `<span class="pid" style="color:var(--moss);">auto</span>`:''}
         ${(n.logMode && n.logMode!=='full')? `<span class="pid">log: ${escapeHtml(LOG_MODE_BADGES[n.logMode]||n.logMode)}</span>`:''}
         ${n.choices&&n.choices.length? `<span class="pid">${n.choices.length} choice${n.choices.length===1?'':'s'}</span>`:''}
-        <span class="pid">${prereqBadge}</span>
+        <span class="pid" ${prereqRule ? `title="Unlocks when: ${escapeHtml(prereqRule)}"` : ''}>${prereqBadge}</span>
         ${!n.image? `<span class="pid" style="color:#d99;">no image</span>` : `<span class="pid media-status" data-check="image">checking image…</span>`}
         ${!n.audio? `<span class="pid" style="color:#d99;">no narration</span>` : `<span class="pid media-status" data-check="audio">checking audio…</span>`}
       </div>

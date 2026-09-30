@@ -11,23 +11,67 @@ function findNodeById(id){
   return null;
 }
 function completionRecord(nodeId){ return progress.completed[nodeId]; }
-// Normalizes a node's prerequisites to always carry a group ('all' or 'any'), for backward
-// compatibility with older saved data that used a single node.prerequisiteMode instead.
-function normalizedPrereqs(node){
+// ---------------- Prerequisite expressions ----------------
+// A narration's prerequisites are a condition tree, stored in node.requires:
+//   group:     {op:'and'|'or', items:[...]}   — all of / any one of its items
+//   condition: {nodeId, choiceId}              — that narration heard (with that choice, if set)
+// Groups nest freely. An empty group (or no prerequisites at all) is always satisfied.
+//
+// Older data has a flat node.prerequisites list instead, each entry marked group 'all' or
+// 'any' (or, older still, one node.prerequisiteMode for the whole list), meaning: every
+// 'all' entry AND at least one 'any' entry. legacyRequires() turns that into the same tree.
+function isReqGroup(item){ return !!item && (item.op==='and' || item.op==='or'); }
+function emptyRequires(){ return {op:'and', items:[]}; }
+function legacyRequires(node){
   const legacyMode = node.prerequisiteMode==='any' ? 'any' : 'all';
-  return (node.prerequisites||[]).map(p=> ({...p, group: p.group || legacyMode}));
+  const list = (node.prerequisites||[]).map(p=> ({nodeId: p.nodeId, choiceId: p.choiceId || null, group: p.group || legacyMode}));
+  const all = list.filter(p=>p.group!=='any').map(p=>({nodeId: p.nodeId, choiceId: p.choiceId}));
+  const any = list.filter(p=>p.group==='any').map(p=>({nodeId: p.nodeId, choiceId: p.choiceId}));
+  if(any.length===0) return {op:'and', items: all};
+  if(all.length===0) return {op:'or', items: any};
+  return {op:'and', items: [...all, {op:'or', items: any}]};
 }
-// True once a node's own AND/OR prerequisites are satisfied — independent of whether the
+// The node's condition tree — its own, or converted from the legacy list. Conversions are
+// cached per node object (edits always replace the object, so the cache can't go stale).
+const legacyRequiresCache = new WeakMap();
+function prereqExpr(node){
+  if(isReqGroup(node.requires)) return node.requires;
+  let expr = legacyRequiresCache.get(node);
+  if(!expr){ expr = legacyRequires(node); legacyRequiresCache.set(node, expr); }
+  return expr;
+}
+function evalRequires(item){
+  if(!isReqGroup(item)) return prereqSatisfied(item);
+  const items = item.items || [];
+  if(items.length===0) return true;
+  return item.op==='or' ? items.some(evalRequires) : items.every(evalRequires);
+}
+// Every condition in the tree, flattened — for map connectors, "what does this unlock", badges.
+function prereqRefs(node){
+  const out = [];
+  (function walk(item){
+    if(isReqGroup(item)) (item.items||[]).forEach(walk);
+    else if(item && item.nodeId) out.push(item);
+  })(prereqExpr(node));
+  return out;
+}
+// Readable form of a condition tree, e.g.  A AND (B OR C: “Flee”).  titleOf(nodeId) and
+// choiceLabelOf(nodeId, choiceId) supply the names. Plain text; escape before inserting as HTML.
+function describeRequires(expr, titleOf, choiceLabelOf, nested){
+  if(!isReqGroup(expr)){
+    const t = titleOf(expr.nodeId);
+    return expr.choiceId ? `${t}: “${choiceLabelOf(expr.nodeId, expr.choiceId)}”` : t;
+  }
+  const items = (expr.items||[]).filter(i=> isReqGroup(i) ? (i.items||[]).length : i.nodeId);
+  if(items.length===0) return nested ? '' : 'available from the start';
+  const text = items.map(i=>describeRequires(i, titleOf, choiceLabelOf, true)).filter(Boolean).join(expr.op==='or' ? ' OR ' : ' AND ');
+  return nested && items.length>1 ? `(${text})` : text;
+}
+// True once a node's own prerequisites are satisfied — independent of whether the
 // node itself has been explicitly marked heard. Shared by isAvailable() and, for
 // "completed by default" nodes, by isCompleted() itself.
 function prerequisitesSatisfiedFor(node){
-  const prereqs = normalizedPrereqs(node);
-  if(prereqs.length===0) return true;
-  const allGroup = prereqs.filter(p=>p.group!=='any');
-  const anyGroup = prereqs.filter(p=>p.group==='any');
-  const allOk = allGroup.every(prereqSatisfied);
-  const anyOk = anyGroup.length===0 || anyGroup.some(prereqSatisfied);
-  return allOk && anyOk;
+  return evalRequires(prereqExpr(node));
 }
 const completedByDefaultGuard = new Set(); // cycle protection while resolving auto-complete chains
 function isCompleted(nodeId){
@@ -61,7 +105,7 @@ function isAvailable(node){
 function findChildrenUnlockedBy(node){
   return (nodesByGame[node.gameId]||[]).filter(c=>
     !c.hidden &&
-    (c.prerequisites||[]).some(p=>p.nodeId===node.id) &&
+    prereqRefs(c).some(p=>p.nodeId===node.id) &&
     isAvailable(c) && !isCompleted(c.id)
   );
 }
